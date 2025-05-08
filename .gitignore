@@ -10,7 +10,7 @@ dist/
 web-build/
 expo-env.d.ts
 #exlude assets
-.assets/
+assets/
 # Native
 .kotlin/
 *.orig.*
