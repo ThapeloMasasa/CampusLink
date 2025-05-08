@@ -1,4 +1,4 @@
-// navigation/AppNavigator.tsx
+
 import { NavigationContainer } from '@react-navigation/native';
 import AuthNavigator from './AuthNavigator';
 import MainNavigator from '../navigation/MainNavigator';
@@ -6,11 +6,11 @@ import { useState } from 'react';
 
 
 export default function AppNavigator() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // TEMP: Hardcoded for now
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
 
   return (
     <NavigationContainer>
-      {isLoggedIn ? <MainNavigator /> : <AuthNavigator setIsLoggedIn={setIsLoggedIn} />}
+      {isLoggedIn ? <MainNavigator setIsLoggedIn = {setIsLoggedIn}/> : <AuthNavigator setIsLoggedIn={setIsLoggedIn} />}
     </NavigationContainer>
   );
 }
