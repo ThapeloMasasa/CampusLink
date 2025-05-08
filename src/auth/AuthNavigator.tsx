@@ -1,12 +1,29 @@
-import React from 'react'
-import { View } from 'react-native'
-import LoginScreen from './LogIn'
-const AuthNavigator = () => {
+import React from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import LoginScreen from './LogIn';
+import SignUpScreen from './SignUp';
+import { AuthProps } from '../types/types';
+
+const Stack = createNativeStackNavigator();
+
+function RootStack({ setIsLoggedIn }: AuthProps) {
   return (
-    <View>
-      <LoginScreen />
-    </View>
-  )
+    <Stack.Navigator>
+      <Stack.Screen name="LogIn">
+        {(props) => <LoginScreen {...props} setIsLoggedIn={setIsLoggedIn} />}
+      </Stack.Screen>
+      <Stack.Screen name="SignUp">
+        {(props) => <SignUpScreen {...props} setIsLoggedIn={setIsLoggedIn} />}
+      </Stack.Screen>
+    </Stack.Navigator>
+  );
 }
 
-export default AuthNavigator
+// AuthNavigator needs to also have typed props
+const AuthNavigator = ({ setIsLoggedIn }: AuthProps) => {
+  return (
+    <RootStack setIsLoggedIn={setIsLoggedIn} />
+  );
+};
+
+export default AuthNavigator;

@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Pressable } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { AuthProps,AuthStackParamList } from '../types/types';
 
-const LoginScreen = () => {
+const LoginScreen = ({setIsLoggedIn}: AuthProps) => {
+    const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
     // Handle login logic here (API call, etc.)
-    console.log('Logging in with:', email, password);
+    setIsLoggedIn(true)
   };
 
   return (
@@ -16,8 +20,8 @@ const LoginScreen = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View style={styles.innerContainer}>
-        <Text style={styles.title}>Welcome Back 👋</Text>
-        <Text style={styles.subtitle}>Sign in to continue</Text>
+        <Text style={styles.title}> Campus Link 👋</Text>
+        <Text style={styles.subtitle}>Enjoy Campus Vibes</Text>
 
         <TextInput
           placeholder="Email"
@@ -37,14 +41,23 @@ const LoginScreen = () => {
           onChangeText={setPassword}
           secureTextEntry
         />
-
+        
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Sign In</Text>
         </TouchableOpacity>
+     
 
         <TouchableOpacity>
           <Text style={styles.forgotPassword}>Forgot Password?</Text>
         </TouchableOpacity>
+
+        <View style={styles.signUp}>
+            <Text style={styles.haveAccount}>Don't have an Account? </Text>
+                <Pressable  onPress={()=>navigation.navigate('SignUp')}>
+                    <Text style={styles.SignUptext}>Sign Up</Text>
+                </Pressable>
+                   
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -99,4 +112,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
   },
+  signUp:{
+    paddingTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'center'
+
+  },
+  haveAccount: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#181c18'
+
+  },
+  SignUptext: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#4CAF50'
+  }
 });

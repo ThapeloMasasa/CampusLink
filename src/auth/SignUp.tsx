@@ -1,15 +1,17 @@
-// SignUpScreen.tsx
+import { AuthProps, AuthStackParamList } from '../types/types';
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Pressable } from 'react-native';
 
-const SignUpScreen = () => {
+const SignUpScreen = ({setIsLoggedIn}: AuthProps) => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
 
   const handleSignUp = () => {
-    // Handle sign-up logic here (API call, etc.)
-    console.log('Signing up with:', fullName, email, password);
+    setIsLoggedIn(true)
   };
 
   return (
@@ -22,7 +24,21 @@ const SignUpScreen = () => {
         <Text style={styles.subtitle}>Sign up to get started!</Text>
 
         <TextInput
-          placeholder="Full Name"
+          placeholder="First Name"
+          placeholderTextColor="#999"
+          style={styles.input}
+          value={fullName}
+          onChangeText={setFullName}
+        />
+        <TextInput
+          placeholder="Last Name"
+          placeholderTextColor="#999"
+          style={styles.input}
+          value={fullName}
+          onChangeText={setFullName}
+        />
+    <TextInput
+          placeholder="User Name"
           placeholderTextColor="#999"
           style={styles.input}
           value={fullName}
@@ -51,10 +67,13 @@ const SignUpScreen = () => {
         <TouchableOpacity style={styles.button} onPress={handleSignUp}>
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity>
-          <Text style={styles.haveAccount}>Already have an account? Sign In</Text>
-        </TouchableOpacity>
+        <View style={styles.signUp}>
+            <Text style={styles.haveAccount}>Already have an Account? </Text>
+            <Pressable  onPress={()=>navigation.goBack()}>
+                <Text style={styles.SignUptext}>Sign In</Text>
+            </Pressable>
+                           
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -104,9 +123,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  haveAccount: {
-    color: '#4CAF50',
-    fontSize: 14,
-    textAlign: 'center',
+  signUp:{
+    paddingTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'center'
+
   },
+  haveAccount: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#181c18'
+
+  },
+  SignUptext: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#4CAF50'
+  }
 });
