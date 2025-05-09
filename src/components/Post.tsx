@@ -1,15 +1,8 @@
-import { View, Text, StyleSheet, Image, ImageSourcePropType } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome'
-
-type PostProps = {
-    title: string;
-    content: string;
-    image?: ImageSourcePropType;
-    likes: string;
-    shares: string;
-  };
-  
+import { PostProps } from '../types/types';
+ 
   
   const Post: React.FC<PostProps> = ({ title, content, image, likes, shares }) => {
   return (

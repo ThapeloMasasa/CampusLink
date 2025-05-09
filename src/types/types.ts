@@ -1,3 +1,6 @@
+import { Image, ImageSourcePropType } from 'react-native';
+
+
 export type AuthProps = {
     setIsLoggedIn: (value: boolean) => void;
   };
@@ -9,6 +12,30 @@ export type AuthProps = {
     id: string;
     text: string;
     sender: 'me' | 'group';
+  };
+
+  export 
+  type PostProps = {
+      title: string;
+      content: string;
+      image?: ImageSourcePropType;
+      likes: string;
+      shares: string;
+    };
+export type deal = {
+        price: string;
+        image: ImageSourcePropType;
+        message: string;
+     }
+export type StudentDealCardProps = {
+  image: ImageSourcePropType;
+  price: string;
+  message: string;
+};
+
+  export type FlipSpaceTabParamList = {
+    Students: undefined;
+    Local: undefined;
   };
 
   export type GroupCardProps = {
