@@ -25,10 +25,12 @@ export default function HomeScreen({ setIsLoggedIn }: AuthProps) {
   }, [navigation, setIsLoggedIn]);
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Top Stories Section */}
-      <StoryBar />
-
+    <View style = {styles.container}>
+    <ScrollView style={styles.feed}>
+    <StoryBar />
+    </ScrollView>
+    <View style={styles.separator} />
+    <ScrollView style={styles.feed}>
       {/* Posts Feed */}
       <View style={styles.feed}>
         <Post
@@ -73,13 +75,24 @@ export default function HomeScreen({ setIsLoggedIn }: AuthProps) {
         />
       </View>
     </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  separator: {
+    width: 1,
+    backgroundColor: '#ccc',
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 2,
+    elevation: 4, // for Android shadow
+  },
   container: {
     backgroundColor: '#fff',
-    flex: 1,
+    flexDirection: 'row',
   },
   feed: {
     paddingHorizontal: 10,

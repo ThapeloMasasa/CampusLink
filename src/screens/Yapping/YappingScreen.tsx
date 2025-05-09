@@ -1,19 +1,15 @@
 import React from 'react'
 import { View } from 'react-native';
-import YapsLeaderBoard from './YapsLeaderBoard';
-import YapsScreen from './YapsScreen';
+import YapTabs from '../../components/YapTabs';
 
 
 const YappingScreen = () => {
   return (
-    <>
+    
     <View>
-        <YapsScreen />
-        </View>
-    <View>
-        <YapsLeaderBoard />
+        <YapTabs />
     </View>
-    </>
+    
   )
 }
 

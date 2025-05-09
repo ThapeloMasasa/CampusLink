@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import React from 'react';
+import {LinearGradient}  from  'expo-linear-gradient';
 
 type YapProps = {
   content: string;
@@ -15,51 +16,53 @@ const Yap: React.FC<YapProps> = ({ content, title }) => {
       </View>
       <View style={styles.tail} />
     </View>
+    
   );
 };
 
 const styles = StyleSheet.create({
-  wrapper: {
-    alignItems: 'center',
-    marginVertical: 12,
-    marginHorizontal: 16,
-  },
-  bubble: {
-    backgroundColor: '#ffffff',
-    borderRadius: 20,
-    padding: 24,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 4,
-    maxWidth: '90%',
-    alignSelf: 'center',
-  },
-  yapText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#111',
-  },
-  tail: {
-    width: 0,
-    height: 0,
-    borderLeftWidth: 12,
-    borderRightWidth: 12,
-    borderTopWidth: 14,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderTopColor: '#ffffff',
-    alignSelf: 'center',
-    marginTop: -2,
-  }, 
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    paddingHorizontal: 10,
-    marginBottom: 10,
-    color: '#333',
-  },
-});
+    wrapper: {
+        alignItems: 'center',
+        marginVertical: 12,
+        marginHorizontal: 16,
+        overflow: 'hidden', // important to clip gradient if needed
+      },
+    bubble: {
+        backgroundColor: 'gray',
+      borderRadius: 20,
+      padding: 24,
+      shadowColor: '#000',
+      shadowOpacity: 0.1,
+      shadowRadius: 6,
+      elevation: 4,
+      maxWidth: '90%',
+      alignSelf: 'center',
+    },
+    yapText: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      color: '#111',
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      paddingHorizontal: 10,
+      marginBottom: 10,
+      color: '#333',
+    },
+    tail: {
+      width: 0,
+      height: 0,
+      borderLeftWidth: 12,
+      borderRightWidth: 12,
+      borderTopWidth: 14,
+      borderLeftColor: 'transparent',
+      borderRightColor: 'transparent',
+      borderTopColor: 'gray',
+      alignSelf: 'center',
+      marginTop: -2,
+    },
+  });
 
 export default Yap;
