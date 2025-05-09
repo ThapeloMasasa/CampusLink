@@ -6,9 +6,6 @@ import StoryBar from '../../components/StoryBar';
 import Post from '../../components/Post';         
 import Yap from '../../components/Yap';
 import { AuthProps } from '../../types/types';
-type HomeScreenProps = {
-  setIsLoggedIn: (value: boolean) => void;
-};
 
 export default function HomeScreen({ setIsLoggedIn }: AuthProps) {
   const navigation = useNavigation();

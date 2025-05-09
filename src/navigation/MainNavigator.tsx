@@ -7,6 +7,7 @@ import ConnectZoneScreen from '../screens/ConnectZone/ConnectZoneScreen';
 import FlipSpaceScreen from '../screens/FlipSpace/FlipSpaceScreen';
 import ProfileScreen from '../screens/Profile/ProfileScreen';
 import { AuthProps } from '../types/types';
+import ConnectZoneStack from './ConnectZoneStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -14,7 +15,7 @@ export default function MainNavigator({ setIsLoggedIn }: AuthProps) {
   return (
     <Tab.Navigator screenOptions={{ headerShown: true }}>
       <Tab.Screen 
-        name="Home"
+        name="Updates"
         options={{
           tabBarIcon: ({focused}) => (
             <Image 
@@ -42,7 +43,7 @@ export default function MainNavigator({ setIsLoggedIn }: AuthProps) {
 
       <Tab.Screen 
         name="Connect"
-        component={ConnectZoneScreen}
+        component={ConnectZoneStack}
         options={{
           tabBarIcon: ({focused}) => (
             <Image 
