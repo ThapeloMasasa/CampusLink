@@ -33,6 +33,17 @@ export type StudentDealCardProps = {
   message: string;
 };
 
+
+export type localDeal = {
+    store: string;
+    image: ImageSourcePropType;
+    storeLogo: ImageSourcePropType;
+    price: string
+    latitude: number
+    longitude: number
+  }
+  
+
   export type FlipSpaceTabParamList = {
     Students: undefined;
     Local: undefined;
