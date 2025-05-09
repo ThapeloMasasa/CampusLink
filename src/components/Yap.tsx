@@ -1,68 +1,112 @@
-import { View, Text, StyleSheet } from 'react-native';
-import React from 'react';
-import {LinearGradient}  from  'expo-linear-gradient';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import EmojiPicker from './EmojiPicker'; // Or your EmojiPicker package
+import { YapProps } from '../types/types';
 
-type YapProps = {
-  content: string;
-  title: string;
-};
+const Yap = ({ title, content, initialLikes = 0, initialReactions = [] }: YapProps) => {
+  const [likes, setLikes] = useState(initialLikes);
+  const [rank, setRank] = useState(0);
+  const [showReactions, setShowReactions] = useState(false);
+  const [reactions, setReactions] = useState(initialReactions);
 
-const Yap: React.FC<YapProps> = ({ content, title }) => {
+  const updateRank = (likes: number) => {
+    setRank(likes > 10 ? 5 : 100); // Example
+  };
+
+  const handleLike = () => {
+    const newLikes = likes + 1;
+    setLikes(newLikes);
+    updateRank(newLikes);
+  };
+
+  const handleReaction = (emoji: string) => {
+    setReactions([...reactions, emoji]);
+    setShowReactions(false);
+  };
+
   return (
-    <View style={styles.wrapper}>
-         <Text style={styles.title}>{title} 🔥</Text>
-      <View style={styles.bubble}>
-        <Text style={styles.yapText}>{content}</Text>
+    <View style={styles.yapCard}>
+      
+      {/* Title */}
+      <Text style={styles.yapTitle}>{title}</Text>
+
+      {/* Content */}
+      <Text style={styles.yapContent}>{content}</Text>
+
+      {/* First bottom row: emojis */}
+      <View style={styles.bottomRow}>
+        <TouchableOpacity onPress={handleLike} style={styles.iconContainer}>
+          <Text style={styles.emoji}>👍</Text>
+        </TouchableOpacity>
+        <View style={styles.iconContainer}>
+          <Text style={styles.emoji}>🏆</Text>
+        </View>
+        <TouchableOpacity onPress={() => setShowReactions(true)} style={styles.iconContainer}>
+          <Text style={styles.emoji}>🙂</Text>
+        </TouchableOpacity>
       </View>
-      <View style={styles.tail} />
+
+      {/* Second bottom row: labels */}
+      <View style={styles.bottomRow}>
+        <Text style={styles.label}>Likes: {likes}</Text>
+        <Text style={styles.label}>Rank: {rank}</Text>
+        <Text style={styles.label}>Reactions: {reactions.length}</Text>
+      </View>
+
+      {/* Emoji Picker */}
+      <EmojiPicker 
+        visible={showReactions}
+        onClose={() => setShowReactions(false)}
+        onSelect={handleReaction}
+      />
+
     </View>
-    
   );
 };
 
 const styles = StyleSheet.create({
-    wrapper: {
-        alignItems: 'center',
-        marginVertical: 12,
-        marginHorizontal: 16,
-        overflow: 'hidden', // important to clip gradient if needed
-      },
-    bubble: {
-        backgroundColor: 'gray',
-      borderRadius: 20,
-      padding: 24,
-      shadowColor: '#000',
-      shadowOpacity: 0.1,
-      shadowRadius: 6,
-      elevation: 4,
-      maxWidth: '90%',
-      alignSelf: 'center',
-    },
-    yapText: {
-      fontSize: 24,
-      fontWeight: 'bold',
-      textAlign: 'center',
-      color: '#111',
-    },
-    title: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      paddingHorizontal: 10,
-      marginBottom: 10,
-      color: '#333',
-    },
-    tail: {
-      width: 0,
-      height: 0,
-      borderLeftWidth: 12,
-      borderRightWidth: 12,
-      borderTopWidth: 14,
-      borderLeftColor: 'transparent',
-      borderRightColor: 'transparent',
-      borderTopColor: 'gray',
-      alignSelf: 'center',
-      marginTop: -2,
-    },
-  });
+  yapCard: {
+    width: '90%',
+    padding: 20,
+    marginBottom: 20,
+    backgroundColor: 'gray',
+    borderRadius: 12,
+    elevation: 5,
+    alignSelf: 'center',
+    marginTop: 10,
+    height: 250, // taller for new layout
+    justifyContent: 'space-between',
+  },
+  yapTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+    fontFamily:'SpaceGrotesk-Bold',
+  },
+  yapContent: {
+    fontSize: 25,
+    textAlign: 'center',
+    marginBottom: 20,
+    fontWeight: 'medium',
+  },
+  bottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  emoji: {
+    fontSize: 28,
+  },
+  label: {
+    fontSize: 16,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  iconContainer: {
+    alignItems: 'center',
+  },
+});
 
 export default Yap;

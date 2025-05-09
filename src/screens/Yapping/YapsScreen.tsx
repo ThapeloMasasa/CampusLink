@@ -8,7 +8,7 @@ const YapsScreen = () => {
   const [yapText, setYapText] = useState('');
   const [yapTitle, setYapTitle] = useState('');
   const [yaps, setYaps] = useState([
-    { title: 'Best Yap', content: 'lets goo' },
+    { title: 'Best Yap', content: 'Learn how to choose and use' },
     { title: 'Cold Yap', content: 'Hello' },
     { title: 'Medium Yap', content: 'warriors Suck' },
     { title: 'Warm Yap', content: 'Go Irish' },
