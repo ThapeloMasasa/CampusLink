@@ -31,7 +31,7 @@ const storyList = [
 export default function StoryBar() {
   return (
     <>
-    <Text style={styles.title}>MyDays</Text>
+    <Text style={styles.title}>MyDay</Text>
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       {storyList.map((story, index) => (
         <Image key={index} source={story} style={styles.storyImage} />
