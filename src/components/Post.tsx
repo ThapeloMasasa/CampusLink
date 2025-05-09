@@ -1,5 +1,7 @@
 import { View, Text, StyleSheet, Image, ImageSourcePropType } from 'react-native';
 import React from 'react';
+import Icon from 'react-native-vector-icons/FontAwesome'
+
 type PostProps = {
     title: string;
     content: string;
@@ -17,6 +19,7 @@ type PostProps = {
       {image && <Image source={ image } style={styles.image} />}
       <View style={styles.stats}>
         <Text>😊 {likes}</Text>
+        <Icon name="user-circle" size={40} color="#000" />
         <Text>📤 {shares}</Text>
       </View>
     </View>

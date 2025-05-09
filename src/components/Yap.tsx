@@ -52,14 +52,13 @@ const Yap = ({ title, content, initialLikes = 0, initialReactions = [] }: YapPro
         <Text style={styles.label}>Rank: {rank}</Text>
         <Text style={styles.label}>Reactions: {reactions.length}</Text>
       </View>
-
+     
       {/* Emoji Picker */}
       <EmojiPicker 
         visible={showReactions}
         onClose={() => setShowReactions(false)}
         onSelect={handleReaction}
       />
-
     </View>
   );
 };
@@ -103,6 +102,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'white',
     fontWeight: 'bold',
+  },
+  bubbleTail: {
+    width: 0,
+    height: 0,
+    borderTopWidth: 30,    // was 20 → bigger
+    borderTopColor: '#f9f9f9',
+    borderLeftWidth: 25,   // was 15 → wider
+    borderLeftColor: 'transparent',
+    borderRightWidth: 25,  // was 15 → wider
+    borderRightColor: 'transparent',
+    transform: [{ rotate: '180deg' }],
+    alignSelf: 'flex-start',
+    marginLeft: 40,        // a bit more left offset
+    marginTop: -10,        // a bit more overlap
   },
   iconContainer: {
     alignItems: 'center',
