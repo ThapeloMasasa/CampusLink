@@ -1,14 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, Image } from 'react-native';
+import { View, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../../types/types'; // You will create this types file
+import { RootStackParamList } from '../../types/types'; 
 import GroupCard from '../../components/GroupCard';
+import { groupItem } from '../../types/types';
 
-type groupItem ={
-  name: string;
-  image: Image;
-}
 type ConnectZoneNavigationProp = StackNavigationProp<RootStackParamList, 'ConnectZone'>;
 
 

@@ -1,4 +1,7 @@
 import { Image, ImageSourcePropType } from 'react-native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 
 export type AuthProps = {
@@ -12,6 +15,7 @@ export type AuthProps = {
     id: string;
     text: string;
     sender: 'me' | 'group';
+    profile: string
   };
 
   export 
@@ -42,8 +46,36 @@ export type localDeal = {
     latitude: number
     longitude: number
   }
-  
 
+  export type MainStackParamList = {
+    MainTabs: undefined; 
+    ViewProfile: { userId: string };
+    DirectMessageScreen: {username: string};
+  };
+
+  export interface DirectMessage {
+    id: string;
+    sender: 'me' | 'other';
+    text: string;
+  }
+ export interface DirectMessageScreenProps {
+    route: any;
+  }
+export type NavigationProp = NativeStackNavigationProp<MainStackParamList, 'MainTabs'>;
+
+
+export type ViewProfileRouteProp = RouteProp<MainStackParamList, 'ViewProfile'>;
+export type DirectMessageProp = RouteProp<MainStackParamList, 'DirectMessageScreen'>;
+export type ViewProfileNavigationProp = StackNavigationProp<MainStackParamList, 'ViewProfile'>;
+
+export type ProfileIconProps = {
+    userId: string;
+  };
+
+export type groupItem ={
+    name: string;
+    image: Image;
+  }
   export type FlipSpaceTabParamList = {
     Students: undefined;
     Local: undefined;

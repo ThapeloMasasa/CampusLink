@@ -1,17 +1,26 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {useRoute } from '@react-navigation/native';
+import { ViewProfileRouteProp, ViewProfileNavigationProp  } from '../../types/types';
+import { useNavigation } from '@react-navigation/native';
+
+
 
 const ViewProfile = () => {
+  const navigation = useNavigation<ViewProfileNavigationProp>();
+  const route = useRoute<ViewProfileRouteProp>();
+  const { userId } = route.params; 
+
   return (
     <View style={styles.container}>
       {/* Top Section */}
-      <Text style={styles.title}>Linker Profile</Text>
+      <Text style={styles.title}>Linker Profile - {userId}</Text> 
       
       {/* Profile Image */}
       <View style={styles.profileImageContainer}>
         <Image
-          source={require('../../../assets/cropped-file.jpg')} // Placeholder image
+          source={require('../../../assets/popi.jpg')} 
           style={styles.profileImage}
         />
       </View>
@@ -19,18 +28,40 @@ const ViewProfile = () => {
       {/* Rating and Social Icons Section */}
       <View style={styles.ratingSection}>
         <View style={styles.ratingContainer}>
-        <Text style={styles.ratingNumber}>🤩1345😎</Text>
+          <Text style={styles.ratingNumber}>🤩1345😎</Text>
           <Text style={styles.ratingText}>Yapper Rating</Text>
-          
         </View>
+
+        <View>
+          <TouchableOpacity onPress={() => navigation.navigate('DirectMessageScreen', { username: 'Masasa' })}>
+            <Text style={styles.ratingText}>DM 😜</Text>
+            <Ionicons name="chatbubble-ellipses-outline" size={40} color="#000" />
+          </TouchableOpacity>
         </View>
+
+        <View>
+          <Text style={styles.ratingText}>Follow 😉</Text>
+          <Image
+            source={require('../../../assets/insta.png')}
+            style={styles.socialIcon}
+          />
+        </View>
+
+        <View>
+          <Text style={styles.ratingText}>Connect 🤝</Text>
+          <Image
+            source={require('../../../assets/Linked.png')}
+            style={styles.socialIcon}
+          />
+        </View>
+      </View>
 
       {/* Posts Section */}
       <Text style={styles.postsTitle}>Posts</Text>
 
       {/* Posts Grid */}
       <FlatList
-        data={[1, 2, 3, 4]} // Placeholder data
+        data={[1, 2, 3, 4]}
         numColumns={2}
         keyExtractor={(item) => item.toString()}
         renderItem={() => (

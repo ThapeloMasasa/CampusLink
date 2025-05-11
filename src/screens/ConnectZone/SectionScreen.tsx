@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity, FlatList, TextInput, StyleSheet, Keyboard
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from '../../types/types';
 import { Message } from '../../types/types';
+import { Icon } from 'react-native-vector-icons/Icon';
+import ProfileIcon from '../../components/ProfileIcon';
 
 
 type SectionScreenRouteProp = RouteProp<RootStackParamList, 'Section'>;
@@ -17,27 +19,27 @@ const initialMessagesData: { [key: string]: string[] } = {
 };
 const messagesData: { [key: string]: Message[] } = {
   General: [
-    { id: '1', text: 'Hello everyone!', sender: 'group' },
-    { id: '2', text: 'Welcome to General', sender: 'group' },
-    { id: '3', text: 'Hey there!', sender: 'me' },
+    { id: '1', text: 'Hello everyone!', sender: 'group', profile: "Masasa"},
+    { id: '2', text: 'Welcome to General', sender: 'group', profile: "Katie"},
+    { id: '3', text: 'Hey there!', sender: 'me' , profile: ""},
   ],
   LeetCode: [
-    { id: '4', text: 'Any tips for Two Sum?', sender: 'group' },
-    { id: '5', text: 'I usually use hashmaps!', sender: 'me' },
-    { id: '6', text: 'Welcome to General', sender: 'group' },
-    { id: '7', text: 'Hey there!', sender: 'me' },
+    { id: '4', text: 'Any tips for Two Sum?', sender: 'group' , profile: "Masasa"},
+    { id: '5', text: 'I usually use hashmaps!', sender: 'me' , profile: ""},
+    { id: '6', text: 'Welcome to General', sender: 'group' , profile: "Danny"},
+    { id: '7', text: 'Hey there!', sender: 'me' , profile: ""},
   ],
   Resumes: [
-    { id: '8', text: 'Any tips for Two Sum?', sender: 'group' },
-    { id: '9', text: 'I usually use hashmaps!', sender: 'me' },
-    { id: '10', text: 'Welcome to General', sender: 'group' },
-    { id: '11', text: 'Hey there!', sender: 'me' },
+    { id: '8', text: 'Any tips for Two Sum?', sender: 'group', profile: "Masasa" },
+    { id: '9', text: 'I usually use hashmaps!', sender: 'me' , profile: ""},
+    { id: '10', text: 'Welcome to General', sender: 'group', profile: "John" },
+    { id: '11', text: 'Hey there!', sender: 'me', profile: "" },
   ],
   Projects: [
-    { id: '12', text: 'Any tips for Two Sum?', sender: 'group' },
-    { id: '13', text: 'I usually use hashmaps!', sender: 'me' },
-    { id: '14', text: 'Welcome to General', sender: 'group' },
-    { id: '15', text: 'Hey there!', sender: 'me' },
+    { id: '12', text: 'Any tips for Two Sum?', sender: 'group', profile: "Lenox" },
+    { id: '13', text: 'I usually use hashmaps!', sender: 'me' ,profile: ""},
+    { id: '14', text: 'Welcome to General', sender: 'group' , profile: "Miranda"},
+    { id: '15', text: 'Hey there!', sender: 'me' ,  profile: ""},
   ],
 };
 
@@ -93,19 +95,31 @@ const SectionScreen = () => {
         </Text>
 
         <FlatList
-        data={messagesData[selectedSection]}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-    <View
-      style={[
-        styles.messageBubble,
-        item.sender === 'me' ? styles.myMessage : styles.groupMessage,
-      ]}
-    >
-      <Text>{item.text}</Text>
-    </View>
-  )}
+          data={messagesData[selectedSection]}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+                <View
+                  style={[
+                    styles.messageBubble,
+                    item.sender === 'me' ? styles.myMessage : styles.userMessage,
+                    item.sender === 'group' && { flexDirection: 'row', alignItems: 'center' }, // <-- ADD THIS for group messages only
+                  ]}
+                >
+                  {item.sender === 'group' ? (
+                    <>
+                      <ProfileIcon userId={item.profile} />
+                      <Text style={styles.groupMessage}>
+                        {item.text}
+                      </Text>
+                    </>
+                  ) : (
+                    <Text>{item.text}</Text>
+                  )}
+                </View>
+              )}
+              
 />
+
 
         <View style={{flexDirection: 'row',
                 position: 'absolute',
@@ -150,6 +164,9 @@ const styles = StyleSheet.create({
     height: 40,
     backgroundColor: '#fff',
   },
+ userMessage:{
+  flexDirection: 'row',
+ },
   messageBubble: {
     padding: 10,
     backgroundColor: '#eee',
@@ -158,14 +175,19 @@ const styles = StyleSheet.create({
     maxWidth: '70%',
   },
   
+  groupWrapper: {
+    backgroundColor: '#fff',
+  },
   myMessage: {
     alignSelf: 'flex-end',
     backgroundColor: '#e8e8e8', 
   },
-  
   groupMessage: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#8e8a8a', 
+    marginLeft: 8,
+    backgroundColor: '#8e8a8a',
+    padding: 8,
+    borderRadius: 10,
+    color: 'white',
   },
   sendButton: {
     marginLeft: 10,

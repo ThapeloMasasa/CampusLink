@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, Pressable,  Modal, Button,ScrollView, SafeAreaView  } from 'react-native';
 import { StudentDealCardProps } from '../types/types';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
+import ProfileIcon from './ProfileIcon';
 
 const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price,message }) => {
   
@@ -14,7 +14,7 @@ const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price,message 
       <Image source={image} style={styles.productImage} resizeMode="cover" />
 
       <View style={styles.bottomRow}>
-      <Icon name="user-circle" size={40} color="#000" />
+      <ProfileIcon  userId='Masasa'/>
 
         <Pressable style={styles.dealButton} onPress={()=>setModalVisible(true)}>
           <Text style={styles.dealText}>Deal</Text>
@@ -39,7 +39,7 @@ const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price,message 
     <Icon name="envelope" size={28} color="#555" />
   </Pressable>
 
-  <Icon name="user-circle" size={38} color="#000" />
+  <ProfileIcon  userId='Masasa'/>
 
   <Pressable onPress={() => console.log('Message')}>
     <Icon name="comment" size={28} color="#555" />
@@ -77,7 +77,8 @@ const styles = StyleSheet.create({
     width: '70%',
     marginBottom: 16,
     marginTop: 12,
-  },  
+  },
+  
   productImage: {
     width: '100%',
     height: '85%',
