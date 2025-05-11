@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, Pressable,  Modal, Button,ScrollView, SafeAreaView  } from 'react-native';
-import { StudentDealCardProps } from '../types/types';
+import { StudentDealCardProps, ViewProfileNavigationProp} from '../types/types';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ProfileIcon from './ProfileIcon';
+import { useNavigation } from '@react-navigation/native';
 
 const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price,message }) => {
-  
+      const navigation = useNavigation<ViewProfileNavigationProp>();
       const [modalVisible, setModalVisible] = useState(false)
 
   
@@ -41,7 +42,7 @@ const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price,message 
 
   <ProfileIcon  userId='Masasa'/>
 
-  <Pressable onPress={() => console.log('Message')}>
+  <Pressable onPress={() => navigation.navigate('DirectMessageScreen', { username: 'Masasa' })}>
     <Icon name="comment" size={28} color="#555" />
   </Pressable>
 </View>

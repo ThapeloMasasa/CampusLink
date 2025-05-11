@@ -70,18 +70,19 @@ function BottomTabs({ setIsLoggedIn }: AuthProps) {
         }}
       />
 
-      <Tab.Screen 
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          tabBarIcon: ({focused}) => (
-            <Image 
-              source={require('../../assets/Profile.png')} 
-              style={{width: focused ? 40 : 25, height: focused ? 42 : 25, resizeMode: 'contain', borderRadius: 17 }}
-            />
-          )
-        }}
-      />
+      <Tab.Screen
+       name="Profile"
+       options={{
+         tabBarIcon: ({focused}) => (
+           <Image 
+             source={require('../../assets/Profile.png')} 
+             style={{width: focused ? 40 : 25, height: focused ? 42 : 25, resizeMode: 'contain', borderRadius: 17 }}
+           />
+         )
+       }}
+      >
+      {(props) => <ProfileScreen {...props} setIsLoggedIn={setIsLoggedIn} />}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 }

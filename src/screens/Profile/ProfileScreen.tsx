@@ -1,9 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useLayoutEffect} from 'react';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Switch } from 'react-native';
+import { Ionicons } from '@expo/vector-icons'; 
+import { useNavigation } from '@react-navigation/native';
+import { AuthProps } from '../../types/types';
 
-const ProfileScreen = () => {
+const ProfileScreen = ({setIsLoggedIn}:AuthProps) => {
+
   const [activeTab, setActiveTab] = useState('Posts');
   const [isRatingVisible, setIsRatingVisible] = useState(true);
+   const navigation = useNavigation();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={() => setIsLoggedIn(false)} style={{ marginRight: 15 }}>
+          <Ionicons name="log-out-outline" size={24} color="black" />
+        </TouchableOpacity>
+      ),
+      title: "Profile", // you said you wanted the title to still be "Hot Yap"
+    });
+  }, [navigation, setIsLoggedIn]);
 
   const renderPostItem = () => <View style={styles.postBox} />;
 

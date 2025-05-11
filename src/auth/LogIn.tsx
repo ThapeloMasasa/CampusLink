@@ -10,7 +10,6 @@ const LoginScreen = ({setIsLoggedIn}: AuthProps) => {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    // Handle login logic here (API call, etc.)
     setIsLoggedIn(true)
   };
 
