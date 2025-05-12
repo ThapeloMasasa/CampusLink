@@ -3,9 +3,10 @@ import { View, Text, TouchableOpacity, FlatList, TextInput, StyleSheet, Keyboard
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from '../../types/types';
 import { Message } from '../../types/types';
-import { Icon } from 'react-native-vector-icons/Icon';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProfileIcon from '../../components/ProfileIcon';
-
+import { useLayoutEffect } from 'react';
+import { useNavigation } from 'expo-router';
 
 type SectionScreenRouteProp = RouteProp<RootStackParamList, 'Section'>;
 
@@ -43,15 +44,22 @@ const messagesData: { [key: string]: Message[] } = {
   ],
 };
 
+
 const SectionScreen = () => {
   const route = useRoute<SectionScreenRouteProp>();
   const { groupName } = route.params;
-
+  const navigation = useNavigation();
   const [selectedSection, setSelectedSection] = useState<string>('General');
   const [messages, setMessages] = useState<{ [key: string]: string[] }>(initialMessagesData);
   const [newMessage, setNewMessage] = useState<string>('');
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
+ 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+     title: groupName
+    });
+  }, [navigation]);
   const handleSendMessage = () => {
     if (newMessage.trim() !== '') {
       setMessages((prevMessages) => ({
@@ -86,13 +94,14 @@ const SectionScreen = () => {
       )}
 
       <View style={styles.chatArea}>
+        
         <TouchableOpacity onPress={() => setSidebarOpen((prev) => !prev)} style={styles.toggleButton}>
-          <Text style={styles.toggleText}>{sidebarOpen ? 'Hide Sections' : 'Show Sections'}</Text>
+          <Text style={styles.toggleText}>{sidebarOpen ? <View style={styles.chevron}><Icon size={20}  name="chevron-left" /></View> : <View style={styles.chevron}><Icon size={20} name="chevron-right" /></View>}</Text>
         </TouchableOpacity>
-
         <Text style={styles.header}>
-          {groupName} - {selectedSection}
+          {selectedSection}
         </Text>
+       
 
         <FlatList
           data={messagesData[selectedSection]}
@@ -102,7 +111,7 @@ const SectionScreen = () => {
                   style={[
                     styles.messageBubble,
                     item.sender === 'me' ? styles.myMessage : styles.userMessage,
-                    item.sender === 'group' && { flexDirection: 'row', alignItems: 'center' }, // <-- ADD THIS for group messages only
+                    item.sender === 'group' && { flexDirection: 'row', alignItems: 'center' }, 
                   ]}
                 >
                   {item.sender === 'group' ? (
@@ -153,7 +162,12 @@ const styles = StyleSheet.create({
   sectionButton: { padding: 10 },
   selectedButton: { backgroundColor: '#bbb' },
   sectionText: { fontSize: 14 },
-  header: { fontSize: 18, fontWeight: 'bold', marginBottom: 10, textAlign: 'center' },
+  header: { 
+    fontSize: 18, 
+    fontWeight: 'bold', 
+    marginBottom: 10, 
+    textAlign: 'center',
+    },
 
   input: {
     flex: 1,
@@ -166,6 +180,17 @@ const styles = StyleSheet.create({
   },
  userMessage:{
   flexDirection: 'row',
+ },
+ chevron:{
+  width: 25,           
+   height: 25,          
+  borderRadius: 12,    
+  backgroundColor: 'white',  
+  borderWidth: 2,      
+  borderColor: '#ccc', 
+  justifyContent: 'center',
+  alignItems: 'center',
+
  },
   messageBubble: {
     padding: 10,
@@ -201,7 +226,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   toggleButton: {
-    alignSelf: 'flex-end',
+    alignSelf: 'flex-start',
     padding: 5,
     marginBottom: 5,
   },

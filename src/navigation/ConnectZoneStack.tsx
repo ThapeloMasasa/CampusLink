@@ -11,7 +11,7 @@ const ConnectZoneStack = () => {
       <Stack.Screen 
         name="ConnectZoneHome" 
         component={ConnectZoneScreen} 
-        options={{ title: 'Connect Zone' }} 
+        options={{ title: '🤝Connect Zone🤝' }} 
       />
       <Stack.Screen 
         name="Section" 

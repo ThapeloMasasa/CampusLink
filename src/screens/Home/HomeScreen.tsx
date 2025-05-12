@@ -17,7 +17,6 @@ export default function HomeScreen({ setIsLoggedIn }: AuthProps) {
           <Ionicons name="log-out-outline" size={24} color="black" />
         </TouchableOpacity>
       ),
-      title: "🔥Campus UpDates🔥", // you said you wanted the title to still be "Hot Yap"
     });
   }, [navigation, setIsLoggedIn]);
 

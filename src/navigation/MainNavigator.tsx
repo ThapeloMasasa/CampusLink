@@ -20,6 +20,7 @@ function BottomTabs({ setIsLoggedIn }: AuthProps) {
       <Tab.Screen 
         name="Updates"
         options={{
+          title: "Updates", 
           tabBarIcon: ({focused}) => (
             <Image 
               source={require('../../assets/updates.png')} 
@@ -35,6 +36,7 @@ function BottomTabs({ setIsLoggedIn }: AuthProps) {
         name="Yapping"
         component={YappingScreen}
         options={{
+          headerShown: false, 
           tabBarIcon: ({focused}) => (
             <Image 
               source={require('../../assets/yapping.png')} 
@@ -48,6 +50,7 @@ function BottomTabs({ setIsLoggedIn }: AuthProps) {
         name="Connect"
         component={ConnectZoneStack}
         options={{
+          headerShown: false, 
           tabBarIcon: ({focused}) => (
             <Image 
               source={require('../../assets/network.png')} 

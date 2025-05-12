@@ -28,13 +28,18 @@ const YapsScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: '#ffffff'}}>
       {/* Scrollable list of Yaps */}
-      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-        {yaps.map((yap, index) => (
-          <Yap key={index} title={yap.title} content={yap.content} />
-        ))}
-      </ScrollView>
+      <ScrollView>
+  <TouchableOpacity>
+    {yaps.map((yap, index) => (
+      <View key={index}> 
+        <Yap title={yap.title} content={yap.content} />
+        <View style={styles.separator} />
+      </View>
+    ))}
+  </TouchableOpacity>
+</ScrollView>
 
       <View>
       <TouchableOpacity 
@@ -95,6 +100,19 @@ const styles = StyleSheet.create({
 
 
   },
+  separator: {
+  height: 1,  
+  backgroundColor: '#ccc', 
+  marginVertical: 10, 
+  width: '100%', 
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 1 }, 
+  shadowOpacity: 0.5,
+  shadowRadius: 2,
+  elevation: 2, 
+},
+
+
   fab: {
     position: 'absolute',
     bottom: 55,
@@ -149,7 +167,7 @@ const styles = StyleSheet.create({
   },
   
   postButton: {
-    backgroundColor: '#34C759', // green
+    backgroundColor: '#180bc6', 
     paddingVertical: 12,
     paddingHorizontal: 25,
     borderRadius: 8,
