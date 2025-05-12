@@ -8,7 +8,7 @@ const Stack = createNativeStackNavigator();
 
 function RootStack({ setIsLoggedIn }: AuthProps) {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="LogIn">
         {(props) => <LoginScreen {...props} setIsLoggedIn={setIsLoggedIn} />}
       </Stack.Screen>

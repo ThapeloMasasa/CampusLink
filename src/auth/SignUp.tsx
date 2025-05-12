@@ -2,16 +2,18 @@ import { AuthProps, AuthStackParamList } from '../types/types';
 import React, { useState } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Pressable } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Pressable, Image } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-const SignUpScreen = ({setIsLoggedIn}: AuthProps) => {
+const SignUpScreen = ({ setIsLoggedIn }: AuthProps) => {
+  const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSignUp = () => {
-    setIsLoggedIn(true)
+    setIsLoggedIn(true);
   };
 
   return (
@@ -20,59 +22,61 @@ const SignUpScreen = ({setIsLoggedIn}: AuthProps) => {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View style={styles.innerContainer}>
-        <Text style={styles.title}>Create Account 📝</Text>
-        <Text style={styles.subtitle}>Sign up to get started!</Text>
+        <View style={styles.logoContainer}>
+          <Image source={require('../../assets/logo.png')} style={styles.logo} />
+        </View>
 
-        <TextInput
-          placeholder="First Name"
-          placeholderTextColor="#999"
-          style={styles.input}
-          value={fullName}
-          onChangeText={setFullName}
-        />
-        <TextInput
-          placeholder="Last Name"
-          placeholderTextColor="#999"
-          style={styles.input}
-          value={fullName}
-          onChangeText={setFullName}
-        />
-    <TextInput
-          placeholder="User Name"
-          placeholderTextColor="#999"
-          style={styles.input}
-          value={fullName}
-          onChangeText={setFullName}
-        />
+        <View style={styles.formCard}>
+          <TextInput
+            placeholder="Full Name"
+            placeholderTextColor="#999"
+            style={styles.input}
+            value={fullName}
+            onChangeText={setFullName}
+          />
+          <TextInput
+            placeholder="User Name"
+            placeholderTextColor="#999"
+            style={styles.input}
+            value={fullName}
+            onChangeText={setFullName}
+          />
 
-        <TextInput
-          placeholder="Email"
-          placeholderTextColor="#999"
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
+          <TextInput
+            placeholder="Email (School Email Only)"
+            placeholderTextColor="#999"
+            style={styles.input}
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
 
-        <TextInput
-          placeholder="Password"
-          placeholderTextColor="#999"
-          style={styles.input}
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+          <View style={styles.passwordContainer}>
+            <TextInput
+              placeholder="Password"
+              placeholderTextColor="#999"
+              style={[styles.input, { borderWidth: 0, flex: 1 }]}
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!showPassword}
+            />
+            <TouchableOpacity onPress={() => setShowPassword((prev) => !prev)}>
+              <Text style={{ color: '#3B82F6', paddingHorizontal: 16 }}>{showPassword ? 'Hide' : 'Show'}</Text>
+            </TouchableOpacity>
+          </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-          <Text style={styles.buttonText}>Sign Up</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+            <Text style={styles.buttonText}>Sign Up</Text>
+          </TouchableOpacity>
+
+        </View>
+
         <View style={styles.signUp}>
-            <Text style={styles.haveAccount}>Already have an Account? </Text>
-            <Pressable  onPress={()=>navigation.goBack()}>
-                <Text style={styles.SignUptext}>Sign In</Text>
-            </Pressable>
-                           
+          <Text style={styles.haveAccount}>Already have an Account? </Text>
+          <Pressable onPress={() => navigation.goBack()}>
+            <Text style={styles.signUpText}>Sign In</Text>
+          </Pressable>
         </View>
       </View>
     </KeyboardAvoidingView>
@@ -84,60 +88,84 @@ export default SignUpScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#3B82F6',
   },
   innerContainer: {
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 30,
   },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#222',
-    marginBottom: 8,
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 24,
   },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 32,
+  logo: {
+    width: 270,
+    height: 270,
+    resizeMode: 'contain',
+    marginBottom: 12,
+  },
+  formCard: {
+    backgroundColor: '#b8c8e4',
+    borderRadius: 20,
+    padding: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 3,
   },
   input: {
-    backgroundColor: '#f2f2f2',
+    backgroundColor: '#eceff4',
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderRadius: 12,
     fontSize: 16,
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#eceff4',
+    borderRadius: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
   button: {
-    backgroundColor: '#4CAF50', // Primary green color
+    backgroundColor: '#FB923C',
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
     marginTop: 8,
-    marginBottom: 16,
+    marginBottom: 8,
   },
   buttonText: {
-    color: '#fff',
+    color: '#ffffff',
     fontSize: 16,
     fontWeight: '600',
   },
-  signUp:{
-    paddingTop: 10,
+  googleButton: {
+    backgroundColor: '#F3F4F6',
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  signUp: {
+    paddingTop: 16,
     flexDirection: 'row',
-    justifyContent: 'center'
-
+    justifyContent: 'center',
   },
   haveAccount: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#181c18'
-
-  },
-  SignUptext: {
-    fontSize: 20,
+    fontSize: 16,
+    color: '#ffffff',
     fontWeight: 'bold',
-    color: '#4CAF50'
-  }
+  },
+  signUpText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FB923C',
+  },
 });
