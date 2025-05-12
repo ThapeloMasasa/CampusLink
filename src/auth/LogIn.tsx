@@ -63,11 +63,10 @@ const LoginScreen = ({setIsLoggedIn}: AuthProps) => {
 };
 
 export default LoginScreen;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#F9FAFB', 
   },
   innerContainer: {
     flex: 1,
@@ -77,24 +76,26 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#222',
+    color: '#3B82F6', 
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: '#6B7280',
     marginBottom: 32,
   },
   input: {
-    backgroundColor: '#f2f2f2',
+    backgroundColor: '#ffffff', 
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderRadius: 12,
     fontSize: 16,
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#E5E7EB', 
   },
   button: {
-    backgroundColor: '#4CAF50', // App's primary theme color
+    backgroundColor: '#FB923C', 
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
@@ -102,30 +103,29 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   buttonText: {
-    color: '#fff',
+    color: '#ffffff',
     fontSize: 16,
     fontWeight: '600',
   },
   forgotPassword: {
-    color: '#4CAF50',
+    color: '#8B5CF6', 
     fontSize: 14,
     textAlign: 'center',
+    marginTop: 8,
   },
-  signUp:{
+  signUp: {
     paddingTop: 10,
     flexDirection: 'row',
     justifyContent: 'center'
-
   },
   haveAccount: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#181c18'
-
+    fontSize: 16,
+    color: '#6B7280',
+    fontWeight: '500',
   },
   SignUptext: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
-    color: '#4CAF50'
+    color: '#3B82F6', 
   }
 });

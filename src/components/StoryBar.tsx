@@ -58,25 +58,25 @@ export default function StoryBar() {
     Animated.sequence([
       Animated.timing(topLineWidth, {
         toValue: 1,
-        duration: 2500,
+        duration: 900,
         easing: Easing.linear,
         useNativeDriver: false,
       }),
       Animated.timing(rightLineHeight, {
         toValue: 1,
-        duration: 2500,
+        duration: 900,
         easing: Easing.linear,
         useNativeDriver: false,
       }),
       Animated.timing(bottomLineWidth, {
         toValue: 1,
-        duration: 2500,
+        duration: 900,
         easing: Easing.linear,
         useNativeDriver: false,
       }),
       Animated.timing(leftLineHeight, {
         toValue: 1,
-        duration: 2500,
+        duration: 900,
         easing: Easing.linear,
         useNativeDriver: false,
       }),
