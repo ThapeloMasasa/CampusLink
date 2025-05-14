@@ -4,14 +4,14 @@ import Yap from '../../components/Yap';
 import { YapType } from '../../types/types';
 
 const dummyYaps: YapType[] = [
-  { id: '1', title: 'Best Yap', content: 'Learn how to choose and use', createdAt: new Date(Date.now() - 100000).toISOString(), likes: 10, score: 95 },
-  { id: '2', title: 'Cold Yap', content: 'Hello', createdAt: new Date(Date.now() - 500000).toISOString(), likes: 3, score: 50 },
-  { id: '3', title: 'Medium Yap', content: 'warriors Suck', createdAt: new Date(Date.now() - 1000000).toISOString(), likes: 5, score: 60 },
-  { id: '4', title: 'Warm Yap', content: 'Go Irish', createdAt: new Date(Date.now() - 2000000).toISOString(), likes: 8, score: 75 },
-  { id: '5', title: 'Best Yapp', content: 'lets goo', createdAt: new Date(Date.now() - 3000000).toISOString(), likes: 12, score: 98 },
-  { id: '6', title: 'Best Yapp', content: 'lets goo', createdAt: new Date(Date.now() - 3500000).toISOString(), likes: 11, score: 96 },
-  { id: '7', title: 'Best Yapp', content: 'lets goo', createdAt: new Date(Date.now() - 4000000).toISOString(), likes: 9, score: 92 },
-  { id: '8', title: 'Best Yapp', content: 'lets goo', createdAt: new Date(Date.now() - 4500000).toISOString(), likes: 7, score: 88 },
+  { id: '1', title: 'Best Yap', content: 'Learn how to choose and use', createdAt: new Date(Date.now() - 100000).toISOString(), likes: 10, score: 120 },
+  { id: '2', title: 'Cold Yap', content: 'Hello', createdAt: new Date(Date.now() - 500000).toISOString(), likes: 3, score: 102 },
+  { id: '3', title: 'Medium Yap', content: 'warriors Suck', createdAt: new Date(Date.now() - 1000000).toISOString(), likes: 5, score: 90},
+  { id: '4', title: 'Warm Yap', content: 'Go Irish', createdAt: new Date(Date.now() - 2000000).toISOString(), likes: 8, score: 83 },
+  { id: '5', title: 'Trip', content: 'Chicago trip this weekend', createdAt: new Date(Date.now() - 3000000).toISOString(), likes: 12, score: 75 },
+  { id: '6', title: 'AC', content: 'We need more AC', createdAt: new Date(Date.now() - 3500000).toISOString(), likes: 11, score: 74 },
+  { id: '7', title: 'Bowling', content: 'Bowling Anyone??', createdAt: new Date(Date.now() - 4000000).toISOString(), likes: 9, score: 60 },
+  { id: '8', title: 'Hype', content: 'lets goo', createdAt: new Date(Date.now() - 4500000).toISOString(), likes: 7, score: 56 },
 ];
 
 const YapsLeaderboard = () => {
@@ -36,7 +36,7 @@ const YapsLeaderboard = () => {
 
   const renderHeader = () => (
     <View style={styles.headerRow}>
-      <Text style={[styles.headerCell, { flex: 1 }]}>ID</Text>
+      <Text style={[styles.headerCell, { flex: 1 }]}>Rank</Text>
       <Text style={[styles.headerCell, { flex: 2 }]}>Title</Text>
       <Text style={[styles.headerCell, { flex: 1 }]}>Age</Text>
       <Text style={[styles.headerCell, { flex: 1 }]}>Score</Text>

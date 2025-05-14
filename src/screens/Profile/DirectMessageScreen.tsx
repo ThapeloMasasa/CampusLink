@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
 import ProfileIcon from '../../components/ProfileIcon'; 
 import { DirectMessage, DirectMessageScreenProps } from '../../types/types';
-
-
 
 const DirectMessageScreen: React.FC<DirectMessageScreenProps> = ({ route }) => {
   const { username } = route.params;
@@ -15,17 +13,21 @@ const DirectMessageScreen: React.FC<DirectMessageScreenProps> = ({ route }) => {
   ]);
   const [inputText, setInputText] = useState('');
 
+  const flatListRef = useRef<FlatList>(null);
+
   const handleSend = () => {
     if (inputText.trim() === '') return;
     setMessages(prev => [...prev, { id: Date.now().toString(), sender: 'me', text: inputText }]);
     setInputText('');
   };
 
+
   return (
     <KeyboardAvoidingView 
-    style={styles.container}
-    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    keyboardVerticalOffset={100}>
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={100}
+    >
       {/* Top Bar */}
       <View style={styles.topBar}>
         <ProfileIcon userId={username} />
@@ -34,6 +36,7 @@ const DirectMessageScreen: React.FC<DirectMessageScreenProps> = ({ route }) => {
 
       {/* Messages */}
       <FlatList
+        ref={flatListRef}
         data={messages}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
@@ -45,7 +48,6 @@ const DirectMessageScreen: React.FC<DirectMessageScreenProps> = ({ route }) => {
           </View>
         )}
         contentContainerStyle={styles.messagesContainer}
-        inverted
       />
 
       {/* Input */}
@@ -114,8 +116,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f2f2',
     borderRadius: 20,
     paddingHorizontal: 15,
-    
-    
   },
   sendButton: {
     marginLeft: 10,
@@ -123,8 +123,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 20,
-
-   
   },
 });
 
