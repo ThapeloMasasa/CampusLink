@@ -3,7 +3,7 @@ import React from 'react';
 import ProfileIcon from './ProfileIcon';
 import { PostProps } from '../types/types';
 
-const Post: React.FC<PostProps> = ({ title, content, image, likes, reactions, mypost }) => {
+const Post: React.FC<PostProps> = ({ title, content, image, likes, reactions, mypost, userId }) => {
   return (
     <View style={styles.postContainer}>
       
@@ -27,7 +27,7 @@ const Post: React.FC<PostProps> = ({ title, content, image, likes, reactions, my
         <Text style={styles.statText}>🙂  {reactions.length > 0 ? reactions.length: 0}</Text>
       </View> :<View style={styles.statsRow}>
         <Text style={styles.statText}>👍  {likes}</Text>
-        <ProfileIcon userId="Masasa" />
+        <ProfileIcon userId={userId} />
         <Text style={styles.statText}>🙂  {reactions.length > 0 ? reactions.length: 0}</Text>
       </View>
 

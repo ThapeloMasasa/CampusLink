@@ -76,7 +76,7 @@ const MyProfile = () => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.postBox}>
-            <Text>{item.title}</Text>
+            <Text>{item.Header}</Text>
           </View>
         )}
         contentContainerStyle={styles.postsGrid}

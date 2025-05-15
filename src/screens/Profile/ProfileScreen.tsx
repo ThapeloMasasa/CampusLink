@@ -71,6 +71,7 @@ const ProfileScreen = ({ setIsLoggedIn }: AuthProps) => {
       likes={item.likes ?? 0}
       reactions={item.reactions ?? []}
       mypost={true}
+      userId={item.id}
     />
   </View>
     
