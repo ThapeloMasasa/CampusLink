@@ -29,7 +29,7 @@ const Yap = ({ title, content, initialLikes = 0, initialReactions = [] }: YapPro
   return (
     <View style={styles.wrapper}>
       <ImageBackground
-        source={require('../../assets/Speech.png')} // Your speech bubble background
+        source={require('../../assets/Speech.png')} 
         style={styles.yapCard}
         imageStyle={styles.bubbleImage}
       >

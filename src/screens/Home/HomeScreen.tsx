@@ -1,15 +1,32 @@
-import React, { useLayoutEffect } from 'react';
-import { View, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { View, ScrollView, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { useNavigation } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons'; 
 import StoryBar from '../../components/StoryBar'; 
 import Post from '../../components/Post';         
 import Yap from '../../components/Yap';
-import { AuthProps } from '../../types/types';
+import { AuthProps, post } from '../../types/types';
+import { supabase } from '../../../supabaseClient';
 
 export default function HomeScreen({ setIsLoggedIn }: AuthProps) {
   const navigation = useNavigation();
+  const [posts, setPosts] = useState<post[] | null>([])
 
+ useEffect(()=>{
+LoadContent()
+ }, [])
+ const LoadContent = async()=>{
+
+    try{
+      const {data:posts, error: postserror} = await supabase
+      .from('Posts')
+      .select("*")
+      console.log(posts?.length)
+      setPosts(posts)
+    }catch(e){
+      console.log("error")
+    }
+ }
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -19,6 +36,20 @@ export default function HomeScreen({ setIsLoggedIn }: AuthProps) {
       ),
     });
   }, [navigation, setIsLoggedIn]);
+  const renderPostItem = ({ item }: { item: post }) => (
+    <View style={styles.post}>
+  <Post
+      title={item.Header}
+      content={item.Header} // fallback to Header if `content` isn't available
+      image={item.image ? { uri: item.image } : undefined}
+      likes={item.likes ?? 0}
+      reactions={item.reactions ?? []}
+      mypost={false}
+      userId={item.owner}
+    />
+    </View>
+    
+);
 
   return (
     <View style = {styles.container}>
@@ -26,51 +57,14 @@ export default function HomeScreen({ setIsLoggedIn }: AuthProps) {
     <StoryBar />
     </ScrollView>
     <View style={styles.separator} />
-    <ScrollView style={styles.feed}>
-      {/* Posts Feed */}
-      <View style={styles.feed}>
-        <Post
-          title="🔥Dining Halls🔥"
-          content="South Dining Hall is the Best"
-          image={require('../../../assets/dining.png')} 
-          likes="9.5K"
-          shares="6.5K"
-        />
-        <Yap
-          title="🔥Go Irish 🔥"
-          content="We are winning the Natty this Year" 
-        />
-        <Post
-          title="That assignment grind 😩"
-          content="Me when I finally finish the assignment that's been destroying my life for weeks"
-          image={require('../../../assets/Ledger.png')}
-          likes="23.3K"
-          shares="10.1K"
-        />
-        <Yap 
-          title="🔥Party Life🔥"
-          content="Zahm's Party Life sucks more than anything"
-        />
-        <Post
-          title="ShamRock Series Baby"
-          content="Army had no chance, Can't run it forever"
-          image={require('../../../assets/Natty.png')}
-          likes="23.3K"
-          shares="10.1K"
-        />
-        <Yap 
-          title="🥰Help needed😄"
-          content="I need a foot massage ASAP"
-        />
-        <Post
-          title="This Year's Outfits"
-          content="I can't wait"
-          image={require('../../../assets/outfit.png')}
-          likes="23.3K"
-          shares="10.1K"
-        />
-      </View>
-    </ScrollView>
+     <FlatList
+                data={posts}
+                numColumns={1}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={renderPostItem}
+                contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 80 }}
+               />
+        
     </View>
   );
 }
@@ -86,12 +80,16 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 4, // for Android shadow
   },
+  post :{
+    paddingRight:20,
+  
+  },
   container: {
     backgroundColor: '#fff',
     flexDirection: 'row',
   },
   feed: {
-    paddingHorizontal: 10,
+    
     paddingTop: 10,
   },
 });

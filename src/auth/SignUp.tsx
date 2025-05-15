@@ -2,18 +2,41 @@ import { AuthProps, AuthStackParamList } from '../types/types';
 import React, { useState } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Pressable, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Pressable, Image, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { supabase } from '../../supabaseClient';
 
 const SignUpScreen = ({ setIsLoggedIn }: AuthProps) => {
   const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
   const [fullName, setFullName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSignUp = () => {
-    setIsLoggedIn(true);
+  const handleSignUp = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Email and password are required.');
+      return;
+    }
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+          username: username
+        }
+      }
+    });
+
+    if (error) {
+      Alert.alert('Signup Failed', error.message);
+    } else {
+      Alert.alert('Check your email', 'A confirmation link was sent.');
+      setIsLoggedIn(true); // or wait until email is confirmed, depending on your flow
+    }
   };
 
   return (
@@ -38,10 +61,9 @@ const SignUpScreen = ({ setIsLoggedIn }: AuthProps) => {
             placeholder="User Name"
             placeholderTextColor="#999"
             style={styles.input}
-            value={fullName}
-            onChangeText={setFullName}
+            value={username}
+            onChangeText={setUsername}
           />
-
           <TextInput
             placeholder="Email (School Email Only)"
             placeholderTextColor="#999"
@@ -51,7 +73,6 @@ const SignUpScreen = ({ setIsLoggedIn }: AuthProps) => {
             keyboardType="email-address"
             autoCapitalize="none"
           />
-
           <View style={styles.passwordContainer}>
             <TextInput
               placeholder="Password"
@@ -61,15 +82,16 @@ const SignUpScreen = ({ setIsLoggedIn }: AuthProps) => {
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
             />
-            <TouchableOpacity onPress={() => setShowPassword((prev) => !prev)}>
-              <Text style={{ color: '#3B82F6', paddingHorizontal: 16 }}>{showPassword ? 'Hide' : 'Show'}</Text>
+            <TouchableOpacity onPress={() => setShowPassword(prev => !prev)}>
+              <Text style={{ color: '#3B82F6', paddingHorizontal: 16 }}>
+                {showPassword ? 'Hide' : 'Show'}
+              </Text>
             </TouchableOpacity>
           </View>
 
           <TouchableOpacity style={styles.button} onPress={handleSignUp}>
             <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
-
         </View>
 
         <View style={styles.signUp}>
@@ -84,6 +106,7 @@ const SignUpScreen = ({ setIsLoggedIn }: AuthProps) => {
 };
 
 export default SignUpScreen;
+
 
 const styles = StyleSheet.create({
   container: {

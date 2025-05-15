@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   View,
+  Alert,
   Text,
   TextInput,
   TouchableOpacity,
@@ -14,6 +15,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { AuthProps, AuthStackParamList } from '../types/types';
+import { supabase } from '../../supabaseClient';
 
 const LoginScreen = ({ setIsLoggedIn }: AuthProps) => {
   const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
@@ -21,9 +23,23 @@ const LoginScreen = ({ setIsLoggedIn }: AuthProps) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = () => {
+ const handleLogin = async () => {
+  if (!email || !password) {
+    Alert.alert('Missing fields', 'Please fill in both fields');
+    return;
+  }
+
+  const { error, data } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    Alert.alert('Login failed', error.message);
+  } else {
     setIsLoggedIn(true);
-  };
+  }
+};
 
   return (
     <KeyboardAvoidingView

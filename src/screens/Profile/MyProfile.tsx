@@ -1,40 +1,83 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Image, FlatList, ActivityIndicator } from 'react-native';
+import { supabase } from '../../../supabaseClient';
+import { Profile, post } from '../../types/types';
+
 
 const MyProfile = () => {
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [posts, setPosts] = useState<post[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    fetchProfileAndPosts();
+  }, []);
+
+  const fetchProfileAndPosts = async () => {
+    setLoading(true);
+    try {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError || !user) throw userError || new Error('User not found');
+
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError) throw profileError;
+
+      const { data: postsData, error: postsError } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (postsError) throw postsError;
+      alert("Success")
+      setProfile(profileData);
+      setPosts(postsData);
+    } catch (error: any) {
+      console.error('Error fetching data:', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) return <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center' }} />;
+
   return (
     <View style={styles.container}>
-      {/* Top Section */}
-      <Text style={styles.title}>Linker Profile</Text>
-      
-      {/* Profile Image */}
+      <Text style={styles.title}>Linker Profil</Text>
+
       <View style={styles.profileImageContainer}>
         <Image
-          source={require('../../../assets/cropped-file.jpg')} // Placeholder image
+          source={profile?.avatar_url ? { uri: profile.avatar_url } : require('../../../assets/cropped-file.jpg')}
           style={styles.profileImage}
         />
       </View>
 
-      {/* Rating and Social Icons Section */}
       <View style={styles.ratingSection}>
         <View style={styles.ratingContainer}>
-        <Text style={styles.ratingNumber}>🤩1345😎</Text>
+          <Text style={styles.ratingNumber}>🤩 121 😎</Text>
           <Text style={styles.ratingText}>Yapper Rating</Text>
-          
         </View>
       </View>
 
-      {/* Posts Section */}
       <Text style={styles.postsTitle}>Posts</Text>
 
-      {/* Posts Grid */}
       <FlatList
-        data={[1, 2, 3, 4]} // Placeholder data
+        data={posts}
         numColumns={2}
-        keyExtractor={(item) => item.toString()}
-        renderItem={() => (
-          <View style={styles.postBox} />
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.postBox}>
+            <Text>{item.Header}</Text>
+          </View>
         )}
         contentContainerStyle={styles.postsGrid}
       />

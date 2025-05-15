@@ -1,14 +1,20 @@
-import React, { useState, useLayoutEffect} from 'react';
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Switch } from 'react-native';
+import React, { useState, useEffect,useLayoutEffect} from 'react';
+import { View, Text, StyleSheet, Image, FlatList, ActivityIndicator,TouchableOpacity, Switch } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import { useNavigation } from '@react-navigation/native';
-import { AuthProps } from '../../types/types';
+import { AuthProps, Profile, post } from '../../types/types';
+import { supabase } from '../../../supabaseClient';
+import Post from '../../components/Post';
 
-const ProfileScreen = ({setIsLoggedIn}:AuthProps) => {
 
+const ProfileScreen = ({ setIsLoggedIn }: AuthProps) => {
   const [activeTab, setActiveTab] = useState('Posts');
   const [isRatingVisible, setIsRatingVisible] = useState(true);
-   const navigation = useNavigation();
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [posts, setPosts] = useState<post[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const navigation = useNavigation();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -17,95 +23,133 @@ const ProfileScreen = ({setIsLoggedIn}:AuthProps) => {
           <Ionicons name="log-out-outline" size={24} color="black" />
         </TouchableOpacity>
       ),
-      title: "Profile", // you said you wanted the title to still be "Hot Yap"
+      title: 'Profile',
     });
   }, [navigation, setIsLoggedIn]);
 
-  const renderPostItem = () => <View style={styles.postBox} />;
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+      if (userError || !user) throw userError || new Error('User not found');
+
+      const { data: profileData, error: profileError } = await supabase
+        .from('Profile')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      if (profileError) throw profileError;
+      console.log(profileError)
+      const { data: postsData, error: postsError } = await supabase
+        .from('Posts')
+        .select('*')
+        .eq('owner', user.id)
+        .order('created_at', { ascending: false });
+      if (postsError) throw postsError;
+      console.log("profile",profileData)
+      setProfile(profileData);
+      setPosts(postsData);
+    } catch (err: any) {
+      console.error('Fetch Error:', err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderPostItem = ({ item }: { item: post }) => (
+  <View style ={styles.gridItem}>
+  <Post
+      title={item.Header}
+      content={item.Header} // fallback to Header if `content` isn't available
+      image={item.image ? { uri: item.image } : undefined}
+      likes={item.likes ?? 0}
+      reactions={item.reactions ?? []}
+      mypost={true}
+      userId={item.id}
+    />
+  </View>
+    
+);
+
+
+  if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center' }]}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      {/* Top Section */}
-      <Text style={styles.title}>Linker Profile</Text>
+      <Text style={styles.title}>{profile?.full_name}</Text>
 
-      {/* Profile Image */}
       <View style={styles.profileImageContainer}>
         <Image
-          source={require('../../../assets/cropped-file.jpg')}
+          source={
+            profile?.avatar_url
+              ? { uri: profile.avatar_url }
+              : require('../../../assets/cropped-file.jpg')
+          }
           style={styles.profileImage}
         />
       </View>
 
-      {/* Rating Section */}
       <View style={styles.ratingSection}>
         <View style={styles.ratingContainer}>
           {isRatingVisible && (
             <View style={styles.ratingInfo}>
-              <Text style={styles.ratingNumber}>🤩1345😎</Text>
+              <Text style={styles.ratingNumber}>🤩 {profile?.rating ?? 0} 😎</Text>
               <Text style={styles.ratingText}>Yapper Rating</Text>
             </View>
           )}
           <View style={styles.switchContainer}>
             <Text style={styles.switchLabel}>Show Public</Text>
-            <Switch
-              value={isRatingVisible}
-              onValueChange={setIsRatingVisible}
-            />
+            <Switch value={isRatingVisible} onValueChange={setIsRatingVisible} />
           </View>
         </View>
       </View>
 
-      {/* Tabs */}
       <View style={styles.tabsContainer}>
         {['Posts', 'Yaps', 'Deals'].map((tab) => (
           <TouchableOpacity
             key={tab}
             onPress={() => setActiveTab(tab)}
-            style={[
-              styles.tabButton,
-              activeTab === tab && styles.activeTabButton,
-            ]}
+            style={[styles.tabButton, activeTab === tab && styles.activeTabButton]}
           >
-            <Text
-              style={[
-                styles.tabButtonText,
-                activeTab === tab && styles.activeTabButtonText,
-              ]}
-            >
+            <Text style={[styles.tabButtonText, activeTab === tab && styles.activeTabButtonText]}>
               {tab}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      {/* Content under Tabs */}
       <FlatList
-        data={[1, 2, 3, 4]}
-        numColumns={2}
-        keyExtractor={(item) => item.toString()}
-        renderItem={renderPostItem}
-        contentContainerStyle={styles.postsGrid}
-      />
+  data={posts}
+  numColumns={2}
+  keyExtractor={(item) => item.id.toString()}
+  renderItem={renderPostItem}
+  contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 80 }}
+    />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 40,
-    backgroundColor: '#fff',
-  },
+  container: { flex: 1, paddingTop: 40, backgroundColor: '#fff' },
   title: {
     fontSize: 24,
     textAlign: 'center',
     fontWeight: 'bold',
     fontFamily: 'Times New Roman',
   },
-  profileImageContainer: {
-    alignItems: 'center',
-    marginVertical: 20,
-  },
+  profileImageContainer: { alignItems: 'center', marginVertical: 20 },
   profileImage: {
     width: 100,
     height: 100,
@@ -119,32 +163,23 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: 'center',
   },
+  gridItem: {
+  flex: 1,
+  paddingHorizontal: 8,
+  margin: 8,
+},
+
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
   },
-  ratingInfo: {
-    alignItems: 'center',
-  },
-  ratingText: {
-    fontWeight: 'bold',
-    marginTop: 5,
-  },
-  ratingNumber: {
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  switchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 20,
-  },
-  switchLabel: {
-    marginRight: 8,
-    fontSize: 14,
-  },
+  ratingInfo: { alignItems: 'center' },
+  ratingText: { fontWeight: 'bold', marginTop: 5 },
+  ratingNumber: { fontWeight: 'bold', fontSize: 16 },
+  switchContainer: { flexDirection: 'row', alignItems: 'center', marginLeft: 20 },
+  switchLabel: { marginRight: 8, fontSize: 14 },
   tabsContainer: {
     flexDirection: 'row',
     justifyContent: 'center',

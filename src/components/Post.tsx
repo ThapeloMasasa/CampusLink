@@ -3,7 +3,7 @@ import React from 'react';
 import ProfileIcon from './ProfileIcon';
 import { PostProps } from '../types/types';
 
-const Post: React.FC<PostProps> = ({ title, content, image, likes, shares }) => {
+const Post: React.FC<PostProps> = ({ title, content, image, likes, reactions, mypost, userId }) => {
   return (
     <View style={styles.postContainer}>
       
@@ -21,28 +21,33 @@ const Post: React.FC<PostProps> = ({ title, content, image, likes, shares }) => 
       </View>
 
       {/* Bottom: reactions, profile, shares */}
-      <View style={styles.statsRow}>
-        <Text style={styles.statText}>😊 {likes}</Text>
-        <ProfileIcon userId="Masasa" />
-        <Text style={styles.statText}>👍 {shares}</Text>
+      {
+        mypost ? <View style={styles.statsRow}>
+        <Text style={styles.statText}>👍  {likes}</Text>
+        <Text style={styles.statText}>🙂  {reactions.length > 0 ? reactions.length: 0}</Text>
+      </View> :<View style={styles.statsRow}>
+        <Text style={styles.statText}>👍  {likes}</Text>
+        <ProfileIcon userId={userId} />
+        <Text style={styles.statText}>🙂  {reactions.length > 0 ? reactions.length: 0}</Text>
       </View>
+
+      }
 
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   postContainer: {
     width: '100%',
     backgroundColor: '#ffffff',
     borderRadius: 12,
     marginHorizontal: 16,
-    marginBottom: 16,
+    marginBottom: 20,
     shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    elevation: 3,
-    overflow: 'hidden', // ⭐ Important: clip child corners!
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 4,
+    overflow: 'hidden',
   },
   imageContainer: {
     width: '100%',
@@ -51,10 +56,11 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover', // fully covers the area
+    resizeMode: 'cover',
   },
   middle: {
-    padding: 16, // Now padding is inside, not on outer container
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   title: {
     fontSize: 18,
@@ -71,13 +77,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingBottom: 12,
-    paddingTop: 4,
+    paddingBottom: 14,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
   },
   statText: {
     fontSize: 15,
     color: '#6B7280',
   },
 });
+
 
 export default Post;

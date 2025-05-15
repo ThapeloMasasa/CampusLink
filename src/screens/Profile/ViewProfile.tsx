@@ -1,26 +1,69 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useRoute } from '@react-navigation/native';
-import { ViewProfileRouteProp, ViewProfileNavigationProp  } from '../../types/types';
+import { ViewProfileRouteProp, ViewProfileNavigationProp, post  } from '../../types/types';
 import { useNavigation } from '@react-navigation/native';
-
+import { supabase } from '../../../supabaseClient';
+import { Profile } from '../../types/types';
+import Post from '../../components/Post';
 
 
 const ViewProfile = () => {
   const navigation = useNavigation<ViewProfileNavigationProp>();
   const route = useRoute<ViewProfileRouteProp>();
   const { userId } = route.params; 
+  const [profile, setProfile] = useState<Profile>();
+  const [posts, setPosts] = useState<post[]| null>(null)
 
+  useEffect(()=>{
+      LoadUser(userId)
+  },[])
+
+  const LoadUser = async (userId: string)=>{
+    try{
+        const {data: profileData, error: profileError} = await supabase
+        .from('Profile')
+        .select('*')
+        .eq('id', userId)
+        .single()
+
+        const {data:postsData, error:postsError} = await supabase
+        .from('Posts')
+        .select("*")
+        .eq('owner', userId)
+        .order('created_at', { ascending: false });
+
+      setPosts(postsData)
+      setProfile(profileData)
+    }catch(e){
+      console.log("Error")
+    }
+  }
+  const renderPostItem = ({ item }: { item: post }) => (
+  <View style ={styles.gridItem}>
+  <Post
+      title={item.Header}
+      content={item.Header} // fallback to Header if `content` isn't available
+      image={item.image ? { uri: item.image } : undefined}
+      likes={item.likes ?? 0}
+      reactions={item.reactions ?? []}
+      mypost={true}
+      userId= {item.id}
+    />
+  </View>
+    
+);
+  
   return (
     <View style={styles.container}>
       {/* Top Section */}
-      <Text style={styles.title}>Linker Profile - {userId}</Text> 
+      <Text style={styles.title}>{profile?.full_name}</Text> 
       
       {/* Profile Image */}
       <View style={styles.profileImageContainer}>
         <Image
-          source={require('../../../assets/popi.jpg')} 
+          source={{uri:profile?.avatar_url}} 
           style={styles.profileImage}
         />
       </View>
@@ -28,7 +71,7 @@ const ViewProfile = () => {
       {/* Rating and Social Icons Section */}
       <View style={styles.ratingSection}>
         <View style={styles.ratingContainer}>
-          <Text style={styles.ratingNumber}>🤩1345😎</Text>
+          <Text style={styles.ratingNumber}>🤩{profile?.rating}😎</Text>
           <Text style={styles.ratingText}>Yapper Rating</Text>
         </View>
 
@@ -61,14 +104,12 @@ const ViewProfile = () => {
 
       {/* Posts Grid */}
       <FlatList
-        data={[1, 2, 3, 4]}
+        data={posts}
         numColumns={2}
-        keyExtractor={(item) => item.toString()}
-        renderItem={() => (
-          <View style={styles.postBox} />
-        )}
-        contentContainerStyle={styles.postsGrid}
-      />
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderPostItem}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 80 }}
+          />
     </View>
   );
 };
@@ -85,6 +126,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontFamily: 'Times New Roman',
   },
+  gridItem: {
+  flex: 1,
+  paddingHorizontal: 8,
+  margin: 8,
+},
   profileImageContainer: {
     alignItems: 'center',
     marginVertical: 20,

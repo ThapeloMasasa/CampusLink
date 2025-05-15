@@ -17,15 +17,45 @@ export type AuthProps = {
     sender: 'me' | 'group';
     profile: string
   };
+// types.ts
 
-  export 
-  type PostProps = {
-      title: string;
-      content: string;
-      image?: ImageSourcePropType;
-      likes: string;
-      shares: string;
-    };
+export interface Profile {
+  id: string;
+  full_name: string;
+  avatar_url?: string;
+  rating?: number;
+  yaps : Yap[]
+  posts : PostProps[]
+  Deals : StudentDealCardProps[]
+}
+
+export interface Yap {
+  id: string;
+  user_id: string;
+  title: string;
+  content: string;
+  created_at: string;
+}
+export interface post {
+  id: number;
+  created_at: string;
+  Header: string;
+  content?: string;
+  image?: string;
+  likes: number;
+  reactions: string[];
+  owner: string;
+}
+
+export interface PostProps {
+  title: string;
+  content: string;
+  image?: any;
+  likes: number;
+  reactions: any[]; 
+  mypost: boolean;
+}
+
 export type deal = {
         price: string;
         image: ImageSourcePropType;
