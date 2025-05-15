@@ -33,8 +33,9 @@ export default function HomeScreen({ setIsLoggedIn }: AuthProps) {
           title="🔥Dining Halls🔥"
           content="South Dining Hall is the Best"
           image={require('../../../assets/dining.png')} 
-          likes="9.5K"
-          shares="6.5K"
+          likes= {50}
+          reactions={[]}
+          mypost = {false}
         />
         <Yap
           title="🔥Go Irish 🔥"
@@ -44,8 +45,9 @@ export default function HomeScreen({ setIsLoggedIn }: AuthProps) {
           title="That assignment grind 😩"
           content="Me when I finally finish the assignment that's been destroying my life for weeks"
           image={require('../../../assets/Ledger.png')}
-          likes="23.3K"
-          shares="10.1K"
+         likes= {50}
+          reactions={[1,2,3]}
+          mypost = {false}
         />
         <Yap 
           title="🔥Party Life🔥"
@@ -55,8 +57,9 @@ export default function HomeScreen({ setIsLoggedIn }: AuthProps) {
           title="ShamRock Series Baby"
           content="Army had no chance, Can't run it forever"
           image={require('../../../assets/Natty.png')}
-          likes="23.3K"
-          shares="10.1K"
+         likes= {50}
+          reactions={[1]}
+          mypost = {false}
         />
         <Yap 
           title="🥰Help needed😄"
@@ -66,8 +69,9 @@ export default function HomeScreen({ setIsLoggedIn }: AuthProps) {
           title="This Year's Outfits"
           content="I can't wait"
           image={require('../../../assets/outfit.png')}
-          likes="23.3K"
-          shares="10.1K"
+          likes= {50}
+          reactions={[]}
+          mypost = {false}
         />
       </View>
     </ScrollView>
