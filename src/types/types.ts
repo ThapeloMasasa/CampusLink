@@ -141,7 +141,8 @@ export type groupItem ={
     id: string;
     title: string;
     content: string;
-    createdAt: string;   // ISO string
+    createdAt: string; 
+    yap: boolean;
     likes: number;
     score: number;
     reactions?: string[];

@@ -27,30 +27,31 @@ const messagesData: { [key: string]: Message[] } = {
   LeetCode: [
     { id: '4', text: 'Any tips for Two Sum?', sender: 'group' , profile: "Masasa"},
     { id: '5', text: 'I usually use hashmaps!', sender: 'me' , profile: ""},
-    { id: '6', text: 'Welcome to General', sender: 'group' , profile: "Danny"},
-    { id: '7', text: 'Hey there!', sender: 'me' , profile: ""},
+    { id: '6', text: 'Lets learn DFS vs BFS', sender: 'group' , profile: "Danny"},
+    { id: '7', text: 'Dynamic programming is Challeging', sender: 'me' , profile: ""},
   ],
   Resumes: [
-    { id: '8', text: 'Any tips for Two Sum?', sender: 'group', profile: "Masasa" },
-    { id: '9', text: 'I usually use hashmaps!', sender: 'me' , profile: ""},
-    { id: '10', text: 'Welcome to General', sender: 'group', profile: "John" },
-    { id: '11', text: 'Hey there!', sender: 'me', profile: "" },
+    { id: '8', text: 'I need help with my resume', sender: 'group', profile: "Masasa" },
+    { id: '9', text: 'Any tips for types of resume projects', sender: 'me' , profile: ""},
+    { id: '10', text: 'Who wants to critic my resume', sender: 'group', profile: "John" },
+    { id: '11', text: 'resume tips, anyone??', sender: 'me', profile: "" },
   ],
   Projects: [
-    { id: '12', text: 'Any tips for Two Sum?', sender: 'group', profile: "Lenox" },
-    { id: '13', text: 'I usually use hashmaps!', sender: 'me' ,profile: ""},
-    { id: '14', text: 'Welcome to General', sender: 'group' , profile: "Miranda"},
-    { id: '15', text: 'Hey there!', sender: 'me' ,  profile: ""},
+    { id: '12', text: 'React developer projects to work on', sender: 'group', profile: "Lenox" },
+    { id: '13', text: 'Java Projects are the best', sender: 'me' ,profile: ""},
+    { id: '14', text: 'Adruino is meant to work with C++', sender: 'group' , profile: "Miranda"},
+    { id: '15', text: 'I will try that', sender: 'me' ,  profile: ""},
   ],
 };
 
 
 const SectionScreen = () => {
+  let messageCount = 16
   const route = useRoute<SectionScreenRouteProp>();
   const { groupName } = route.params;
   const navigation = useNavigation();
   const [selectedSection, setSelectedSection] = useState<string>('General');
-  const [messages, setMessages] = useState<{ [key: string]: string[] }>(initialMessagesData);
+ const [messages, setMessages] = useState<{ [key: string]: Message[] }>(messagesData);
   const [newMessage, setNewMessage] = useState<string>('');
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
@@ -61,14 +62,22 @@ const SectionScreen = () => {
     });
   }, [navigation]);
   const handleSendMessage = () => {
-    if (newMessage.trim() !== '') {
-      setMessages((prevMessages) => ({
-        ...prevMessages,
-        [selectedSection]: [...prevMessages[selectedSection], newMessage],
-      }));
-      setNewMessage('');
-    }
+  if (newMessage.trim() === '') return;
+
+  messageCount += 1;
+  const newMsg: Message = {
+    id: messageCount.toString(),
+    text: newMessage,
+    sender: 'me',
+    profile: '',
   };
+
+  setMessages((prev) => ({
+    ...prev,
+    [selectedSection]: [...(prev[selectedSection] || []), newMsg],
+  }));
+  setNewMessage('');
+};
 
   return (
     <KeyboardAvoidingView
@@ -104,30 +113,35 @@ const SectionScreen = () => {
        
 
         <FlatList
-          data={messagesData[selectedSection]}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-                <View
-                  style={[
-                    styles.messageBubble,
-                    item.sender === 'me' ? styles.myMessage : styles.userMessage,
-                    item.sender === 'group' && { flexDirection: 'row', alignItems: 'center' }, 
-                  ]}
-                >
-                  {item.sender === 'group' ? (
-                    <>
-                      <ProfileIcon userId={item.profile} />
-                      <Text style={styles.groupMessage}>
-                        {item.text}
-                      </Text>
-                    </>
-                  ) : (
-                    <Text>{item.text}</Text>
-                  )}
-                </View>
-              )}
-              
+  data={
+    messages[selectedSection]?.map((msg, index) => ({
+      id: index.toString(),
+      text: msg.text,
+      sender: msg.sender, // Alternate senders for now
+      profile: msg.profile,  // Example profile
+    })) || []
+  }
+  keyExtractor={(item) => item.id}
+  renderItem={({ item }) => (
+    <View
+      style={[
+        styles.messageBubble,
+        item.sender === 'me' ? styles.myMessage : styles.userMessage,
+        item.sender === 'group' && { flexDirection: 'row', alignItems: 'center' },
+      ]}
+    >
+      {item.sender === 'group' ? (
+        <>
+          <ProfileIcon userId={item.profile} />
+          <Text style={styles.groupMessage}>{item.text}</Text>
+        </>
+      ) : (
+        <Text>{item.text}</Text>
+      )}
+    </View>
+  )}
 />
+
 
 
         <View style={{flexDirection: 'row',

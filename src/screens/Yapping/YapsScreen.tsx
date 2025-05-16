@@ -1,28 +1,41 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Modal, TextInput, Button } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // for the plus icon
 import Yap from '../../components/Yap';
+import { YapType } from '../../types/types';
+import { supabase } from '../../../supabaseClient';
 
 const YapsScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [yapText, setYapText] = useState('');
   const [yapTitle, setYapTitle] = useState('');
-  const [yaps, setYaps] = useState([
-    { title: 'Best Yap', content: 'Learn how to choose and use' },
-    { title: 'Cold Yap', content: 'Hello' },
-    { title: 'Medium Yap', content: 'warriors Suck' },
-    { title: 'Warm Yap', content: 'Go Irish' },
-    { title: 'Best Yapp', content: 'lets goo' },
-    { title: 'Best Yapp', content: 'lets goo' },
-    { title: 'Best Yapp', content: 'lets goo' },
-    { title: 'Best Yapp', content: 'lets goo' },
-  ]);
+  const [yaps, setYaps] = useState<YapType[]| null>([])
+  let countid = 0
+  useEffect(()=>{
+    LoadContent()
+  },[])
 
+const LoadContent = async()=>{
+
+    try{
+      const {data:yapsdata, error: yapserror} = await supabase
+      .from('Yaps')
+      .select("*")
+
+      setYaps(yapsdata)
+     
+    }catch(e){
+      console.log("error")
+    }
+ }
+  
+  
   const handlePostYap = () => {
     if (yapTitle.trim() && yapText.trim()) {
-      setYaps([{ title: yapTitle, content: yapText }, ...yaps]);
+      countid += 1
+      setYaps([{ id:countid.toString(), title: yapTitle, createdAt: Date.now().toString(), Content: yapText, yap: true, likes:0, reactions: [], score:0 }, ...(yaps || [])]);
       setYapTitle('');
-      setYapText('');
+      setYapText('');``
       setModalVisible(false);
     }
   };
@@ -32,9 +45,9 @@ const YapsScreen = () => {
       {/* Scrollable list of Yaps */}
       <ScrollView>
   <TouchableOpacity>
-    {yaps.map((yap, index) => (
+    {yaps?.map((yap, index) => (
       <View key={index}> 
-        <Yap title={yap.title} content={yap.content} />
+        <Yap title={yap.title} content={yap?.Content} />
         <View style={styles.separator} />
       </View>
     ))}

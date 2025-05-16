@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { View, ScrollView, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, ScrollView, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import { useNavigation } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons'; 
 import StoryBar from '../../components/StoryBar'; 
@@ -13,12 +13,15 @@ export default function HomeScreen({ setIsLoggedIn }: AuthProps) {
   const [posts, setPosts] = useState<post[] | null>([])
   const [yaps, setYaps] = useState<YapType[]| null>([])
   const [homeContent, setHomeContent] = useState<any []>([])
+  const [loading, setLoading] = useState<boolean>(true)
 
  useEffect(()=>{
-LoadContent()
+  
+    LoadContent()
+  setLoading(!loading)
  }, [])
  const LoadContent = async()=>{
-
+  setLoading(!loading)
     try{
       const {data:postsdata, error: postserror} = await supabase
       .from('Posts')
@@ -28,12 +31,16 @@ LoadContent()
       .from('Yaps')
       .select("*")
 
+      
       setPosts(postsdata)
       setYaps(yapsdata)
-      setHomeContent([...(posts || []), ...(yaps || [])])
-      console.log(yapsdata)
+      const hotyaps = yapsdata?.filter(item => item.likes > 15);
+      setHomeContent([...(posts || []), ...(hotyaps || [])])
+     
     }catch(e){
       console.log("error")
+    }finally{
+      setLoading(!loading)
     }
  }
   useLayoutEffect(() => {
@@ -67,23 +74,30 @@ LoadContent()
       )}
     </View>
   );
+return (
+  <View style={styles.container}>
+    {loading ? (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#007AFF" />
+      </View>
+    ) : (
+      <>
+        <ScrollView style={styles.feed}>
+          <StoryBar />
+        </ScrollView>
+        <View style={styles.separator} />
+        <FlatList
+          data={homeContent}
+          numColumns={1}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderPostItem}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 80 }}
+        />
+      </>
+    )}
+  </View>
+);
 
-  return (
-    <View style = {styles.container}>
-    <ScrollView style={styles.feed}>
-    <StoryBar />
-    </ScrollView>
-    <View style={styles.separator} />
-     <FlatList
-                data={homeContent}
-                numColumns={1}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={renderPostItem}
-                contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 80 }}
-               />
-        
-    </View>
-  );
 }
 
 
@@ -98,6 +112,12 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 4, // for Android shadow
   },
+
+  loaderContainer: {
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+},
   post :{
     paddingRight:20,
   
