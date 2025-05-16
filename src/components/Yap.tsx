@@ -13,7 +13,6 @@ const Yap = ({ title, content, initialLikes = 0, initialReactions = [] }: YapPro
   const updateRank = (likes: number) => {
     setRank(likes > 10 ? 5 : 100); // Example rank calculation
   };
-
   const handleLike = () => {
     const newLikes = likes + 1;
     setLikes(newLikes);
@@ -28,17 +27,16 @@ const Yap = ({ title, content, initialLikes = 0, initialReactions = [] }: YapPro
 
   return (
     <View style={styles.wrapper}>
+      {
+        likes > 10 ?  <Text style={styles.yapTitle}>🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 </Text> : <Text style={styles.yapTitle}></Text> 
+        }
       <ImageBackground
         source={require('../../assets/Speech.png')} 
         style={styles.yapCard}
         imageStyle={styles.bubbleImage}
       >
         {/* Title */}
-        {
-        likes > 10 ?  <Text style={styles.yapTitle}>🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 </Text> : <Text style={styles.yapTitle}></Text> 
-        }
-       
-
+        
         {/* Content */}
         <Text style={styles.yapContent}>{content}</Text>
 

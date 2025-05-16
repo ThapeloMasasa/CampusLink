@@ -5,12 +5,14 @@ import { Ionicons } from '@expo/vector-icons';
 import StoryBar from '../../components/StoryBar'; 
 import Post from '../../components/Post';         
 import Yap from '../../components/Yap';
-import { AuthProps, post } from '../../types/types';
+import { AuthProps, post, YapType } from '../../types/types';
 import { supabase } from '../../../supabaseClient';
 
 export default function HomeScreen({ setIsLoggedIn }: AuthProps) {
   const navigation = useNavigation();
   const [posts, setPosts] = useState<post[] | null>([])
+  const [yaps, setYaps] = useState<YapType[]| null>([])
+  const [homeContent, setHomeContent] = useState<any []>([])
 
  useEffect(()=>{
 LoadContent()
@@ -18,11 +20,18 @@ LoadContent()
  const LoadContent = async()=>{
 
     try{
-      const {data:posts, error: postserror} = await supabase
+      const {data:postsdata, error: postserror} = await supabase
       .from('Posts')
       .select("*")
-      console.log(posts?.length)
-      setPosts(posts)
+
+      const {data:yapsdata, error: yapserror} = await supabase
+      .from('Yaps')
+      .select("*")
+
+      setPosts(postsdata)
+      setYaps(yapsdata)
+      setHomeContent([...(posts || []), ...(yaps || [])])
+      console.log(yapsdata)
     }catch(e){
       console.log("error")
     }
@@ -36,20 +45,28 @@ LoadContent()
       ),
     });
   }, [navigation, setIsLoggedIn]);
-  const renderPostItem = ({ item }: { item: post }) => (
+  const renderPostItem = ({ item }: { item: any }) => (
     <View style={styles.post}>
-  <Post
-      title={item.Header}
-      content={item.Header} // fallback to Header if `content` isn't available
-      image={item.image ? { uri: item.image } : undefined}
-      likes={item.likes ?? 0}
-      reactions={item.reactions ?? []}
-      mypost={false}
-      userId={item.owner}
-    />
+      {item.yap ? (
+        <Yap
+          title=""
+          content={item.Content}
+          initialLikes={item.likes ?? 0}
+          initialReactions={item.reactions ?? []}
+        />
+      ) : (
+        <Post
+          title={item.Header}
+          content={item.Header}
+          image={item.image ? { uri: item.image } : undefined}
+          likes={item.likes ?? 0}
+          reactions={item.reactions ?? []}
+          mypost={false}
+          userId={item.owner}
+        />
+      )}
     </View>
-    
-);
+  );
 
   return (
     <View style = {styles.container}>
@@ -58,7 +75,7 @@ LoadContent()
     </ScrollView>
     <View style={styles.separator} />
      <FlatList
-                data={posts}
+                data={homeContent}
                 numColumns={1}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={renderPostItem}
@@ -68,6 +85,7 @@ LoadContent()
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   separator: {

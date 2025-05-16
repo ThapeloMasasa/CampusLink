@@ -37,7 +37,7 @@ export interface Yap {
   created_at: string;
 }
 export interface post {
-  id: number;
+  id: string;
   created_at: string;
   Header: string;
   content?: string;
@@ -54,6 +54,7 @@ export interface PostProps {
   likes: number;
   reactions: any[]; 
   mypost: boolean;
+  userId: string
 }
 
 export type deal = {
@@ -80,7 +81,7 @@ export type localDeal = {
   export type MainStackParamList = {
     MainTabs: undefined; 
     ViewProfile: { userId: string };
-    DirectMessageScreen: {username: string};
+    DirectMessageScreen: {username: string | undefined};
   };
 
   export interface DirectMessage {

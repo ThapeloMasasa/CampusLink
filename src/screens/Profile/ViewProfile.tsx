@@ -76,7 +76,7 @@ const ViewProfile = () => {
         </View>
 
         <View>
-          <TouchableOpacity onPress={() => navigation.navigate('DirectMessageScreen', { username: 'Masasa' })}>
+          <TouchableOpacity onPress={() => navigation.navigate('DirectMessageScreen', { username: profile?.full_name })}>
             <Text style={styles.ratingText}>DM 😜</Text>
             <Ionicons name="chatbubble-ellipses-outline" size={40} color="#000" />
           </TouchableOpacity>

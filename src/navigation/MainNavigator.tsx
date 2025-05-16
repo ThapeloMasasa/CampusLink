@@ -105,7 +105,10 @@ export default function MainNavigator({ setIsLoggedIn }: AuthProps) {
         options={{ title: 'User Profile' }}
       />
       {/* Direct Message screen */}
-      <Stack.Screen name="DirectMessageScreen" component={DirectMessageScreen} />
+      <Stack.Screen 
+      name="DirectMessageScreen" 
+      options ={{title: 'Inbox'}}
+      component={DirectMessageScreen} />
     </Stack.Navigator>
   );
 }

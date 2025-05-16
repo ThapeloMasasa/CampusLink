@@ -1,20 +1,21 @@
-import React, { useState, useEffect,useLayoutEffect} from 'react';
-import { View, Text, StyleSheet, Image, FlatList, ActivityIndicator,TouchableOpacity, Switch } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; 
+// screens/Profile/ProfileScreen.tsx
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { View, Text, StyleSheet, Image, ActivityIndicator, Switch, TouchableOpacity } from 'react-native';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { AuthProps, Profile, post } from '../../types/types';
 import { supabase } from '../../../supabaseClient';
-import Post from '../../components/Post';
+import { AuthProps, Profile, post } from '../../types/types';
+import PostsTab from '../../components/postsTab';
 
+const Tab = createMaterialTopTabNavigator();
 
 const ProfileScreen = ({ setIsLoggedIn }: AuthProps) => {
-  const [activeTab, setActiveTab] = useState('Posts');
+  const navigation = useNavigation();
   const [isRatingVisible, setIsRatingVisible] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [posts, setPosts] = useState<post[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const navigation = useNavigation();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -25,58 +26,39 @@ const ProfileScreen = ({ setIsLoggedIn }: AuthProps) => {
       ),
       title: 'Profile',
     });
-  }, [navigation, setIsLoggedIn]);
+  }, [navigation]);
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) throw userError || new Error('User not found');
+
+        const { data: profileData, error: profileError } = await supabase
+          .from('Profile')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        if (profileError) throw profileError;
+
+        const { data: postsData, error: postsError } = await supabase
+          .from('Posts')
+          .select('*')
+          .eq('owner', user.id)
+          .order('created_at', { ascending: false });
+        if (postsError) throw postsError;
+
+        setProfile(profileData);
+        setPosts(postsData);
+      } catch (err: any) {
+        console.error('Fetch Error:', err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchData();
   }, []);
-
-  const fetchData = async () => {
-    try {
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-      if (userError || !user) throw userError || new Error('User not found');
-
-      const { data: profileData, error: profileError } = await supabase
-        .from('Profile')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-      if (profileError) throw profileError;
-      console.log(profileError)
-      const { data: postsData, error: postsError } = await supabase
-        .from('Posts')
-        .select('*')
-        .eq('owner', user.id)
-        .order('created_at', { ascending: false });
-      if (postsError) throw postsError;
-      console.log("profile",profileData)
-      setProfile(profileData);
-      setPosts(postsData);
-    } catch (err: any) {
-      console.error('Fetch Error:', err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const renderPostItem = ({ item }: { item: post }) => (
-  <View style ={styles.gridItem}>
-  <Post
-      title={item.Header}
-      content={item.Header} // fallback to Header if `content` isn't available
-      image={item.image ? { uri: item.image } : undefined}
-      likes={item.likes ?? 0}
-      reactions={item.reactions ?? []}
-      mypost={true}
-      userId={item.id}
-    />
-  </View>
-    
-);
-
 
   if (loading) {
     return (
@@ -116,27 +98,14 @@ const ProfileScreen = ({ setIsLoggedIn }: AuthProps) => {
         </View>
       </View>
 
-      <View style={styles.tabsContainer}>
-        {['Posts', 'Yaps', 'Deals'].map((tab) => (
-          <TouchableOpacity
-            key={tab}
-            onPress={() => setActiveTab(tab)}
-            style={[styles.tabButton, activeTab === tab && styles.activeTabButton]}
-          >
-            <Text style={[styles.tabButtonText, activeTab === tab && styles.activeTabButtonText]}>
-              {tab}
-            </Text>
-          </TouchableOpacity>
-        ))}
+      {/* Tabs */}
+      <View style={{ flex: 1 }}>
+        <Tab.Navigator>
+          <Tab.Screen name="Posts">{() => <PostsTab posts={posts} />}</Tab.Screen>
+          <Tab.Screen name="Yaps">{() => <Text style={{ padding: 20 }}>Yaps Coming Soon</Text>}</Tab.Screen>
+          <Tab.Screen name="Deals">{() => <Text style={{ padding: 20 }}>Deals Coming Soon</Text>}</Tab.Screen>
+        </Tab.Navigator>
       </View>
-
-      <FlatList
-  data={posts}
-  numColumns={2}
-  keyExtractor={(item) => item.id.toString()}
-  renderItem={renderPostItem}
-  contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 80 }}
-    />
     </View>
   );
 };
@@ -163,12 +132,6 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: 'center',
   },
-  gridItem: {
-  flex: 1,
-  paddingHorizontal: 8,
-  margin: 8,
-},
-
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -180,38 +143,6 @@ const styles = StyleSheet.create({
   ratingNumber: { fontWeight: 'bold', fontSize: 16 },
   switchContainer: { flexDirection: 'row', alignItems: 'center', marginLeft: 20 },
   switchLabel: { marginRight: 8, fontSize: 14 },
-  tabsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginVertical: 20,
-  },
-  tabButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    marginHorizontal: 5,
-    borderRadius: 20,
-    backgroundColor: '#e0e0e0',
-  },
-  activeTabButton: {
-    backgroundColor: '#007bff',
-  },
-  tabButtonText: {
-    color: '#333',
-    fontWeight: 'bold',
-  },
-  activeTabButtonText: {
-    color: '#fff',
-  },
-  postsGrid: {
-    paddingHorizontal: 10,
-  },
-  postBox: {
-    backgroundColor: '#d3d3d3',
-    flex: 1,
-    margin: 10,
-    height: 150,
-    borderRadius: 15,
-  },
 });
 
 export default ProfileScreen;
