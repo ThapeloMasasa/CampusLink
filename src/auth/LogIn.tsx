@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   View,
-  Alert,
   Text,
   TextInput,
   TouchableOpacity,
@@ -25,35 +24,58 @@ const LoginScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
 
  const { dispatch } = useGlobalContext();
-
 const handleLogin = async () => {
-  try{
-    const { data: { user }, error } = await supabase.auth.getUser();
-  if (error || !user) return;
-  const { data: profiledata, error: profileError } = await supabase
-    .from('Profile')
-    .select('*')
-    .eq('id',user.id)
-  if (profileError || !profiledata) return;
+  try {
+    // 1. Sign the user in
+    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  dispatch({ type: 'LOGIN', payload:{ userId:user.id, profile: profiledata }});
+    if (signInError || !signInData.user) {
+      console.log("Login failed", signInError?.message);
+      return;
+    }
 
-  const { data: posts, error: postsError } = await supabase
-    .from('Posts')
-    .select('*');
-  if (!postsError) dispatch({ type: 'SET_POSTS', payload: posts });
+    const user = signInData.user;
 
-  const { data: yaps, error: yapsError } = await supabase
-    .from('Yaps')
-    .select('*');
-  if (!yapsError) dispatch({ type: 'SET_YAPS', payload: yaps });
-  }catch(e){
-    console.log("Err", e)
-  }finally{
+    // 2. Fetch profile
+    const { data: profileData, error: profileError } = await supabase
+      .from('Profile')
+      .select('*')
+      .eq('id', user.id)
+      .single();
 
+    if (profileError || !profileData) {
+      console.log("Failed to get profile", profileError?.message);
+      return;
+    }
+    
+    // 3. Fetch posts
+    const { data: posts, error: postsError } = await supabase.from('Posts').select('*');
+    if (!postsError) dispatch({ type: 'SET_POSTS', payload: posts });
+    if (postsError) console.log(postsError)
+    // 4. Fetch yaps
+    const { data: yaps, error: yapsError } = await supabase.from('Yaps').select('*');
+    if (!yapsError) dispatch({ type: 'SET_YAPS', payload: yaps });
+    if (yapsError) console.log(yapsError)
+    const { data: allProfiles, error: profilesError } = await supabase.from('Profile').select('*');
+    if (!profilesError) dispatch({ type: 'SET_PROFILES', payload: allProfiles });
+    if (profilesError) console.log(profileError)
+      console.log("your profiles",allProfiles)
+    // 5. Dispatch login
+    dispatch({
+      type: 'LOGIN',
+      payload: { isLoggedIn: true, currentUserId: user.id, currentProfile: profileData },
+    });
+
+    console.log("Done logging in");
+
+  } catch (e) {
+    console.log("Unexpected error during login:", e);
   }
-  
 };
+
 
   return (
     <KeyboardAvoidingView

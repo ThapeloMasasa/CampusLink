@@ -117,8 +117,8 @@ const SectionScreen = () => {
     messages[selectedSection]?.map((msg, index) => ({
       id: index.toString(),
       text: msg.text,
-      sender: msg.sender, // Alternate senders for now
-      profile: msg.profile,  // Example profile
+      sender: msg.sender, 
+      profile: msg.profile,  
     })) || []
   }
   keyExtractor={(item) => item.id}

@@ -3,14 +3,15 @@ import { NavigationContainer } from '@react-navigation/native';
 import AuthNavigator from './AuthNavigator';
 import MainNavigator from '../navigation/MainNavigator';
 import { useState } from 'react';
+import { useGlobalContext } from '../contexts/GlobalContext';
 
 
-export default function AppNavigator() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); 
+export default function AppNavigator() { 
+  const { state } = useGlobalContext();
 
   return (
     <NavigationContainer>
-      {isLoggedIn ? <MainNavigator setIsLoggedIn = {setIsLoggedIn}/> : <AuthNavigator setIsLoggedIn={setIsLoggedIn} />}
+      {state.isLoggedIn ? <MainNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );
 }

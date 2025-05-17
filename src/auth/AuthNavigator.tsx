@@ -2,27 +2,30 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './LogIn';
 import SignUpScreen from './SignUp';
-import { AuthProps } from '../types/types';
+
+
+
 
 const Stack = createNativeStackNavigator();
 
-function RootStack({ setIsLoggedIn }: AuthProps) {
+function RootStack() {
+  
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="LogIn">
-        {(props) => <LoginScreen {...props} setIsLoggedIn={setIsLoggedIn} />}
+        {(props) => <LoginScreen />}
       </Stack.Screen>
       <Stack.Screen name="SignUp">
-        {(props) => <SignUpScreen {...props} setIsLoggedIn={setIsLoggedIn} />}
+        {(props) => <SignUpScreen />}
       </Stack.Screen>
     </Stack.Navigator>
   );
 }
 
 // AuthNavigator needs to also have typed props
-const AuthNavigator = ({ setIsLoggedIn }: AuthProps) => {
+const AuthNavigator = () => {
   return (
-    <RootStack setIsLoggedIn={setIsLoggedIn} />
+    <RootStack />
   );
 };
 

@@ -22,29 +22,23 @@ export default function HomeScreen() {
     LoadContent()
   setLoading(!loading)
  }, [])
- const LoadContent = async()=>{
-  setLoading(!loading)
-    try{
-      const {data:postsdata, error: postserror} = await supabase
-      .from('Posts')
-      .select("*")
+ const LoadContent = () => {
+  setLoading(true);
 
-      const {data:yapsdata, error: yapserror} = await supabase
-      .from('Yaps')
-      .select("*")
+  try {
+    const postsdata = state.allPosts || [];
+    const yapsdata = state.allYaps || [];
 
-      
-      setPosts(postsdata)
-      setYaps(yapsdata)
-      const hotyaps = yapsdata?.filter(item => item.likes > 15);
-      setHomeContent([...(postsdata || []), ...(hotyaps || [])])
-     
-    }catch(e){
-      console.log("error")
-    }finally{
-      setLoading(!loading)
-    }
- }
+    const hotyaps = yapsdata.filter(item => item.likes > 15);
+    const combinedContent = [...postsdata, ...hotyaps];
+
+    setHomeContent(combinedContent);
+  } catch (e) {
+    console.log("Error loading content from context:", e);
+  } finally {
+    setLoading(false);
+  }
+};
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (

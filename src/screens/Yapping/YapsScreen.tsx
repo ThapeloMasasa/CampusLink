@@ -4,24 +4,23 @@ import { Ionicons } from '@expo/vector-icons'; // for the plus icon
 import Yap from '../../components/Yap';
 import { YapType } from '../../types/types';
 import { supabase } from '../../../supabaseClient';
+import { useGlobalContext } from '../../contexts/GlobalContext';
 
 const YapsScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [yapText, setYapText] = useState('');
   const [yapTitle, setYapTitle] = useState('');
   const [yaps, setYaps] = useState<YapType[]| null>([])
+  const {state} = useGlobalContext()
   let countid = 0
   useEffect(()=>{
     LoadContent()
   },[])
 
-const LoadContent = async()=>{
+const LoadContent = ()=>{
 
     try{
-      const {data:yapsdata, error: yapserror} = await supabase
-      .from('Yaps')
-      .select("*")
-
+      const yapsdata = state.allYaps || null
       setYaps(yapsdata)
      
     }catch(e){
@@ -33,7 +32,7 @@ const LoadContent = async()=>{
   const handlePostYap = () => {
     if (yapTitle.trim() && yapText.trim()) {
       countid += 1
-      setYaps([{ id:countid.toString(), title: yapTitle, createdAt: Date.now().toString(), Content: yapText, yap: true, likes:0, reactions: [], score:0 }, ...(yaps || [])]);
+      setYaps([{ id:countid.toString(), title: yapTitle, createdAt: Date.now().toString(), Content: yapText, yap: true, likes:0, reactions: [], score:0 , owner:null}, ...(yaps || [])]);
       setYapTitle('');
       setYapText('');``
       setModalVisible(false);

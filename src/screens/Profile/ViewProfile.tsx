@@ -2,44 +2,40 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useRoute } from '@react-navigation/native';
-import { ViewProfileRouteProp, ViewProfileNavigationProp, post  } from '../../types/types';
+import { ViewProfileRouteProp, ViewProfileNavigationProp, post, currentUser  } from '../../types/types';
 import { useNavigation } from '@react-navigation/native';
-import { supabase } from '../../../supabaseClient';
 import { Profile } from '../../types/types';
 import Post from '../../components/Post';
+import { useGlobalContext } from '../../contexts/GlobalContext';
 
 
 const ViewProfile = () => {
   const navigation = useNavigation<ViewProfileNavigationProp>();
   const route = useRoute<ViewProfileRouteProp>();
   const { userId } = route.params; 
-  const [profile, setProfile] = useState<Profile>();
+  const [profile, setProfile] = useState<currentUser>();
   const [posts, setPosts] = useState<post[]| null>(null)
+  const {state} = useGlobalContext();
 
-  useEffect(()=>{
-      LoadUser(userId)
-  },[])
+  const loadUserFromContext = (userId: string) => {
+  try {
+    const profileData = state.allProfiles?.find(profile => profile.id === userId);
+    console.log("Heee", state.allProfiles)
+    const postsData = (state.allPosts || [])
+      .filter(post => post.owner === userId)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-  const LoadUser = async (userId: string)=>{
-    try{
-        const {data: profileData, error: profileError} = await supabase
-        .from('Profile')
-        .select('*')
-        .eq('id', userId)
-        .single()
-
-        const {data:postsData, error:postsError} = await supabase
-        .from('Posts')
-        .select("*")
-        .eq('owner', userId)
-        .order('created_at', { ascending: false });
-
-      setPosts(postsData)
-      setProfile(profileData)
-    }catch(e){
-      console.log("Error")
-    }
+    setProfile(profileData);
+    setPosts(postsData || []);
+  } catch (e) {
+    console.log("Context Load Error");
   }
+};
+useEffect(() => {
+  loadUserFromContext(userId);
+}, [userId]);
+
+
   const renderPostItem = ({ item }: { item: post }) => (
   <View style ={styles.gridItem}>
   <Post
@@ -49,7 +45,7 @@ const ViewProfile = () => {
       likes={item.likes ?? 0}
       reactions={item.reactions ?? []}
       mypost={true}
-      userId= {item.id}
+      userId= {item.owner}
     />
   </View>
     

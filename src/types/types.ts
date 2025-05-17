@@ -160,18 +160,21 @@ export type groupItem ={
   export type GlobalState = {
   isLoggedIn: boolean;
   currentUserId: string | null;
-  currentProfile: currentUser[] | null;
+  currentProfile: currentUser | null;
   allPosts: post[];
   allYaps: YapType[];
+  allProfiles: currentUser[] | null
 };
 
 export type Action =
-  | { type: 'LOGIN'; payload: { userId: string; profile: currentUser[] | null } }
+  | { type: 'LOGIN'; payload: { isLoggedIn: boolean; currentUserId: string; currentProfile: currentUser | null } }
   | { type: 'LOGOUT' }
   | { type: 'SET_POSTS'; payload: post[] }
   | { type: 'SET_YAPS'; payload: YapType[] }
   | { type: 'REFRESH_POSTS'; payload: post[] }
-  | { type: 'REFRESH_YAPS'; payload: YapType[] };
+  | { type: 'SET_PROFILES'; payload: currentUser [] | null }
+  | { type: 'REFRESH_YAPS'; payload: YapType[] }
+  | { type: 'RESTORE_STATE'; payload: {currentUserId: string, currentProfile:currentUser} };
   export type LeaderboardProps = {
     yaps: YapType[];
   };

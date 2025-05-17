@@ -1,5 +1,5 @@
 import React, {useEffect, useContext, useReducer, ReactNode, createContext} from "react";
-import { post, YapType,Profile, GlobalState,Action } from "../types/types";
+import { GlobalState,Action } from "../types/types";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -9,6 +9,7 @@ const initialState: GlobalState = {
   currentProfile: null,
   allPosts: [],
   allYaps: [],
+  allProfiles: []
 };
 
 function reducer(state: GlobalState, action: Action): GlobalState {
@@ -16,9 +17,9 @@ function reducer(state: GlobalState, action: Action): GlobalState {
     case 'LOGIN':
       return {
         ...state,
-        isLoggedIn: true,
-        currentUserId: action.payload.userId,
-        currentProfile: action.payload.profile,
+        isLoggedIn: action.payload.isLoggedIn,
+        currentUserId: action.payload.currentUserId,
+        currentProfile: action.payload.currentProfile,
       };
     case 'LOGOUT':
       return { ...initialState };
@@ -28,6 +29,15 @@ function reducer(state: GlobalState, action: Action): GlobalState {
     case 'SET_YAPS':
     case 'REFRESH_YAPS':
       return { ...state, allYaps: action.payload };
+    case 'RESTORE_STATE':
+            return {
+                ...state,
+                currentUserId: action.payload.currentUserId,
+                currentProfile: action.payload.currentProfile,
+            };
+
+    case 'SET_PROFILES':
+      return { ...state, allProfiles: action.payload };
     default:
       return state;
   }
@@ -45,23 +55,43 @@ const GlobalContext = createContext<{
 export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  // Load persisted state
   useEffect(() => {
-    (async () => {
+  const loadPersistedState = async () => {
+    try {
       const stored = await AsyncStorage.getItem('globalState');
       if (stored) {
         const parsed = JSON.parse(stored);
-        dispatch({ type: 'LOGIN', payload: { userId: parsed.currentUserId, profile: parsed.currentProfile } });
-        dispatch({ type: 'SET_POSTS', payload: parsed.allPosts });
-        dispatch({ type: 'SET_YAPS', payload: parsed.allYaps });
+
+       if (parsed && typeof parsed === 'object') {
+  if (parsed.currentUserId && parsed.currentProfile) {
+    dispatch({
+      type: 'RESTORE_STATE',
+      payload: {
+        currentUserId: parsed.currentUserId,
+        currentProfile: parsed.currentProfile,
+      },
+    });
+  }}
+
+
+        if (parsed?.allPosts) dispatch({ type: 'SET_POSTS', payload: parsed.allPosts });
+        if (parsed?.allYaps) dispatch({ type: 'SET_YAPS', payload: parsed.allYaps });
+        if (parsed?.allProfiles) dispatch({ type: 'SET_PROFILES', payload: parsed.allProfiles }); 
       }
-    })();
-  }, []);
+    } catch (e) {
+      console.warn('Failed to load global state:', e);
+    }
+  };
+
+  loadPersistedState(); // async function called inside useEffect
+}, []);
 
   // Persist on change
-  useEffect(() => {
-    AsyncStorage.setItem('globalState', JSON.stringify(state));
-  }, [state]);
+ useEffect(() => {
+  // Persist everything except isLoggedIn
+  const { isLoggedIn, ...persistedState } = state;
+  AsyncStorage.setItem('globalState', JSON.stringify(persistedState));
+}, [state]);
 
   return (
     <GlobalContext.Provider value={{ state, dispatch }}>

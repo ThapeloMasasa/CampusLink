@@ -1,11 +1,9 @@
-// screens/Profile/ProfileScreen.tsx
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, Image, ActivityIndicator, Switch, TouchableOpacity } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { supabase } from '../../../supabaseClient';
-import { AuthProps, Profile, post } from '../../types/types';
+import { Profile, currentUser, post } from '../../types/types';
 import PostsTab from '../../components/postsTab';
 import { useGlobalContext } from '../../contexts/GlobalContext';
 
@@ -14,11 +12,10 @@ const Tab = createMaterialTopTabNavigator();
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const [isRatingVisible, setIsRatingVisible] = useState(true);
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<currentUser | null>(null);
   const [posts, setPosts] = useState<post[]>([]);
   const [loading, setLoading] = useState(true);
-  const { state,dispatch  } = useGlobalContext();
-
+  const { state, dispatch } = useGlobalContext();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -32,36 +29,28 @@ const ProfileScreen = () => {
   }, [navigation]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const loadFromContext = () => {
       try {
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError || !user) throw userError || new Error('User not found');
+        const userProfile = state.currentProfile;
+        const allPosts = state.allPosts || [];
 
-        const { data: profileData, error: profileError } = await supabase
-          .from('Profile')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-        if (profileError) throw profileError;
+        if (!userProfile) throw new Error('User profile not found in context');
 
-        const { data: postsData, error: postsError } = await supabase
-          .from('Posts')
-          .select('*')
-          .eq('owner', user.id)
-          .order('created_at', { ascending: false });
-        if (postsError) throw postsError;
+        const userPosts = allPosts
+          .filter((p) => p.owner === userProfile.id)
+          .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-        setProfile(profileData);
-        setPosts(postsData);
+        setProfile(userProfile);
+        setPosts(userPosts);
       } catch (err: any) {
-        console.error('Fetch Error:', err.message);
+        console.error('Context Load Error:', err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
-  }, []);
+    loadFromContext();
+  }, [state]);
 
   if (loading) {
     return (
@@ -101,7 +90,6 @@ const ProfileScreen = () => {
         </View>
       </View>
 
-      {/* Tabs */}
       <View style={{ flex: 1 }}>
         <Tab.Navigator>
           <Tab.Screen name="Posts">{() => <PostsTab posts={posts} />}</Tab.Screen>

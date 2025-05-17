@@ -6,15 +6,37 @@ import { YapType } from '../../types/types';
 const dummyYaps: YapType[] = [
   {
     id: '1', title: 'Best Yap', Content: 'Learn how to choose and use', createdAt: new Date(Date.now() - 100000).toISOString(), likes: 10, score: 120,
-    yap: true
+    yap: true,
+    owner: null
   },
-  { id: '2', title: 'Cold Yap', Content: 'Hello', createdAt: new Date(Date.now() - 500000).toISOString(), likes: 3, score: 102 ,  yap: true},
-  { id: '3', title: 'Medium Yap', Content: 'warriors Suck', createdAt: new Date(Date.now() - 1000000).toISOString(), likes: 5, score: 90,  yap: true},
-  { id: '4', title: 'Warm Yap', Content: 'Go Irish', createdAt: new Date(Date.now() - 2000000).toISOString(), likes: 8, score: 83,  yap: true },
-  { id: '5', title: 'Trip', Content: 'Chicago trip this weekend', createdAt: new Date(Date.now() - 3000000).toISOString(), likes: 12, score: 75 ,  yap: true},
-  { id: '6', title: 'AC', Content: 'We need more AC', createdAt: new Date(Date.now() - 3500000).toISOString(), likes: 11, score: 74 ,  yap: true},
-  { id: '7', title: 'Bowling', Content: 'Bowling Anyone??', createdAt: new Date(Date.now() - 4000000).toISOString(), likes: 9, score: 60 ,  yap: true},
-  { id: '8', title: 'Hype', Content: 'lets goo', createdAt: new Date(Date.now() - 4500000).toISOString(), likes: 7, score: 56 ,  yap: true},
+  {
+    id: '2', title: 'Cold Yap', Content: 'Hello', createdAt: new Date(Date.now() - 500000).toISOString(), likes: 3, score: 102, yap: true,
+    owner: null
+  },
+  {
+    id: '3', title: 'Medium Yap', Content: 'warriors Suck', createdAt: new Date(Date.now() - 1000000).toISOString(), likes: 5, score: 90, yap: true,
+    owner: null
+  },
+  {
+    id: '4', title: 'Warm Yap', Content: 'Go Irish', createdAt: new Date(Date.now() - 2000000).toISOString(), likes: 8, score: 83, yap: true,
+    owner: null
+  },
+  {
+    id: '5', title: 'Trip', Content: 'Chicago trip this weekend', createdAt: new Date(Date.now() - 3000000).toISOString(), likes: 12, score: 75, yap: true,
+    owner: null
+  },
+  {
+    id: '6', title: 'AC', Content: 'We need more AC', createdAt: new Date(Date.now() - 3500000).toISOString(), likes: 11, score: 74, yap: true,
+    owner: null
+  },
+  {
+    id: '7', title: 'Bowling', Content: 'Bowling Anyone??', createdAt: new Date(Date.now() - 4000000).toISOString(), likes: 9, score: 60, yap: true,
+    owner: null
+  },
+  {
+    id: '8', title: 'Hype', Content: 'lets goo', createdAt: new Date(Date.now() - 4500000).toISOString(), likes: 7, score: 56, yap: true,
+    owner: null
+  },
 ];
 
 const YapsLeaderboard = () => {
