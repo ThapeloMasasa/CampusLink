@@ -14,7 +14,7 @@ import DirectMessageScreen from '../screens/Profile/DirectMessageScreen';
 const Tab = createBottomTabNavigator();
 const  Stack = createNativeStackNavigator<MainStackParamList>();
 
-function BottomTabs({ setIsLoggedIn }: AuthProps) {
+function BottomTabs() {
   return (
     <Tab.Navigator screenOptions={{ headerShown: true }}>
       <Tab.Screen 
@@ -29,7 +29,7 @@ function BottomTabs({ setIsLoggedIn }: AuthProps) {
           )
         }}
       >
-        {(props) => <HomeScreen {...props} setIsLoggedIn={setIsLoggedIn} />}
+        {(props) => <HomeScreen />}
       </Tab.Screen>
 
       <Tab.Screen 
@@ -84,18 +84,18 @@ function BottomTabs({ setIsLoggedIn }: AuthProps) {
          )
        }}
       >
-      {(props) => <ProfileScreen {...props} setIsLoggedIn={setIsLoggedIn} />}
+      {(props) => <ProfileScreen />}
       </Tab.Screen>
     </Tab.Navigator>
   );
 }
 
-export default function MainNavigator({ setIsLoggedIn }: AuthProps) {
+export default function MainNavigator() {
   return (
     <Stack.Navigator>
       {/* Bottom Tabs */}
       <Stack.Screen name="MainTabs" options={{ headerShown: false }}>
-        {() => <BottomTabs setIsLoggedIn={setIsLoggedIn} />}
+        {() => <BottomTabs />}
       </Stack.Screen>
 
       {/* User Profile screen */}

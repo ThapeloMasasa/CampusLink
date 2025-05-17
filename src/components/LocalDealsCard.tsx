@@ -1,8 +1,41 @@
 import React from 'react'
-import { View, Text, Image, Button, StyleSheet } from 'react-native'
+import { View, Text, Image, Button, StyleSheet, Linking,
+  Alert, Platform } from 'react-native'
 import { localDeal } from '../types/types'
 
 const LocalDealsCard = ({ store, storeLogo, image, price }: localDeal) => {
+
+const openDoorDash = async () => {
+  const urlScheme = 'doordash://';
+  const appStoreURL = Platform.select({
+  ios: 'https://apps.apple.com/us/app/doordash-food-delivery/id719972451',
+  android: 'https://play.google.com/store/apps/details?id=com.dd.doordash',
+}) ?? 'https://doordash.com';
+
+  const supported = await Linking.canOpenURL(urlScheme);
+  if (supported) {
+    Linking.openURL(urlScheme);
+  } else {
+    Linking.openURL(appStoreURL);
+  }
+};
+
+const openUberEats = async () => {
+  const urlScheme = 'uber-eats://';
+  const uberEatsURL = Platform.select({
+  ios: 'https://apps.apple.com/us/app/uber-eats-food-delivery/id1058959277',
+  android: 'https://play.google.com/store/apps/details?id=com.ubercab.eats',
+}) ?? 'https://www.ubereats.com'; // Fallback to website
+
+  const supported = await Linking.canOpenURL(urlScheme);
+  if (supported) {
+    Linking.openURL(urlScheme);
+  } else {
+    Linking.openURL(uberEatsURL);
+  }
+};
+
+
     return (
         <View style={styles.card}>
           <View style={styles.headerRow}>
@@ -16,8 +49,8 @@ const LocalDealsCard = ({ store, storeLogo, image, price }: localDeal) => {
           
 
           <View style={styles.buttonContainer}>
-            <Button title="UberEats" onPress={() => {}} />
-            <Button title="DoorDash" onPress={() => {}} />
+            <Button title="UberEats" onPress={openUberEats} />
+            <Button title="DoorDash" onPress={openDoorDash} />
           </View>
         </View>
       )

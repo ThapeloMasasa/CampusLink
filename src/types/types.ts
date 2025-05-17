@@ -28,6 +28,14 @@ export interface Profile {
   posts : PostProps[]
   Deals : StudentDealCardProps[]
 }
+export type currentUser = {
+  id: string;
+  created_at: string;
+  full_name: string;
+  avatar_url: string;
+  rating: number
+
+}
 
 export interface Yap {
   id: string;
@@ -138,15 +146,32 @@ export type groupItem ={
   };
 
   export type YapType = {
+    owner: string | null;
     id: string;
     title: string;
-    content: string;
+    Content: string;
     createdAt: string; 
     yap: boolean;
     likes: number;
     score: number;
     reactions?: string[];
   };
+
+  export type GlobalState = {
+  isLoggedIn: boolean;
+  currentUserId: string | null;
+  currentProfile: currentUser[] | null;
+  allPosts: post[];
+  allYaps: YapType[];
+};
+
+export type Action =
+  | { type: 'LOGIN'; payload: { userId: string; profile: currentUser[] | null } }
+  | { type: 'LOGOUT' }
+  | { type: 'SET_POSTS'; payload: post[] }
+  | { type: 'SET_YAPS'; payload: YapType[] }
+  | { type: 'REFRESH_POSTS'; payload: post[] }
+  | { type: 'REFRESH_YAPS'; payload: YapType[] };
   export type LeaderboardProps = {
     yaps: YapType[];
   };

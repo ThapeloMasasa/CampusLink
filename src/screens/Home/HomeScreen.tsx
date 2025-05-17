@@ -7,13 +7,15 @@ import Post from '../../components/Post';
 import Yap from '../../components/Yap';
 import { AuthProps, post, YapType } from '../../types/types';
 import { supabase } from '../../../supabaseClient';
+import { useGlobalContext } from '../../contexts/GlobalContext';
 
-export default function HomeScreen({ setIsLoggedIn }: AuthProps) {
+export default function HomeScreen() {
   const navigation = useNavigation();
   const [posts, setPosts] = useState<post[] | null>([])
   const [yaps, setYaps] = useState<YapType[]| null>([])
   const [homeContent, setHomeContent] = useState<any []>([])
   const [loading, setLoading] = useState<boolean>(true)
+  const { state,dispatch  } = useGlobalContext();
 
  useEffect(()=>{
   
@@ -35,7 +37,7 @@ export default function HomeScreen({ setIsLoggedIn }: AuthProps) {
       setPosts(postsdata)
       setYaps(yapsdata)
       const hotyaps = yapsdata?.filter(item => item.likes > 15);
-      setHomeContent([...(posts || []), ...(hotyaps || [])])
+      setHomeContent([...(postsdata || []), ...(hotyaps || [])])
      
     }catch(e){
       console.log("error")
@@ -46,12 +48,12 @@ export default function HomeScreen({ setIsLoggedIn }: AuthProps) {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity onPress={() => setIsLoggedIn(false)} style={{ marginRight: 15 }}>
+        <TouchableOpacity onPress={() => dispatch({ type: 'LOGOUT' })} style={{ marginRight: 15 }}>
           <Ionicons name="log-out-outline" size={24} color="black" />
         </TouchableOpacity>
       ),
     });
-  }, [navigation, setIsLoggedIn]);
+  }, [navigation, state.isLoggedIn]);
   const renderPostItem = ({ item }: { item: any }) => (
     <View style={styles.post}>
       {item.yap ? (

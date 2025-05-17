@@ -7,20 +7,23 @@ import { useNavigation } from '@react-navigation/native';
 import { supabase } from '../../../supabaseClient';
 import { AuthProps, Profile, post } from '../../types/types';
 import PostsTab from '../../components/postsTab';
+import { useGlobalContext } from '../../contexts/GlobalContext';
 
 const Tab = createMaterialTopTabNavigator();
 
-const ProfileScreen = ({ setIsLoggedIn }: AuthProps) => {
+const ProfileScreen = () => {
   const navigation = useNavigation();
   const [isRatingVisible, setIsRatingVisible] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [posts, setPosts] = useState<post[]>([]);
   const [loading, setLoading] = useState(true);
+  const { state,dispatch  } = useGlobalContext();
+
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity onPress={() => setIsLoggedIn(false)} style={{ marginRight: 15 }}>
+        <TouchableOpacity onPress={() => dispatch({ type: 'LOGOUT' })} style={{ marginRight: 15 }}>
           <Ionicons name="log-out-outline" size={24} color="black" />
         </TouchableOpacity>
       ),

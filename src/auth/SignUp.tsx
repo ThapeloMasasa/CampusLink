@@ -3,10 +3,9 @@ import React, { useState } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Pressable, Image, Alert } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { supabase } from '../../supabaseClient';
 
-const SignUpScreen = ({ setIsLoggedIn }: AuthProps) => {
+const SignUpScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
   const [fullName, setFullName] = useState('');
   const [username, setUsername] = useState('');
@@ -15,29 +14,37 @@ const SignUpScreen = ({ setIsLoggedIn }: AuthProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSignUp = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Email and password are required.');
-      return;
-    }
+  if (!email || !password) {
+    Alert.alert('Error', 'Email and password are required.');
+    return;
+  }
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-          username: username
-        }
-      }
-    });
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        full_name: fullName,
+        username: username,
+      },
+    },
+  });
 
-    if (error) {
-      Alert.alert('Signup Failed', error.message);
-    } else {
-      Alert.alert('Check your email', 'A confirmation link was sent.');
-      setIsLoggedIn(true); // or wait until email is confirmed, depending on your flow
-    }
-  };
+  if (error) {
+    Alert.alert('Signup Failed', error.message);
+  } else {
+    Alert.alert(
+      'Verify Your Email',
+      'A confirmation link has been sent to your email. Please verify before signing in.',
+      [
+        {
+          text: 'OK',
+          onPress: () => navigation.goBack(), // ✅ navigate back to sign-in
+        },
+      ]
+    );
+  }
+};
 
   return (
     <KeyboardAvoidingView

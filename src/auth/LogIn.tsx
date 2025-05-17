@@ -11,34 +11,48 @@ import {
   Pressable,
   Image,
 } from 'react-native';
+import { useGlobalContext } from '../contexts/GlobalContext';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { AuthProps, AuthStackParamList } from '../types/types';
 import { supabase } from '../../supabaseClient';
 
-const LoginScreen = ({ setIsLoggedIn }: AuthProps) => {
+const LoginScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
- const handleLogin = async () => {
-  if (!email || !password) {
-    Alert.alert('Missing fields', 'Please fill in both fields');
-    return;
-  }
+ const { dispatch } = useGlobalContext();
 
-  const { error, data } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+const handleLogin = async () => {
+  try{
+    const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) return;
+  const { data: profiledata, error: profileError } = await supabase
+    .from('Profile')
+    .select('*')
+    .eq('id',user.id)
+  if (profileError || !profiledata) return;
 
-  if (error) {
-    Alert.alert('Login failed', error.message);
-  } else {
-    setIsLoggedIn(true);
+  dispatch({ type: 'LOGIN', payload:{ userId:user.id, profile: profiledata }});
+
+  const { data: posts, error: postsError } = await supabase
+    .from('Posts')
+    .select('*');
+  if (!postsError) dispatch({ type: 'SET_POSTS', payload: posts });
+
+  const { data: yaps, error: yapsError } = await supabase
+    .from('Yaps')
+    .select('*');
+  if (!yapsError) dispatch({ type: 'SET_YAPS', payload: yaps });
+  }catch(e){
+    console.log("Err", e)
+  }finally{
+
   }
+  
 };
 
   return (
@@ -109,7 +123,7 @@ const LoginScreen = ({ setIsLoggedIn }: AuthProps) => {
   );
 };
 
-export default LoginScreen;
+
 
 const styles = StyleSheet.create({
   container: {
@@ -212,3 +226,4 @@ const styles = StyleSheet.create({
     color: '#FB923C',
   },
 });
+export default LoginScreen;

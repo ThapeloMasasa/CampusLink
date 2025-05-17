@@ -6,6 +6,8 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  Linking,
+  Alert
 } from 'react-native'
 import LocalDealsCard from '../../components/LocalDealsCard'
 import { localDeal } from '../../types/types'
@@ -30,7 +32,17 @@ const deals: localDeal[] = [
 
 const LocalDealsScreen = () => {
   const [viewMode, setViewMode] = useState<'cards' | 'map'>('cards')
+  const openDoorDash = async () => {
+  const url = 'doordash://'; // Deep link for DoorDash (if supported)
 
+  const supported = await Linking.canOpenURL(url);
+
+  if (supported) {
+    await Linking.openURL(url);
+  } else {
+    Alert.alert("DoorDash app is not installed");
+  }
+};
   return (
     <View style={styles.container}>
       {/* Toggle Switch */}
