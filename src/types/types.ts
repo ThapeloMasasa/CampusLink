@@ -3,13 +3,13 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
-
 export type AuthProps = {
     setIsLoggedIn: (value: boolean) => void;
   };
   export type RootStackParamList = {
     ConnectZone: undefined;
-    Section: { groupName: string };
+    SectionScreen: { groupName: string };
+    GroupChat: {sectionName: string};
   };
   export type Message = {
     id: string;
@@ -89,6 +89,7 @@ export type localDeal = {
   export type MainStackParamList = {
     MainTabs: undefined; 
     ViewProfile: { userId: string };
+    GroupChat: {sectionName: string}
     DirectMessageScreen: {username: string | undefined};
   };
 
@@ -106,6 +107,7 @@ export type NavigationProp = NativeStackNavigationProp<MainStackParamList, 'Main
 export type ViewProfileRouteProp = RouteProp<MainStackParamList, 'ViewProfile'>;
 export type DirectMessageProp = RouteProp<MainStackParamList, 'DirectMessageScreen'>;
 export type ViewProfileNavigationProp = StackNavigationProp<MainStackParamList, 'ViewProfile'>;
+export type GroupChatRouteProp = RouteProp<RootStackParamList, 'GroupChat'>;
 
 export type ProfileIconProps = {
     userId: string;

@@ -10,6 +10,7 @@ import ViewProfile from '../screens/Profile/ViewProfile';
 import ConnectZoneStack from './ConnectZoneStack';
 import { AuthProps, MainStackParamList } from '../types/types';
 import DirectMessageScreen from '../screens/Profile/DirectMessageScreen';
+import GroupChat from '../screens/ConnectZone/GroupChat';
 
 const Tab = createBottomTabNavigator();
 const  Stack = createNativeStackNavigator<MainStackParamList>();

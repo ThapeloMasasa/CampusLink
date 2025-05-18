@@ -2,11 +2,10 @@ import React from 'react';
 import { View, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../../types/types'; 
 import GroupCard from '../../components/GroupCard';
-import { groupItem } from '../../types/types';
+import { groupItem, RootStackParamList   } from '../../types/types';
 
-type ConnectZoneNavigationProp = StackNavigationProp<RootStackParamList, 'ConnectZone'>;
+type ConnectZoneNavigationProp = StackNavigationProp<RootStackParamList, 'ConnectZone', 'GroupChat'>;
 
 
 const images = {'CS': require('../../../assets/CS.png'),
@@ -35,7 +34,7 @@ const ConnectZoneScreen = () => {
            <GroupCard
                 groupName= {item.name}
                 isOpen={false}
-                onPress={() => navigation.navigate('Section', { groupName: item.name })}
+                onPress={() => navigation.navigate('SectionScreen', { groupName: item.name })}
                 backgroundImage={item.image}
 />
           </TouchableOpacity>
