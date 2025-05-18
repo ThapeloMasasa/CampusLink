@@ -5,17 +5,17 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import ProfileIcon from './ProfileIcon';
 import { useNavigation } from '@react-navigation/native';
 
-const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price,message }) => {
+const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price,message, userId }) => {
       const navigation = useNavigation<ViewProfileNavigationProp>();
       const [modalVisible, setModalVisible] = useState(false)
-
+      console.log("out here", userId)
   
   return (
     <View style={styles.card}>
       <Image source={image} style={styles.productImage} resizeMode="cover" />
 
       <View style={styles.bottomRow}>
-      <ProfileIcon  userId='Masasa'/>
+      <ProfileIcon  userId={userId}/>
 
         <Pressable style={styles.dealButton} onPress={()=>setModalVisible(true)}>
           <Text style={styles.dealText}>Deal</Text>
@@ -40,7 +40,7 @@ const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price,message 
     <Icon name="envelope" size={28} color="#555" />
   </Pressable>
 
-  <ProfileIcon  userId='Masasa'/>
+  <ProfileIcon  userId={userId}/>
 
   <Pressable onPress={() => navigation.navigate('DirectMessageScreen', { username: 'Masasa' })}>
     <Icon name="comment" size={28} color="#555" />

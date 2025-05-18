@@ -4,7 +4,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useRoute } from '@react-navigation/native';
 import { ViewProfileRouteProp, ViewProfileNavigationProp, post, currentUser  } from '../../types/types';
 import { useNavigation } from '@react-navigation/native';
-import { Profile } from '../../types/types';
 import Post from '../../components/Post';
 import { useGlobalContext } from '../../contexts/GlobalContext';
 
@@ -17,10 +16,9 @@ const ViewProfile = () => {
   const [posts, setPosts] = useState<post[]| null>(null)
   const {state} = useGlobalContext();
 
-  const loadUserFromContext = (userId: string) => {
+  const loadUserFromContext = (userId: string | null) => {
   try {
     const profileData = state.allProfiles?.find(profile => profile.id === userId);
-    console.log("Heee", state.allProfiles)
     const postsData = (state.allPosts || [])
       .filter(post => post.owner === userId)
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());

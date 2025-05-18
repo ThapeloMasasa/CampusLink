@@ -62,7 +62,7 @@ export interface PostProps {
   likes: number;
   reactions: any[]; 
   mypost: boolean;
-  userId: string
+  userId: string | null
 }
 
 export type deal = {
@@ -74,6 +74,7 @@ export type StudentDealCardProps = {
   image: ImageSourcePropType;
   price: string;
   message: string;
+  userId: string | null;
 };
 
 
@@ -88,7 +89,7 @@ export type localDeal = {
 
   export type MainStackParamList = {
     MainTabs: undefined; 
-    ViewProfile: { userId: string };
+    ViewProfile: { userId: string | null };
     GroupChat: {sectionName: string}
     DirectMessageScreen: {username: string | undefined};
   };
@@ -110,7 +111,7 @@ export type ViewProfileNavigationProp = StackNavigationProp<MainStackParamList, 
 export type GroupChatRouteProp = RouteProp<RootStackParamList, 'GroupChat'>;
 
 export type ProfileIconProps = {
-    userId: string;
+    userId: string | null;
   };
 
 export type groupItem ={

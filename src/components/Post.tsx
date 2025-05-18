@@ -1,12 +1,23 @@
-import { View, Text, StyleSheet, Image } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Pressable, ScrollView } from 'react-native';
 import ProfileIcon from './ProfileIcon';
 import { PostProps } from '../types/types';
 
-const Post: React.FC<PostProps> = ({ title, content, image, likes, reactions, mypost, userId }) => {
+const Post: React.FC<PostProps> = ({ title, content, image, likes,  mypost, userId }) => {
+  const [likeCount, setLikeCount] = useState(likes);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleLikePress = () => {
+    setLikeCount(prev => prev + 1);
+  };
+  const reactions = ['😀', '😀', '😀','😀','😀', '😡', '😡', '😡', '🎉', '🎉', '🎉', '😀', '😡', '🎉'];
+  const reactionCounts = reactions.reduce((acc: Record<string, number>, emoji: string) => {
+    acc[emoji] = (acc[emoji] || 0) + 1;
+    return acc;
+  }, {});
+
   return (
     <View style={styles.postContainer}>
-      
       {/* Top image */}
       {image && (
         <View style={styles.imageContainer}>
@@ -21,21 +32,52 @@ const Post: React.FC<PostProps> = ({ title, content, image, likes, reactions, my
       </View>
 
       {/* Bottom: reactions, profile, shares */}
-      {
-        mypost ? <View style={styles.statsRow}>
-        <Text style={styles.statText}>👍  {likes}</Text>
-        <Text style={styles.statText}>🙂  {reactions.length > 0 ? reactions.length: 0}</Text>
-      </View> :<View style={styles.statsRow}>
-        <Text style={styles.statText}>👍  {likes}</Text>
-        <ProfileIcon userId={userId} />
-        <Text style={styles.statText}>🙂  {reactions.length > 0 ? reactions.length: 0}</Text>
+      <View style={styles.statsRow}>
+        <TouchableOpacity onPress={handleLikePress}>
+          <Text style={styles.statText}>👍 {likeCount}</Text>
+        </TouchableOpacity>
+
+        {!mypost && <ProfileIcon userId={userId} />}
+
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <Text style={styles.statText}>🙂 {reactions.length > 0 ? reactions.length : 0}</Text>
+        </TouchableOpacity>
       </View>
 
-      }
+      {/* Reaction Breakdown Modal */}
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Reactions</Text>
+            <ScrollView>
+              {Object.entries(reactionCounts).map(([emoji, count]) => {
+  const countNumber = count as number;
+  return (
+    <Text key={emoji} style={styles.reactionText}>
+      {emoji} {countNumber} 
+    </Text>
+  );
+})}
 
+              {Object.keys(reactionCounts).length === 0 && (
+                <Text style={styles.reactionText}>No reactions yet</Text>
+              )}
+            </ScrollView>
+            <Pressable style={styles.closeButton} onPress={() => setModalVisible(false)}>
+              <Text style={{ color: 'white', fontWeight: 'bold' }}>Close</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   postContainer: {
     width: '100%',
@@ -86,7 +128,36 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#6B7280',
   },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 16,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  reactionText: {
+    fontSize: 16,
+    marginVertical: 4,
+    color: '#111827',
+  },
+  closeButton: {
+    marginTop: 20,
+    backgroundColor: '#3B82F6',
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    borderRadius: 10,
+  },
 });
-
 
 export default Post;

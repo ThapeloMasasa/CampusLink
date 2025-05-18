@@ -2,6 +2,7 @@ import React from 'react';
 import {ScrollView, TouchableOpacity } from 'react-native';
 import StudentDealCard from '../../components/StudentDealCard';
 import { deal } from '../../types/types';
+import { useGlobalContext } from '../../contexts/GlobalContext';
 
 
 const images = {'TV': require('../../../assets/TV.png'),
@@ -20,6 +21,7 @@ const deals: deal[]= [{price: '45', image: images['TV'], message: "Please contac
                       {price: '0', image: images['Coffee'], message: "I am actually getting rid of it for free, hit me up by friday noon, 6461233445"}]
 
 const StudentDealsScreen: React.FC = () => {
+  const {state} = useGlobalContext();
   return (
     <ScrollView>
       {
@@ -29,6 +31,7 @@ const StudentDealsScreen: React.FC = () => {
            image={deal.image}
            price= {deal.price}
            message = {deal.message}
+           userId= {state.currentUserId}
          />
         </TouchableOpacity>
        )

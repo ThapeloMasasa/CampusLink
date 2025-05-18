@@ -10,7 +10,7 @@ export default function ProfileIcon({ userId}: ProfileIconProps) {
   const navigation = useNavigation<NavigationProp>();
 
   const handlePress = () => {
-    navigation.navigate('ViewProfile', { userId });
+    navigation.navigate('ViewProfile', { userId: userId });
   };
 
   return (
