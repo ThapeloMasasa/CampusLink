@@ -1,44 +1,112 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
-import ProfileIcon from '../../components/ProfileIcon'; 
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, Alert
+} from 'react-native';
+import { supabase } from '../../../supabaseClient';
+import ProfileIcon from '../../components/ProfileIcon';
 import { DirectMessage, DirectMessageScreenProps } from '../../types/types';
+import { useGlobalContext } from '../../contexts/GlobalContext';
 
 const DirectMessageScreen: React.FC<DirectMessageScreenProps> = ({ route }) => {
   const { username } = route.params;
-  
-  const [messages, setMessages] = useState<DirectMessage[]>([
-    { id: '1', sender: 'other', text: 'Hi there!' },
-    { id: '2', sender: 'me', text: 'Hello!' },
-    { id: '3', sender: 'other', text: 'How are you?' },
-  ]);
+  let countMessages = Math.random()
+  const { state } = useGlobalContext();
+  const [messages, setMessages] = useState<DirectMessage[]>([]);
   const [inputText, setInputText] = useState('');
-
   const flatListRef = useRef<FlatList>(null);
+  const userId = state.currentUserId;
+  const [receiverId, setReceiverId] = useState<string | null>(null);
+  console.log("lets see", username)
+  useEffect(() => {
+    countMessages += 1
+    if (userId) {
+      loadConversation();
+    }
+  }, [userId]);
 
-  const handleSend = () => {
-    if (inputText.trim() === '') return;
-    setMessages(prev => [...prev, { id: Date.now().toString(), sender: 'me', text: inputText }]);
-    setInputText('');
+  const loadConversation = async () => {
+    try {
+      // 1. Get receiver ID
+      const { data: targetUser, error: userErr } = await supabase
+        .from('Profile')
+        .select('id')
+        .eq('full_name', username)
+        .single();
+
+      if (userErr || !targetUser) throw new Error('User not found');
+      const otherUserId = targetUser.id;
+
+      setReceiverId(otherUserId);
+
+      // 2. Fetch messages between current user and other user
+      const { data: msgs, error: msgErr } = await supabase
+        .from('Messages')
+        .select('*')
+        .or(`and(sender_id.eq.${userId},receiver_id.eq.${otherUserId}),and(sender_id.eq.${otherUserId},receiver_id.eq.${userId})`)
+        .eq('is_group', false)
+        .order('created_at', { ascending: true });
+
+      if (msgErr) throw msgErr;
+
+      setMessages(
+        msgs.map((msg) => ({
+          id: msg.message_id,
+          sender: msg.sender_id === userId ? 'me' : 'other',
+          text: msg.content,
+        }))
+      );
+    } catch (err) {
+      console.error(err);
+      Alert.alert('Error loading conversation');
+    }
   };
 
+  const handleSend = async () => {
+    if (inputText.trim() === '' || !receiverId || !userId) return;
+
+    const { data, error } = await supabase
+      .from('Messages')
+      .insert([
+        {
+          sender_id: userId,
+          receiver_id: receiverId,
+          is_group: false,
+          content: inputText,
+        },
+      ])
+      .select()
+      .single();
+
+    if (!error && data) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: countMessages.toString(),
+          sender: 'me',
+          text: inputText,
+        },
+      ]);
+      setInputText('');
+    } else {
+      console.log(error)
+    }
+  };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={100}
     >
-      {/* Top Bar */}
       <View style={styles.topBar}>
         <ProfileIcon userId={username} />
         <Text style={styles.username}>{username}</Text>
       </View>
 
-      {/* Messages */}
       <FlatList
         ref={flatListRef}
         data={messages}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={[
             styles.messageBubble,
@@ -50,7 +118,6 @@ const DirectMessageScreen: React.FC<DirectMessageScreenProps> = ({ route }) => {
         contentContainerStyle={styles.messagesContainer}
       />
 
-      {/* Input */}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}

@@ -95,7 +95,7 @@ export type localDeal = {
   };
 
   export interface DirectMessage {
-    id: string;
+    id: string
     sender: 'me' | 'other';
     text: string;
   }

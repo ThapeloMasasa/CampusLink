@@ -50,7 +50,7 @@ const GroupChat = () => {
 
   const [messages, setMessages] = useState<{ [key: string]: Message[] }>(initialMessagesData);
   const [newMessage, setNewMessage] = useState<string>('');
-
+  
   useLayoutEffect(() => {
     navigation.setOptions({
       title: sectionName,

@@ -98,6 +98,18 @@ return (
 
 
 const styles = StyleSheet.create({
+  horizontalSeparator: {
+  height: 1,
+  backgroundColor: '#ccc',
+  marginVertical: 10,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 1 },
+  shadowOpacity: 0.1,
+  shadowRadius: 1,
+  elevation: 2, // for Android
+  width: '100%',
+},
+
   separator: {
     width: 1,
     backgroundColor: '#ccc',

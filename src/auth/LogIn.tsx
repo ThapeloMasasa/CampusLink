@@ -62,14 +62,12 @@ const handleLogin = async () => {
     const { data: allProfiles, error: profilesError } = await supabase.from('Profile').select('*');
     if (!profilesError) dispatch({ type: 'SET_PROFILES', payload: allProfiles });
     if (profilesError) console.log(profileError)
-      console.log("your profiles",allProfiles)
     // 5. Dispatch login
     dispatch({
       type: 'LOGIN',
       payload: { isLoggedIn: true, currentUserId: user.id, currentProfile: profileData },
     });
 
-    console.log("Done logging in");
 
   } catch (e) {
     console.log("Unexpected error during login:", e);

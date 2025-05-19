@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Pressable, ScrollView } from 'react-native';
 import ProfileIcon from './ProfileIcon';
 import { PostProps } from '../types/types';
+import { useGlobalContext } from '../contexts/GlobalContext';
 
 const Post: React.FC<PostProps> = ({ title, content, image, likes,  mypost, userId }) => {
   const [likeCount, setLikeCount] = useState(likes);
   const [modalVisible, setModalVisible] = useState(false);
-
+  const { state } = useGlobalContext();
   const handleLikePress = () => {
     setLikeCount(prev => prev + 1);
   };
@@ -36,9 +37,8 @@ const Post: React.FC<PostProps> = ({ title, content, image, likes,  mypost, user
         <TouchableOpacity onPress={handleLikePress}>
           <Text style={styles.statText}>👍 {likeCount}</Text>
         </TouchableOpacity>
-
-        {!mypost && <ProfileIcon userId={userId} />}
-
+       {state.currentUserId !== userId && !mypost && <ProfileIcon userId={userId} />}
+        
         <TouchableOpacity onPress={() => setModalVisible(true)}>
           <Text style={styles.statText}>🙂 {reactions.length > 0 ? reactions.length : 0}</Text>
         </TouchableOpacity>
@@ -80,17 +80,19 @@ const Post: React.FC<PostProps> = ({ title, content, image, likes,  mypost, user
 
 const styles = StyleSheet.create({
   postContainer: {
-    width: '100%',
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    marginHorizontal: 16,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 4,
-    overflow: 'hidden',
-  },
+  width: '100%',
+  backgroundColor: '#ffffff',
+  borderRadius: 12,
+  marginHorizontal: 16,
+  marginBottom: 20,
+  shadowColor: '#000',
+  shadowOpacity: 0.08,
+  shadowRadius: 6,
+  shadowOffset: { width: 0, height: 10 }, // ⬅️ this adds shadow to the bottom
+  elevation: 4, // Android shadow
+  overflow: 'hidden',
+},
+
   imageContainer: {
     width: '100%',
     height: 220,
