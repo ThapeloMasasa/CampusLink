@@ -3,14 +3,16 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ConnectZoneScreen from '../screens/ConnectZone/ConnectZoneScreen';
 import SectionScreen from '../screens/ConnectZone/SectionScreen'; 
 import GroupChat from '../screens/ConnectZone/GroupChat';
+import { RootStackParamList } from '../types/types';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
 
 const ConnectZoneStack = () => {
   return (
     <Stack.Navigator>
   <Stack.Screen 
-    name="ConnectZoneHome" 
+    name="ConnectZone" 
     component={ConnectZoneScreen} 
     options={{ title: '🤝Connect Zone🤝' }} 
   />

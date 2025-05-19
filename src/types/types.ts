@@ -1,7 +1,7 @@
 import { Image, ImageSourcePropType } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
+import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 
 export type AuthProps = {
     setIsLoggedIn: (value: boolean) => void;
@@ -9,7 +9,7 @@ export type AuthProps = {
   export type RootStackParamList = {
     ConnectZone: undefined;
     SectionScreen: { group: groupItem};
-    GroupChat: {sectionName: string};
+    GroupChat: {section: string, groupName: string};
   };
   export type Message = {
     id: string;
@@ -90,7 +90,7 @@ export type localDeal = {
   export type MainStackParamList = {
     MainTabs: undefined; 
     ViewProfile: { userId: string | null };
-    GroupChat: {sectionName: string}
+    GroupChat: {sections: string[]| null}
     DirectMessageScreen: {username: string | undefined};
   };
 
@@ -102,9 +102,7 @@ export type localDeal = {
  export interface DirectMessageScreenProps {
     route: any;
   }
-   export interface SectionScreenProps {
-    route: any;
-  }
+ export type SectionScreenProps = StackScreenProps<RootStackParamList, 'SectionScreen'>;
 export type NavigationProp = NativeStackNavigationProp<MainStackParamList, 'MainTabs'>;
 export type ViewProfileRouteProp = RouteProp<MainStackParamList, 'ViewProfile'>;
 export type DirectMessageProp = RouteProp<MainStackParamList, 'DirectMessageScreen'>;
@@ -118,7 +116,7 @@ export type ProfileIconProps = {
 export type groupItem ={
     name: string;
     image: Image;
-    sections: any[]
+    sections: string[]
   }
   export type FlipSpaceTabParamList = {
     Students: undefined;

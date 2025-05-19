@@ -11,16 +11,17 @@ import { GroupChatRouteProp } from '../../types/types';
 
 const GroupChat = () => {
   const route = useRoute<GroupChatRouteProp>();
-  const { sectionName } = route.params;
+  const { section,groupName } = route.params;
   const navigation = useNavigation();
   const { state } = useGlobalContext();
   let countMessage = Math.floor(Math.random() * 1000000000);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
-
+  const name = groupName+" "+section
+  console.log(name)
   useLayoutEffect(() => {
-    navigation.setOptions({ title: sectionName });
-  }, [navigation, sectionName]);
+    navigation.setOptions({ title: section });
+  }, [navigation, section]);
 
   useEffect(() => {
     countMessage += 1
@@ -32,7 +33,7 @@ const GroupChat = () => {
     .from('Messages')
     .select('*')
     .eq('is_group', true)
-    .eq('group_id', sectionName)
+    .eq('group_id', 'General')
     .order('created_at', { ascending: true });
 
   if (error) {
@@ -49,7 +50,7 @@ const GroupChat = () => {
       id:countMessage,
       content: newMessage,
       sender_id: state.currentUserId,
-      group_id: sectionName,
+      group_id: section,
       is_group: true,
     },
   ]);

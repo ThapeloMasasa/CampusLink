@@ -9,7 +9,7 @@ import { useGlobalContext } from '../../contexts/GlobalContext';
 
 const DirectMessageScreen: React.FC<DirectMessageScreenProps> = ({ route }) => {
   const { username } = route.params;
-  let countMessages = Math.random()
+  let countMessages =  Math.floor(Math.random() * 1000000000);
   const { state } = useGlobalContext();
   const [messages, setMessages] = useState<DirectMessage[]>([]);
   const [inputText, setInputText] = useState('');

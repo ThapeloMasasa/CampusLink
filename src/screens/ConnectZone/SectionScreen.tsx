@@ -1,18 +1,11 @@
 // screens/SectionScreen.tsx
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import {  RootStackParamList, SectionScreenProps } from '../../types/types';
+import { SectionScreenProps } from '../../types/types';
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+const SectionScreen = ({ route, navigation }: SectionScreenProps) => {
+  const { group } = route.params;
 
-
-
-const SectionScreen : React.FC<SectionScreenProps>  = ({route}) => {
-  const navigation = useNavigation<NavigationProp>();
-  const group = route.params
-  console.log("the group",group.sections)
   return (
     <View style={styles.container}>
       <FlatList
@@ -21,7 +14,12 @@ const SectionScreen : React.FC<SectionScreenProps>  = ({route}) => {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.sectionButton}
-            onPress={() => navigation.navigate('GroupChat', { sectionName: item })}
+            onPress={() =>
+              navigation.navigate('GroupChat', {
+                section: item,
+                groupName: group.name,
+              })
+            }
           >
             <Text style={styles.sectionText}>{item}</Text>
           </TouchableOpacity>
