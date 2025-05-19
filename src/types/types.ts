@@ -8,13 +8,13 @@ export type AuthProps = {
   };
   export type RootStackParamList = {
     ConnectZone: undefined;
-    SectionScreen: { groupName: string };
+    SectionScreen: { group: groupItem};
     GroupChat: {sectionName: string};
   };
   export type Message = {
     id: string;
-    text: string;
-    sender: 'me' | 'group';
+    content: string;
+    sender_id: string;
     profile: string
   };
 // types.ts
@@ -96,15 +96,16 @@ export type localDeal = {
 
   export interface DirectMessage {
     id: string
-    sender: 'me' | 'other';
-    text: string;
+    sender: string | null;
+    content: string;
   }
  export interface DirectMessageScreenProps {
     route: any;
   }
+   export interface SectionScreenProps {
+    route: any;
+  }
 export type NavigationProp = NativeStackNavigationProp<MainStackParamList, 'MainTabs'>;
-
-
 export type ViewProfileRouteProp = RouteProp<MainStackParamList, 'ViewProfile'>;
 export type DirectMessageProp = RouteProp<MainStackParamList, 'DirectMessageScreen'>;
 export type ViewProfileNavigationProp = StackNavigationProp<MainStackParamList, 'ViewProfile'>;
@@ -117,6 +118,7 @@ export type ProfileIconProps = {
 export type groupItem ={
     name: string;
     image: Image;
+    sections: any[]
   }
   export type FlipSpaceTabParamList = {
     Students: undefined;

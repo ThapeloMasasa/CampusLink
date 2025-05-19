@@ -15,11 +15,28 @@ const images = {'CS': require('../../../assets/CS.png'),
                 
 }
 const groups: groupItem[] = [
-  { name: 'Computer Science', image: images['CS'] },
-  { name: 'Finance', image: images['fin'] },
-  { name: 'Law', image: images['law'] },
-  { name: 'Sociology', image: images['socio'] },
+  {
+    name: 'Computer Science',
+    image: images['CS'],
+    sections: ['General', 'LeetCode', 'Resumes', 'Projects']
+  },
+  {
+    name: 'Finance',
+    image: images['fin'],
+    sections: ['General', 'Internships', 'Valuation', 'Resume Reviews', 'Case Studies']
+  },
+  {
+    name: 'Law',
+    image: images['law'],
+    sections: ['General', 'Case Discussions', 'Internships', 'Moot Court', 'LSAT Prep']
+  },
+  {
+    name: 'Sociology',
+    image: images['socio'],
+    sections: ['General', 'Research Topics', 'Debates', 'Resume Help', 'Projects']
+  }
 ];
+
 const ConnectZoneScreen = () => {
   const navigation = useNavigation<ConnectZoneNavigationProp>();
 
@@ -34,7 +51,7 @@ const ConnectZoneScreen = () => {
            <GroupCard
                 groupName= {item.name}
                 isOpen={false}
-                onPress={() => navigation.navigate('SectionScreen', { groupName: item.name })}
+                onPress={() => navigation.navigate('SectionScreen', { group: item })}
                 backgroundImage={item.image}
 />
           </TouchableOpacity>

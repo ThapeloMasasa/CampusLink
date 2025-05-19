@@ -1,78 +1,87 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
+  View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform,
 } from 'react-native';
-import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
-import { RootStackParamList, Message } from '../../types/types';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useRoute, useNavigation } from '@react-navigation/native';
+import { supabase } from '../../../supabaseClient';
+import { useGlobalContext } from '../../contexts/GlobalContext';
+import { Message } from '../../types/types';
 import ProfileIcon from '../../components/ProfileIcon';
 import { GroupChatRouteProp } from '../../types/types';
-
-const initialMessagesData: { [key: string]: Message[] } = {
-  General: [
-    { id: '1', text: 'Hello everyone!', sender: 'group', profile: 'Masasa' },
-    { id: '2', text: 'Welcome to General', sender: 'group', profile: 'Katie' },
-    { id: '3', text: 'Hey there!', sender: 'me', profile: '' },
-  ],
-  LeetCode: [
-    { id: '4', text: 'Any tips for Two Sum?', sender: 'group', profile: 'Masasa' },
-    { id: '5', text: 'I usually use hashmaps!', sender: 'me', profile: '' },
-    { id: '6', text: 'Let’s learn DFS vs BFS', sender: 'group', profile: 'Danny' },
-    { id: '7', text: 'Dynamic programming is challenging', sender: 'me', profile: '' },
-  ],
-  Resumes: [
-    { id: '8', text: 'I need help with my resume', sender: 'group', profile: 'Masasa' },
-    { id: '9', text: 'Any tips for resume projects?', sender: 'me', profile: '' },
-    { id: '10', text: 'Who wants to critique my resume?', sender: 'group', profile: 'John' },
-    { id: '11', text: 'Resume tips, anyone?', sender: 'me', profile: '' },
-  ],
-  Projects: [
-    { id: '12', text: 'React developer projects to work on', sender: 'group', profile: 'Lenox' },
-    { id: '13', text: 'Java projects are the best', sender: 'me', profile: '' },
-    { id: '14', text: 'Arduino is meant for C++', sender: 'group', profile: 'Miranda' },
-    { id: '15', text: 'I will try that', sender: 'me', profile: '' },
-  ],
-};
-
-let messageCount = 16;
 
 const GroupChat = () => {
   const route = useRoute<GroupChatRouteProp>();
   const { sectionName } = route.params;
   const navigation = useNavigation();
+  const { state } = useGlobalContext();
+  let countMessage = Math.floor(Math.random() * 1000000000);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [newMessage, setNewMessage] = useState('');
 
-  const [messages, setMessages] = useState<{ [key: string]: Message[] }>(initialMessagesData);
-  const [newMessage, setNewMessage] = useState<string>('');
-  
   useLayoutEffect(() => {
-    navigation.setOptions({
-      title: sectionName,
-    });
+    navigation.setOptions({ title: sectionName });
   }, [navigation, sectionName]);
 
-  const handleSendMessage = () => {
-    if (!newMessage.trim()) return;
+  useEffect(() => {
+    countMessage += 1
+    fetchMessages();
+  }, []);
 
-    messageCount += 1;
-    const newMsg: Message = {
-      id: messageCount.toString(),
-      text: newMessage,
-      sender: 'me',
-      profile: '',
-    };
+  const fetchMessages = async () => {
+  const { data, error } = await supabase
+    .from('Messages')
+    .select('*')
+    .eq('is_group', true)
+    .eq('group_id', sectionName)
+    .order('created_at', { ascending: true });
 
-    setMessages((prev) => ({
-      ...prev,
-      [sectionName]: [...(prev[sectionName] || []), newMsg],
-    }));
+  if (error) {
+    console.error('Error fetching group messages:', error);
+  } else {
+    setMessages(data || []);
+  }
+};
+  const handleSendMessage = async () => {
+  if (!newMessage.trim()) return;
+
+  const { data, error } = await supabase.from('Messages').insert([
+    {
+      id:countMessage,
+      content: newMessage,
+      sender_id: state.currentUserId,
+      group_id: sectionName,
+      is_group: true,
+    },
+  ]);
+
+  if (error) {
+    console.error('Error sending group message:', error);
+  } else {
+    fetchMessages();
     setNewMessage('');
+  }
+};
+  const renderItem = ({ item }: { item: Message }) => {
+    const isCurrentUser = item.sender_id === state.currentUserId;
+
+    return (
+      <View
+        style={[
+          styles.messageBubble,
+          isCurrentUser ? styles.myMessage : styles.userMessage,
+          !isCurrentUser && { flexDirection: 'row', alignItems: 'center' },
+        ]}
+      >
+        {!isCurrentUser ? (
+          <>
+            <ProfileIcon userId={item.sender_id} />
+            <Text style={styles.groupMessage}>{item.content}</Text>
+          </>
+        ) : (
+          <Text>{item.content}</Text>
+        )}
+      </View>
+    );
   };
 
   return (
@@ -83,26 +92,9 @@ const GroupChat = () => {
     >
       <View style={styles.container}>
         <FlatList
-          data={messages[sectionName] || []}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View
-              style={[
-                styles.messageBubble,
-                item.sender === 'me' ? styles.myMessage : styles.userMessage,
-                item.sender === 'group' && { flexDirection: 'row', alignItems: 'center' },
-              ]}
-            >
-              {item.sender === 'group' ? (
-                <>
-                  <ProfileIcon userId={item.profile} />
-                  <Text style={styles.groupMessage}>{item.text}</Text>
-                </>
-              ) : (
-                <Text>{item.text}</Text>
-              )}
-            </View>
-          )}
+          data={messages}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
         />
 
         <View style={styles.inputArea}>

@@ -3,19 +3,20 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import {  RootStackParamList } from '../../types/types';
+import {  RootStackParamList, SectionScreenProps } from '../../types/types';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-const sections = ['General', 'LeetCode', 'Resumes', 'Projects'];
 
-const SectionScreen = () => {
+
+const SectionScreen : React.FC<SectionScreenProps>  = ({route}) => {
   const navigation = useNavigation<NavigationProp>();
-
+  const group = route.params
+  console.log("the group",group.sections)
   return (
     <View style={styles.container}>
       <FlatList
-        data={sections}
+        data={group.sections}
         keyExtractor={(item) => item}
         renderItem={({ item }) => (
           <TouchableOpacity

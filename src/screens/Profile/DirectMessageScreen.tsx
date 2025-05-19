@@ -16,7 +16,7 @@ const DirectMessageScreen: React.FC<DirectMessageScreenProps> = ({ route }) => {
   const flatListRef = useRef<FlatList>(null);
   const userId = state.currentUserId;
   const [receiverId, setReceiverId] = useState<string | null>(null);
-  console.log("lets see", username)
+
   useEffect(() => {
     countMessages += 1
     if (userId) {
@@ -50,9 +50,9 @@ const DirectMessageScreen: React.FC<DirectMessageScreenProps> = ({ route }) => {
 
       setMessages(
         msgs.map((msg) => ({
-          id: msg.message_id,
+          id: msg.id,
           sender: msg.sender_id === userId ? 'me' : 'other',
-          text: msg.content,
+          content: msg.content,
         }))
       );
     } catch (err) {
@@ -82,8 +82,8 @@ const DirectMessageScreen: React.FC<DirectMessageScreenProps> = ({ route }) => {
         ...prev,
         {
           id: countMessages.toString(),
-          sender: 'me',
-          text: inputText,
+          sender: state.currentUserId,
+          content: inputText,
         },
       ]);
       setInputText('');
@@ -112,7 +112,7 @@ const DirectMessageScreen: React.FC<DirectMessageScreenProps> = ({ route }) => {
             styles.messageBubble,
             item.sender === 'me' ? styles.myMessage : styles.theirMessage
           ]}>
-            <Text style={styles.messageText}>{item.text}</Text>
+            <Text style={styles.messageText}>{item.content}</Text>
           </View>
         )}
         contentContainerStyle={styles.messagesContainer}
