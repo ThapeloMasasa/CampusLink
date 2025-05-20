@@ -16,7 +16,7 @@ const Post: React.FC<PostProps> = ({ title, content, image, likes,  mypost, user
     acc[emoji] = (acc[emoji] || 0) + 1;
     return acc;
   }, {});
-
+  
   return (
     <View style={styles.postContainer}>
       {/* Top image */}

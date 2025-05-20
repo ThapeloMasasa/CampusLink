@@ -9,9 +9,14 @@ import {
   TextInput,
   Image,
 } from 'react-native';
+import { Buffer } from 'buffer';
+if (typeof global.Buffer === 'undefined') {
+  global.Buffer = Buffer;
+}
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
+
 import Post from './Post';
 import { post } from '../types/types';
 import { supabase } from '../../supabaseClient';
@@ -42,16 +47,18 @@ const PostsTab = ({ posts }: { posts: post[] }) => {
 
   const uploadImageToSupabase = async (uri: string) => {
   try {
-    // fetch the local file and get the blob directly
-    const response = await fetch(uri);
-    const blob = await response.blob();
+    const base64 = await FileSystem.readAsStringAsync(uri, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
 
     const fileName = `${state.currentUserId}/post-${Date.now()}.jpg`;
+    const contentType = 'image/jpeg';
 
     const { data, error } = await supabase.storage
       .from('posts')
-      .upload(fileName, blob, {
-        contentType: 'image/jpeg',
+      .upload(fileName, Buffer.from(base64, 'base64'), {
+        contentType,
+        upsert: true,
       });
 
     if (error) {

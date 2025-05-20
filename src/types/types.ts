@@ -73,8 +73,8 @@ export type deal = {
 export type StudentDealCardProps = {
   image: ImageSourcePropType;
   price: string;
-  message: string;
-  userId: string | null;
+  instructions: string;
+  userId: string;
 };
 
 

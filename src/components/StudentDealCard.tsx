@@ -1,65 +1,143 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, Pressable,  Modal, Button,ScrollView, SafeAreaView  } from 'react-native';
-import { StudentDealCardProps, ViewProfileNavigationProp} from '../types/types';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Pressable,
+  Modal,
+  Button,
+  ScrollView,
+  SafeAreaView,
+  TextInput,
+  Alert,
+} from 'react-native';
+import { StudentDealCardProps, ViewProfileNavigationProp } from '../types/types';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ProfileIcon from './ProfileIcon';
 import { useNavigation } from '@react-navigation/native';
+import { useGlobalContext } from '../contexts/GlobalContext';
+// Import your supabase client here (adjust path as needed)
+import { supabase } from '../../supabaseClient';
 
-const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price,message, userId }) => {
-      const navigation = useNavigation<ViewProfileNavigationProp>();
-      const [modalVisible, setModalVisible] = useState(false)
-      console.log("out here", userId)
-  
+const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price, instructions, userId }) => {
+  const navigation = useNavigation<ViewProfileNavigationProp>();
+  const { state } = useGlobalContext();
+
+  const [modalVisible, setModalVisible] = useState(false);
+
+  // For editing instructions and price if current user
+  const [editedInstructions, setEditedInstructions] = useState(instructions);
+  const [editedPrice, setEditedPrice] = useState(String(price));
+
+  const isCurrentUser = userId === state.currentUserId;
+
+  const handleSave = async () => {
+    const priceNum = parseFloat(editedPrice);
+    if (isNaN(priceNum) || priceNum < 0) {
+      Alert.alert('Invalid Price', 'Please enter a valid non-negative number for price.');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('deals')
+        .update({ instructions: editedInstructions, price: priceNum })
+        .eq('user_id', userId);
+
+      if (error) {
+        Alert.alert('Update Failed', error.message);
+        return;
+      }
+
+      Alert.alert('Success', 'Deal updated successfully!');
+      setModalVisible(false);
+    } catch (error) {
+      Alert.alert('Error', 'Something went wrong while updating the deal.');
+    }
+  };
+
+  const handleCancel = () => {
+    // Reset edits and close modal
+    setEditedInstructions(instructions);
+    setEditedPrice(String(price));
+    setModalVisible(false);
+  };
+
   return (
     <View style={styles.card}>
       <Image source={image} style={styles.productImage} resizeMode="cover" />
 
       <View style={styles.bottomRow}>
-      <ProfileIcon  userId={userId}/>
+        {!isCurrentUser && <ProfileIcon userId={userId} />}
 
-        <Pressable style={styles.dealButton} onPress={()=>setModalVisible(true)}>
-          <Text style={styles.dealText}>Deal</Text>
+        <Pressable style={styles.dealButton} onPress={() => setModalVisible(true)}>
+          <Text style={styles.dealText}>{isCurrentUser ? 'Instructions' : 'Deal'}</Text>
         </Pressable>
 
         <Text style={styles.priceTag}>${price}</Text>
+
         <Modal
-  animationType="slide"
-  transparent={true}
-  visible={modalVisible}
-  onRequestClose={() => setModalVisible(false)}
->
-  <SafeAreaView style={styles.modalOverlay}>
-    <View style={styles.modalContent}>
-    <Text style={styles.modalTitle}>📌 Deal Instructions</Text>
-      <Text style={styles.modalMessage}>
-  {message}
-</Text>
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <SafeAreaView style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>📌 Deal Instructions</Text>
 
-<View style={styles.modalActions}>
-  <Pressable onPress={() => console.log('Email')}>
-    <Icon name="envelope" size={28} color="#555" />
-  </Pressable>
+              {isCurrentUser ? (
+                <>
+                  {/* Editable instructions input */}
+                  <TextInput
+                    style={styles.instructionsInput}
+                    multiline
+                    value={editedInstructions}
+                    onChangeText={setEditedInstructions}
+                    placeholder="Enter instructions"
+                  />
+                 <View style={styles.price}>
 
-  <ProfileIcon  userId={userId}/>
+                 <Text style = {styles.priceText}>Price</Text>
+                  <TextInput
+                    style={styles.priceInput}
+                    keyboardType="numeric"
+                    value={editedPrice}
+                    onChangeText={setEditedPrice}
+                    placeholder="Price"
+                    maxLength={10}
+                  />
+                  </View>
 
-  <Pressable onPress={() => navigation.navigate('DirectMessageScreen', { username: 'Masasa' })}>
-    <Icon name="comment" size={28} color="#555" />
-  </Pressable>
-</View>
-      <Button title="Done" onPress={() => setModalVisible(false)} />
-    </View>
-  </SafeAreaView>
-</Modal>
+                  {/* Buttons side by side */}
+                  <View style={styles.modalButtonsRow}>
+                    <Pressable style={[styles.modalButton, styles.cancelButton]} onPress={handleCancel}>
+                      <Text style={styles.modalButtonText}>Cancel</Text>
+                    </Pressable>
+                    <Pressable style={[styles.modalButton, styles.saveButton]} onPress={handleSave}>
+                      <Text style={styles.modalButtonText}>Save</Text>
+                    </Pressable>
+                  </View>
+                </>
+              ) : (
+                <>
+                  <Text style={styles.modalMessage}>{instructions}</Text>
+                  <Button title="Done" onPress={() => setModalVisible(false)} />
+                </>
+              )}
+            </View>
+          </SafeAreaView>
+        </Modal>
       </View>
     </View>
   );
 };
 
-
 const styles = StyleSheet.create({
   card: {
     width: '75%',
-    aspectRatio: 0.8, // Makes card height dynamic to width for portrait shape
+    aspectRatio: 0.8,
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: '4%',
@@ -71,6 +149,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginLeft: '13%',
   },
+  price:{
+flexDirection: 'row',
+  },
+  priceText:{
+     fontWeight:'bold',
+     fontSize: 20,
+     paddingTop: 7,
+     paddingRight: 10
+
+  },
   modalActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -79,7 +167,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     marginTop: 12,
   },
-  
   productImage: {
     width: '100%',
     height: '85%',
@@ -122,7 +209,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '85%',
-    height: '45%', 
+    height: '45%',
     backgroundColor: 'white',
     borderRadius: 16,
     padding: 20,
@@ -130,7 +217,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     elevation: 10,
   },
-  
   modalTitle: {
     fontSize: 30,
     fontWeight: 'bold',
@@ -138,7 +224,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333',
   },
-  
   modalMessage: {
     paddingTop: 45,
     fontSize: 25,
@@ -149,8 +234,52 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
-  
-
+  instructionsInput: {
+    flex: 1,
+    width: '100%',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 10,
+    fontSize: 18,
+    textAlignVertical: 'top',
+    marginBottom: 12,
+    maxHeight: 100,
+  },
+  priceInput: {
+    width: 80,
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    fontSize: 18,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  modalButtonsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  modalButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 10,
+    marginHorizontal: 10,
+    alignItems: 'center',
+  },
+  cancelButton: {
+    backgroundColor: '#bbb',
+  },
+  saveButton: {
+    backgroundColor: '#3B82F6', // Your app's main blue
+  },
+  modalButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
 });
 
 export default StudentDealCard;

@@ -3,9 +3,11 @@ import { View, Text, StyleSheet, Image, ActivityIndicator, Switch, TouchableOpac
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { Profile, currentUser, post } from '../../types/types';
+import {  currentUser, post } from '../../types/types';
 import PostsTab from '../../components/postsTab';
 import { useGlobalContext } from '../../contexts/GlobalContext';
+import YapsTab from '../../components/YapsTab';
+import DealsTab from '../../components/DealsTab';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -93,8 +95,8 @@ const ProfileScreen = () => {
       <View style={{ flex: 1 }}>
         <Tab.Navigator>
           <Tab.Screen name="Posts">{() => <PostsTab posts={posts} />}</Tab.Screen>
-          <Tab.Screen name="Yaps">{() => <Text style={{ padding: 20 }}>Yaps Coming Soon</Text>}</Tab.Screen>
-          <Tab.Screen name="Deals">{() => <Text style={{ padding: 20 }}>Deals Coming Soon</Text>}</Tab.Screen>
+          <Tab.Screen name="Yaps">{() => <YapsTab />}</Tab.Screen>
+          <Tab.Screen name="Deals">{() => <DealsTab />}</Tab.Screen>
         </Tab.Navigator>
       </View>
     </View>

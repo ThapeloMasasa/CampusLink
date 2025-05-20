@@ -1,37 +1,44 @@
-import React from 'react';
-import {ScrollView, TouchableOpacity } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import StudentDealCard from '../../components/StudentDealCard';
 import { deal } from '../../types/types';
 import { useGlobalContext } from '../../contexts/GlobalContext';
+import { supabase } from '../../../supabaseClient';
 
-
-const images = {'TV': require('../../../assets/TV.png'),
-  'Books': require('../../../assets/Books.png'),
-  'Calculator': require('../../../assets/Calculator.png'),
-  'Futon': require('../../../assets/futon.png'),
-  'Instrument': require('../../../assets/InstrumentSet.png'),
-  'Coffee': require('../../../assets/futon.png'), 
-}
-
-const deals: deal[]= [{price: '45', image: images['TV'], message: "Please contact me about when to do the deal at this email: bob@gmail.com"},
-                      {price: '80', image: images['Calculator'], message: "Open to baugaining, please call me at 5740000000"},
-                      {price: '120', image: images['Books'], message: "Selling them as group, open to individual selling, contact at Jessica@hotmail.com"},
-                      {price: '30', image: images['Futon'], message: "I am graduating so need someone who needs it, Inbox me here"},
-                      {price: '50', image: images['Instrument'], message: "Please Know I am not going any lower, Thank you. email karen@gmail.com"},
-                      {price: '0', image: images['Coffee'], message: "I am actually getting rid of it for free, hit me up by friday noon, 6461233445"}]
 
 const StudentDealsScreen: React.FC = () => {
-  const {state} = useGlobalContext();
+  const [deals, setDeals] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const {state} = useGlobalContext();
+  
+    const fetchDeals = async () => {
+      const { data, error } = await supabase.from('Deals').select('*').neq('owner', state.currentUserId).order('created_at', { ascending: false });
+  
+      if (error) {
+        console.error('Error fetching deals:', error.message);
+      } else {
+        setDeals(data);
+      }
+      setLoading(false);
+    };
+  
+    useEffect(() => {
+      fetchDeals();
+    }, []);
+  
+    if (loading) {
+      return <ActivityIndicator size="large" style={{ marginTop: 50 }} />;
+    }
   return (
     <ScrollView>
       {
        deals.map((deal, index)=>(
         <TouchableOpacity key={index}>
         <StudentDealCard
-           image={deal.image}
+           image={{uri:deal.image}}
            price= {deal.price}
-           message = {deal.message}
-           userId= {state.currentUserId}
+           instructions = {deal.instructions}
+           userId= {deal.owner}
          />
         </TouchableOpacity>
        )
