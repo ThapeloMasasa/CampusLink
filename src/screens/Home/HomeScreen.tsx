@@ -5,14 +5,10 @@ import { Ionicons } from '@expo/vector-icons';
 import StoryBar from '../../components/StoryBar'; 
 import Post from '../../components/Post';         
 import Yap from '../../components/Yap';
-import { AuthProps, post, YapType } from '../../types/types';
-import { supabase } from '../../../supabaseClient';
 import { useGlobalContext } from '../../contexts/GlobalContext';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
-  const [posts, setPosts] = useState<post[] | null>([])
-  const [yaps, setYaps] = useState<YapType[]| null>([])
   const [homeContent, setHomeContent] = useState<any []>([])
   const [loading, setLoading] = useState<boolean>(true)
   const { state,dispatch  } = useGlobalContext();
@@ -20,7 +16,7 @@ export default function HomeScreen() {
  useEffect(()=>{
   
     LoadContent()
-  setLoading(!loading)
+  setLoading(false)
  }, [])
  const LoadContent = () => {
   setLoading(true);
@@ -30,7 +26,10 @@ export default function HomeScreen() {
     const yapsdata = state.allYaps || [];
 
     const hotyaps = yapsdata.filter(item => item.likes > 15);
+
     const combinedContent = [...postsdata, ...hotyaps];
+
+    combinedContent.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
     setHomeContent(combinedContent);
   } catch (e) {
@@ -39,6 +38,7 @@ export default function HomeScreen() {
     setLoading(false);
   }
 };
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (

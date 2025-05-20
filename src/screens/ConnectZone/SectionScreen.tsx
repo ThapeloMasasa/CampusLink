@@ -1,4 +1,4 @@
-// screens/SectionScreen.tsx
+
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { SectionScreenProps } from '../../types/types';

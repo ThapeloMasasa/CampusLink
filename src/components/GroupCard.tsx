@@ -1,8 +1,16 @@
 import React from 'react';
-import { View, Text, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, TouchableOpacity, Alert } from 'react-native';
 import { GroupCardProps } from '../types/types';
 
 const GroupCard = ({ groupName, isOpen, onPress, backgroundImage }: GroupCardProps) => {
+  const onRequest = ()=>{
+    Alert.alert("You need to request to Join Group")
+  }
+  if(groupName.length% 2 == 0){
+    isOpen = true
+  }else{
+    isOpen = false
+  }
   return (
     <View style={styles.cardContainer}>
       <ImageBackground
@@ -11,13 +19,17 @@ const GroupCard = ({ groupName, isOpen, onPress, backgroundImage }: GroupCardPro
         imageStyle={{ borderRadius: 15 }}
       >
         <View style={styles.overlay}>
-            
-        <TouchableOpacity onPress={onPress}>
+    {isOpen ? <TouchableOpacity onPress={onPress}>
         <Text style={styles.groupName}>{groupName}</Text>
         <Text style={styles.statusText}>
-        {isOpen ? 'Open to Everyone' : 'Request to Join'}
         </Text>
-    </TouchableOpacity>
+    </TouchableOpacity>:  <TouchableOpacity onPress={onRequest}>
+        <Text style={styles.groupName}>{groupName}</Text>
+        <Text style={styles.statusText}>
+          Request to Join
+        </Text>
+    </TouchableOpacity>  }    
+   
         </View>
       </ImageBackground>
       </View>

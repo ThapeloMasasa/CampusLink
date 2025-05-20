@@ -12,7 +12,7 @@ const YapsScreen = () => {
   const [yapTitle, setYapTitle] = useState('');
   const [yaps, setYaps] = useState<YapType[]| null>([])
   const {state} = useGlobalContext()
-  let countid = 0
+  const formattedDate = new Date().toISOString().replace('T', ' ').replace('Z', '+00');
   useEffect(()=>{
     LoadContent()
   },[])
@@ -29,15 +29,42 @@ const LoadContent = ()=>{
  }
   
   
-  const handlePostYap = () => {
-    if (yapTitle.trim() && yapText.trim()) {
-      countid += 1
-      setYaps([{ id:countid.toString(), title: yapTitle, createdAt: Date.now().toString(), Content: yapText, yap: true, likes:0, reactions: [], score:0 , owner:null}, ...(yaps || [])]);
+  const handlePostYap = async () => {
+  if (yapTitle.trim() && yapText.trim()) {
+    try {
+      const { data, error } = await supabase
+        .from('Yaps')
+        .insert([
+          {
+            Content: yapText,
+            yap: true,
+            likes: 0,
+            reactions: [],
+            score: 0,
+            created_at: formattedDate,
+            owner: state.currentUserId, // If you have the user ID in context
+          },
+        ])
+        .select()
+        .single(); // Get the inserted row back
+
+      if (error) {
+        console.error("Supabase insert error:", error);
+        return;
+      }
+
+      // Add the new yap to the current list
+      setYaps([data, ...(yaps || [])]);
+    } catch (e) {
+      console.error("Unexpected error posting yap:", e);
+    } finally {
       setYapTitle('');
-      setYapText('');``
+      setYapText('');
       setModalVisible(false);
     }
-  };
+  }
+};
+
 
   return (
     <View style={{ flex: 1, backgroundColor: '#ffffff'}}>
