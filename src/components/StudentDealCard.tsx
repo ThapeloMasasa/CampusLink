@@ -41,9 +41,9 @@ const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price, instruc
 
     try {
       const { error } = await supabase
-        .from('deals')
+        .from('Deals')
         .update({ instructions: editedInstructions, price: priceNum })
-        .eq('user_id', userId);
+        .eq('owner', userId);
 
       if (error) {
         Alert.alert('Update Failed', error.message);

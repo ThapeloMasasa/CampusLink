@@ -153,7 +153,7 @@ export type groupItem ={
     id: string;
     title: string;
     Content: string;
-    createdAt: string; 
+    created_at: string; 
     yap: boolean;
     likes: number;
     score: number;

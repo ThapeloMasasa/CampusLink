@@ -79,16 +79,12 @@ const ProfileScreen = () => {
 
       <View style={styles.ratingSection}>
         <View style={styles.ratingContainer}>
-          {isRatingVisible && (
+          
             <View style={styles.ratingInfo}>
               <Text style={styles.ratingNumber}>🤩 {profile?.rating ?? 0} 😎</Text>
               <Text style={styles.ratingText}>Yapper Rating</Text>
             </View>
-          )}
-          <View style={styles.switchContainer}>
-            <Text style={styles.switchLabel}>Show Public</Text>
-            <Switch value={isRatingVisible} onValueChange={setIsRatingVisible} />
-          </View>
+        
         </View>
       </View>
 
