@@ -17,8 +17,8 @@ const GroupChat = () => {
   let countMessage = Math.floor(Math.random() * 1000000000);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
-  const name = groupName+" "+section
-  console.log(name)
+  const name = groupName+section
+
   useLayoutEffect(() => {
     navigation.setOptions({ title: section });
   }, [navigation, section]);
@@ -33,7 +33,7 @@ const GroupChat = () => {
     .from('Messages')
     .select('*')
     .eq('is_group', true)
-    .eq('group_id', 'General')
+    .eq('group_id', name)
     .order('created_at', { ascending: true });
 
   if (error) {
@@ -50,7 +50,7 @@ const GroupChat = () => {
       id:countMessage,
       content: newMessage,
       sender_id: state.currentUserId,
-      group_id: section,
+      group_id: name,
       is_group: true,
     },
   ]);

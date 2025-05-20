@@ -11,26 +11,97 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 import Post from './Post';
 import { post } from '../types/types';
+import { supabase } from '../../supabaseClient';
+import { useGlobalContext } from '../contexts/GlobalContext';
 
 const PostsTab = ({ posts }: { posts: post[] }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [content, setContent] = useState('');
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [newPost, setNewPost] = useState({ Header: '', image: '' });
+  const { state } = useGlobalContext();
+  let countPosts = Math.floor(Math.random() * 1000000000);
+
   const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
       quality: 1,
     });
 
     if (!result.canceled) {
       setImageUri(result.assets[0].uri);
+    }
+  };
+
+  const uploadImageToSupabase = async (uri: string) => {
+  try {
+    // fetch the local file and get the blob directly
+    const response = await fetch(uri);
+    const blob = await response.blob();
+
+    const fileName = `${state.currentUserId}/post-${Date.now()}.jpg`;
+
+    const { data, error } = await supabase.storage
+      .from('posts')
+      .upload(fileName, blob, {
+        contentType: 'image/jpeg',
+      });
+
+    if (error) {
+      console.error('Error uploading image:', error.message);
+      return null;
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from('posts')
+      .getPublicUrl(fileName);
+
+    return publicUrlData?.publicUrl ?? null;
+  } catch (error) {
+    console.error('Upload failed:', error);
+    return null;
+  }
+};
+
+
+  const handleCreatePost = async () => {
+    let imageUrl = '';
+    countPosts += 1;
+    if (imageUri) {
+      const uploadedUrl = await uploadImageToSupabase(imageUri);
+      if (uploadedUrl) {
+        imageUrl = uploadedUrl;
+      }
+    }
+
+    const postPayload = {
+      Header: newPost.Header,
+      id: countPosts,
+      image: imageUrl,
+      created_at: new Date().toISOString(),
+      reactions: [],
+      yap: false,
+      owner: state.currentUserId,
+      likes: 0,
+    };
+
+    const { error } = await supabase.from('Posts').insert(postPayload);
+
+    if (error) {
+      console.error('Error saving post:', error.message);
+    } else {
+      console.log('Post saved!');
+      setModalVisible(false);
+      setNewPost({ Header: '', image: '' });
+      setContent('');
+      setImageUri(null);
     }
   };
 
@@ -58,13 +129,11 @@ const PostsTab = ({ posts }: { posts: post[] }) => {
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 80 }}
       />
 
-      {/* ➕ Add Post Button */}
       <TouchableOpacity style={styles.addButton} onPress={toggleModal}>
         <Ionicons name="add" size={28} color="#fff" />
         <Text style={styles.addButtonLabel}>New Post</Text>
       </TouchableOpacity>
 
-      {/* 📝 Add Post Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -93,6 +162,10 @@ const PostsTab = ({ posts }: { posts: post[] }) => {
             {imageUri && (
               <Image source={{ uri: imageUri }} style={styles.previewImage} />
             )}
+
+            <TouchableOpacity onPress={handleCreatePost} style={styles.uploadButton}>
+              <Text style={{ color: '#fff' }}>Post</Text>
+            </TouchableOpacity>
 
             <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
               <Text style={{ color: '#fff' }}>Close</Text>

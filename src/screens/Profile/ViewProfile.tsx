@@ -48,8 +48,6 @@ useEffect(() => {
   </View>
     
 );
-
-console.log("here Profile", profile)
   
   return (
     <View style={styles.container}>

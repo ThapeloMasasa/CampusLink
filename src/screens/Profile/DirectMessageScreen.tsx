@@ -47,7 +47,6 @@ const DirectMessageScreen: React.FC<DirectMessageScreenProps> = ({ route }) => {
         .order('created_at', { ascending: true });
 
       if (msgErr) throw msgErr;
-
       setMessages(
         msgs.map((msg) => ({
           id: msg.id,
@@ -91,6 +90,7 @@ const DirectMessageScreen: React.FC<DirectMessageScreenProps> = ({ route }) => {
       console.log(error)
     }
   };
+ 
 
   return (
     <KeyboardAvoidingView
