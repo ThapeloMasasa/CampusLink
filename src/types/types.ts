@@ -15,10 +15,15 @@ export type AuthProps = {
     id: string;
     content: string;
     sender_id: string;
-    profile: string
+    profile: string 
   };
 // types.ts
 
+export type myday = {
+  owner: string;
+  image: string;
+  created_at: string;
+}
 export interface Profile {
   id: string;
   full_name: string;
@@ -169,12 +174,14 @@ export type groupItem ={
   allPosts: post[];
   allYaps: YapType[];
   allProfiles: currentUser[] | null
+  allMydays: myday[][];
 };
 
 export type Action =
   | { type: 'LOGIN'; payload: { isLoggedIn: boolean; currentUserId: string; currentProfile: currentUser | null } }
   | { type: 'LOGOUT' }
   | { type: 'SET_POSTS'; payload: post[] }
+  | { type: 'SET_MYDAYS'; payload: myday[][] }
   | { type: 'SET_YAPS'; payload: YapType[] }
   | { type: 'REFRESH_POSTS'; payload: post[] }
   | { type: 'SET_PROFILES'; payload: currentUser [] | null }

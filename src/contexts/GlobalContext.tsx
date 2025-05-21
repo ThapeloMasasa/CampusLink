@@ -1,5 +1,5 @@
 import React, {useEffect, useContext, useReducer, ReactNode, createContext} from "react";
-import { GlobalState,Action } from "../types/types";
+import { GlobalState,Action, myday } from "../types/types";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -9,7 +9,8 @@ const initialState: GlobalState = {
   currentProfile: null,
   allPosts: [],
   allYaps: [],
-  allProfiles: []
+  allProfiles: [],
+  allMydays: []
 };
 
 function reducer(state: GlobalState, action: Action): GlobalState {
@@ -23,6 +24,8 @@ function reducer(state: GlobalState, action: Action): GlobalState {
       };
     case 'LOGOUT':
       return { ...initialState };
+    case 'SET_MYDAYS':
+        return {...state, allMydays: action.payload};
     case 'SET_POSTS':
     case 'REFRESH_POSTS':
       return { ...state, allPosts: action.payload };

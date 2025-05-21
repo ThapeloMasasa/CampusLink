@@ -14,7 +14,7 @@ import { useGlobalContext } from '../contexts/GlobalContext';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
-import { AuthProps, AuthStackParamList } from '../types/types';
+import { AuthStackParamList, myday } from '../types/types';
 import { supabase } from '../../supabaseClient';
 
 const LoginScreen = () => {
@@ -24,7 +24,7 @@ const LoginScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
 
  const { dispatch } = useGlobalContext();
-const handleLogin = async () => {
+ const handleLogin = async () => {
   try {
     // 1. Sign the user in
     const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
@@ -50,29 +50,71 @@ const handleLogin = async () => {
       console.log("Failed to get profile", profileError?.message);
       return;
     }
-    
+
     // 3. Fetch posts
     const { data: posts, error: postsError } = await supabase.from('Posts').select('*');
     if (!postsError) dispatch({ type: 'SET_POSTS', payload: posts });
-    if (postsError) console.log(postsError)
+    else console.log(postsError);
+
     // 4. Fetch yaps
     const { data: yaps, error: yapsError } = await supabase.from('Yaps').select('*');
     if (!yapsError) dispatch({ type: 'SET_YAPS', payload: yaps });
-    if (yapsError) console.log(yapsError)
+    else console.log(yapsError);
+
+    // 5. Fetch all profiles
     const { data: allProfiles, error: profilesError } = await supabase.from('Profile').select('*');
     if (!profilesError) dispatch({ type: 'SET_PROFILES', payload: allProfiles });
-    if (profilesError) console.log(profileError)
-    // 5. Dispatch login
+    else console.log(profilesError);
+
+    // 6. Fetch all Myday entries
+    const { data: allMyDays, error: mydaysError } = await supabase.from('Myday').select('*');
+
+    if (!mydaysError && allMyDays) {
+      // Create a map for quick profile lookup
+      const profilesMap = new Map(allProfiles?.map((p) => [p.id, p]));
+
+      // Group Myday entries by owner
+      const groupedByOwner: { [ownerId: string]: myday[] } = {};
+
+      allMyDays.forEach((entry) => {
+        if (!groupedByOwner[entry.owner]) {
+          groupedByOwner[entry.owner] = [];
+        }
+        groupedByOwner[entry.owner].push(entry);
+      });
+
+      // Convert the object to a 2D array, prepending the profile pic object
+      const mydays2DArray: any[][] = Object.entries(groupedByOwner).map(([ownerId, stories]) => {
+        const profile = profilesMap.get(ownerId);
+        const profilePic = {
+          image: profile?.avatar_url || '', // use your profile picture field name here
+          isProfilePic: true,
+          id: `profile-${ownerId}`, // unique id for React keys if needed
+        };
+        return [profilePic, ...stories];
+      });
+
+      console.log(mydays2DArray);
+      dispatch({ type: 'SET_MYDAYS', payload: mydays2DArray });
+    } else {
+      console.log(mydaysError);
+    }
+
+    // 7. Dispatch login
     dispatch({
       type: 'LOGIN',
-      payload: { isLoggedIn: true, currentUserId: user.id, currentProfile: profileData },
+      payload: {
+        isLoggedIn: true,
+        currentUserId: user.id,
+        currentProfile: profileData,
+      },
     });
-
 
   } catch (e) {
     console.log("Unexpected error during login:", e);
   }
 };
+
 
 
   return (

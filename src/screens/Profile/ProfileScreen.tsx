@@ -141,7 +141,7 @@ const ProfileScreen = () => {
 
         if (dbError) throw dbError;
 
-        alert('Added to MyDay!');
+        alert('Added to Scenes!');
       } catch (e) {
         console.error('Upload failed:', e);
         alert('Failed to upload image');
@@ -183,7 +183,7 @@ const ProfileScreen = () => {
         <View style={styles.ratingContainer}>
           <View style={styles.ratingInfo}>
             <Text style={styles.ratingNumber}>🤩 {profile?.rating ?? 0} 😎</Text>
-            <Text style={styles.ratingText}>Yapper Rating</Text>
+            <Text style={styles.ratingText}>Rating</Text>
           </View>
           <View style={{ flexDirection: 'row', marginTop: 10 }}>
             {linkedIn && (
@@ -212,7 +212,7 @@ const ProfileScreen = () => {
         <View style={styles.modalBackground}>
           <View style={styles.modalContent}>
             <TouchableOpacity style={styles.modalButton} onPress={onAddToMyDay}>
-              <Text style={styles.modalButtonText}>Add to MyDay</Text>
+              <Text style={styles.modalButtonText}>Add to Scenes</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.modalButton} onPress={updateDP}>
               <Text style={styles.modalButtonText}>Change Profile Pic</Text>
