@@ -36,6 +36,7 @@ const LoadContent = ()=>{
         .from('Yaps')
         .insert([
           {
+            header: yapTitle,
             Content: yapText,
             yap: true,
             likes: 0,
@@ -73,7 +74,7 @@ const LoadContent = ()=>{
   <TouchableOpacity>
     {yaps?.map((yap, index) => (
       <View key={index}> 
-        <Yap title={yap.title} content={yap?.Content} />
+        <Yap title={yap.header} content={yap?.Content} />
         <View style={styles.separator} />
       </View>
     ))}

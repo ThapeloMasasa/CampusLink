@@ -1,53 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Modal, StyleSheet, Keyboard, KeyboardAvoidingView } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Modal, StyleSheet, Keyboard, SafeAreaView} from 'react-native';
 import Yap from '../../components/Yap';
 import { YapType } from '../../types/types';
+import { useGlobalContext } from '../../contexts/GlobalContext';
 
-const dummyYaps: YapType[] = [
-  {
-    id: '1', title: 'Best Yap', Content: 'Learn how to choose and use', created_at: new Date(Date.now() - 100000).toISOString(), likes: 10, score: 120,
-    yap: true,
-    owner: null
-  },
-  {
-    id: '2', title: 'Cold Yap', Content: 'Hello', created_at: new Date(Date.now() - 500000).toISOString(), likes: 3, score: 102, yap: true,
-    owner: null
-  },
-  {
-    id: '3', title: 'Medium Yap', Content: 'warriors Suck', created_at: new Date(Date.now() - 1000000).toISOString(), likes: 5, score: 90, yap: true,
-    owner: null
-  },
-  {
-    id: '4', title: 'Warm Yap', Content: 'Go Irish', created_at: new Date(Date.now() - 2000000).toISOString(), likes: 8, score: 83, yap: true,
-    owner: null
-  },
-  {
-    id: '5', title: 'Trip', Content: 'Chicago trip this weekend', created_at: new Date(Date.now() - 3000000).toISOString(), likes: 12, score: 75, yap: true,
-    owner: null
-  },
-  {
-    id: '6', title: 'AC', Content: 'We need more AC', created_at: new Date(Date.now() - 3500000).toISOString(), likes: 11, score: 74, yap: true,
-    owner: null
-  },
-  {
-    id: '7', title: 'Bowling', Content: 'Bowling Anyone??', created_at: new Date(Date.now() - 4000000).toISOString(), likes: 9, score: 60, yap: true,
-    owner: null
-  },
-  {
-    id: '8', title: 'Hype', Content: 'lets goo', created_at: new Date(Date.now() - 4500000).toISOString(), likes: 7, score: 56, yap: true,
-    owner: null
-  },
-];
+
 
 const YapsLeaderboard = () => {
   const [selectedYap, setSelectedYap] = useState<YapType | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [yaps, setYaps] = useState<YapType[]>([]);
+  const {state} = useGlobalContext();
+  let countYaps = 0;
 
   useEffect(() => {
-    setYaps(dummyYaps);
+    LoadContent()
   }, []);
+  
+  const LoadContent = ()=>{
 
+    try{
+      const yapsdata = state.allYaps || null
+      yapsdata.sort((a,b)=> b.score - a.score)
+      setYaps(yapsdata)
+     
+    }catch(e){
+      console.log("error")
+    }
+ }
   const openYapDetails = (yap: YapType) => {
     setSelectedYap(yap);
     setModalVisible(true);
@@ -70,10 +50,12 @@ const YapsLeaderboard = () => {
 
   const renderItem = ({ item }: { item: YapType }) => {
     const age = calculateYapAge(item.created_at);
+    countYaps += 1
+
     return (
       <TouchableOpacity style={styles.row} onPress={() => openYapDetails(item)}>
-        <Text style={[styles.cell, { flex: 1 }]}>{item.id}</Text>
-        <Text style={[styles.cell, { flex: 2 }]}>{item.title}</Text>
+        <Text style={[styles.cell, { flex: 1 }]}>{countYaps}</Text>
+        <Text style={[styles.cell, { flex: 2 }]}>{item.header}</Text>
         <Text style={[styles.cell, { flex: 1 }]}>{age}</Text>
         <Text style={[styles.cell, { flex: 1 }]}>{item.score}</Text>
       </TouchableOpacity>
@@ -84,28 +66,31 @@ const YapsLeaderboard = () => {
   
     <View style={styles.container}>
       <FlatList
-        ListHeaderComponent={renderHeader}
-        data={yaps}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ paddingTop: 10}}
-      />
-      <Modal visible={modalVisible} animationType="slide" onRequestClose={closeModal}>
-      <View style={styles.modalBackground}>
-      <View style={styles.modalContent}>
-        {selectedYap && 
-          <Yap
-                title={selectedYap.title}
-                content={selectedYap.Content}
-                initialLikes={selectedYap.likes}
-                initialReactions={selectedYap.reactions || []}
-              />}
-              <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity>
-              </View>
-          </View>
-      </Modal>
+  ListHeaderComponent={renderHeader}
+  data={yaps}
+  renderItem={renderItem}
+  keyExtractor={(item) => item.id}
+  contentContainerStyle={{ paddingTop: 10, paddingBottom: 50 }}
+  keyboardShouldPersistTaps="handled"
+/>
+     <Modal visible={modalVisible} animationType="slide" onRequestClose={closeModal} transparent={true}>
+  <SafeAreaView style={{ flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.4)' }}>
+    <View style={styles.modalContent}>
+      {selectedYap && 
+        <Yap
+          title={selectedYap.header}
+          content={selectedYap.Content}
+          initialLikes={selectedYap.likes}
+          initialReactions={selectedYap.reactions || []}
+        />
+      }
+      <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
+        <Text style={styles.closeButtonText}>Close</Text>
+      </TouchableOpacity>
+    </View>
+  </SafeAreaView>
+</Modal>
+
     </View>
   );
 };
@@ -122,9 +107,10 @@ const calculateYapAge = (created_at: string) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 10,
-  },
+  flex: 1,
+  padding: 10, 
+},
+
   headerRow: {
     flexDirection: 'row',
     backgroundColor: 'lightgray',
