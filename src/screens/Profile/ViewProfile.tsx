@@ -6,6 +6,7 @@ import { ViewProfileRouteProp, ViewProfileNavigationProp, post, currentUser  } f
 import { useNavigation } from '@react-navigation/native';
 import Post from '../../components/Post';
 import { useGlobalContext } from '../../contexts/GlobalContext';
+import { Linking } from 'react-native';
 
 
 const ViewProfile = () => {
@@ -15,6 +16,9 @@ const ViewProfile = () => {
   const [profile, setProfile] = useState<currentUser>();
   const [posts, setPosts] = useState<post[]| null>(null)
   const {state} = useGlobalContext();
+  const [linkedIn, setLinkedIn] = useState<string | undefined>('');
+  const [instagram, setInstagram] = useState<string | undefined>('');
+
 
   const loadUserFromContext = (userId: string | null) => {
   try {
@@ -25,12 +29,15 @@ const ViewProfile = () => {
 
     setProfile(profileData);
     setPosts(postsData || []);
+    setInstagram(profileData?.insta_url)
+    setLinkedIn(profileData?.linkedIn_url)
   } catch (e) {
     console.log("Context Load Error");
   }
 };
 useEffect(() => {
   loadUserFromContext(userId);
+
 }, [userId]);
 
 
@@ -71,25 +78,28 @@ useEffect(() => {
 
         <View>
           <TouchableOpacity onPress={() => navigation.navigate('DirectMessageScreen', { username: profile?.full_name })}>
-            <Text style={styles.ratingText}>DM 😜</Text>
             <Ionicons name="chatbubble-ellipses-outline" size={40} color="#000" />
           </TouchableOpacity>
         </View>
 
         <View>
-          <Text style={styles.ratingText}>Follow 😉</Text>
-          <Image
+          {instagram ?<TouchableOpacity onPress={()=>Linking.openURL(instagram)}>
+              <Image
             source={require('../../../assets/insta.png')}
             style={styles.socialIcon}
           />
+          </TouchableOpacity>: <></>}
         </View>
 
-        <View>
-          <Text style={styles.ratingText}>Connect 🤝</Text>
+        <View>{
+          linkedIn ? <TouchableOpacity onPress={() => Linking.openURL(linkedIn)}>
           <Image
             source={require('../../../assets/Linked.png')}
             style={styles.socialIcon}
           />
+        </TouchableOpacity>: <></>}
+          
+          
         </View>
       </View>
 

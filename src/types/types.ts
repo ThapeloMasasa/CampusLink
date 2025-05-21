@@ -34,6 +34,8 @@ export type currentUser = {
   full_name: string;
   avatar_url: string;
   rating: number
+  linkedIn_url: string | undefined
+  insta_url: string | undefined
 
 }
 
@@ -151,13 +153,13 @@ export type groupItem ={
   export type YapType = {
     owner: string | null;
     id: string;
-    title: string;
     Content: string;
     created_at: string; 
     yap: boolean;
     likes: number;
     score: number;
     reactions?: string[];
+    header: string
   };
 
   export type GlobalState = {

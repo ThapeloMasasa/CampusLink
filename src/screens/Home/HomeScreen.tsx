@@ -5,6 +5,12 @@ import { Ionicons } from '@expo/vector-icons';
 import StoryBar from '../../components/StoryBar'; 
 import Post from '../../components/Post';         
 import Yap from '../../components/Yap';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from 'react-native-reanimated';
+
 import { useGlobalContext } from '../../contexts/GlobalContext';
 
 export default function HomeScreen() {
@@ -12,6 +18,18 @@ export default function HomeScreen() {
   const [homeContent, setHomeContent] = useState<any []>([])
   const [loading, setLoading] = useState<boolean>(true)
   const { state,dispatch  } = useGlobalContext();
+  const drawerTranslateX = useSharedValue(-250);
+  const [toggleChev, setToggleChev] = useState(false)
+
+const drawerStyle = useAnimatedStyle(() => ({
+  transform: [{ translateX: drawerTranslateX.value }],
+}));
+
+const toggleDrawer = () => {
+  drawerTranslateX.value = withTiming(drawerTranslateX.value === 0 ? -250 : 0, { duration: 300 });
+  setToggleChev(!toggleChev)
+};
+
 
  useEffect(()=>{
   
@@ -78,9 +96,21 @@ return (
       </View>
     ) : (
       <>
-        <ScrollView style={styles.feed}>
-          <StoryBar />
-        </ScrollView>
+        <>
+  <TouchableOpacity onPress={toggleDrawer} style={styles.drawerToggle}>
+    <Ionicons
+  name={toggleChev ? 'chevron-back' : 'menu'}
+  size={24}
+  color="black"
+/>
+
+  </TouchableOpacity>
+
+  <Animated.View style={[styles.drawer, drawerStyle]}>
+    <StoryBar />
+  </Animated.View>
+</>
+
         <View style={styles.separator} />
         <FlatList
           data={homeContent}
@@ -106,7 +136,7 @@ const styles = StyleSheet.create({
   shadowOffset: { width: 0, height: 1 },
   shadowOpacity: 0.1,
   shadowRadius: 1,
-  elevation: 2, // for Android
+  elevation: 2, 
   width: '100%',
 },
 
@@ -118,7 +148,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 1, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 2,
-    elevation: 4, // for Android shadow
+    elevation: 4, 
   },
 
   loaderContainer: {
@@ -130,12 +160,31 @@ const styles = StyleSheet.create({
     paddingRight:20,
   
   },
+  drawer: {
+  position: 'absolute',
+  left: 0,
+  top: 0,
+  bottom: 0,
+  width: 150,
+  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+  zIndex: 10,
+  paddingTop: 50,
+  borderRightWidth: 1,
+  borderRightColor: '#ccc',
+},
+
+drawerToggle: {
+  position: 'absolute',
+  top: 40,
+  left: 10,
+  zIndex: 20,
+},
+
   container: {
     backgroundColor: '#fff',
     flexDirection: 'row',
   },
   feed: {
-    
     paddingTop: 10,
   },
 });

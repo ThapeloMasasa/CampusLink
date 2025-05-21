@@ -92,7 +92,7 @@ export default function StoryBar() {
 
   return (
     <>
-      <Text style={styles.title}>MyDay</Text>
+      <Text style={styles.title}>Scenes</Text>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
         {storyList.map((story, index) => (
           <TouchableOpacity key={index} onPress={() => openStory(story)}>
