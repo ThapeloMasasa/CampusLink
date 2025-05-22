@@ -7,89 +7,45 @@ export default function StoryBar() {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
   const [currentStories, setCurrentStories] = useState<any[]>([]);
+  const progressBars = useRef<Animated.Value[]>([]);
 
-  const topLineWidth = useRef(new Animated.Value(0)).current;
-  const rightLineHeight = useRef(new Animated.Value(0)).current;
-  const bottomLineWidth = useRef(new Animated.Value(0)).current;
-  const leftLineHeight = useRef(new Animated.Value(0)).current;
-  console.log(state.allMydays)
   useEffect(() => {
-    if (modalVisible) {
-      playStories();
-    } else {
-      resetAnimations();
-    }
-  }, [modalVisible]);
-  useEffect(() => {
-  if (!modalVisible) return;
+    if (!modalVisible) return;
 
-  if (currentStoryIndex < currentStories.length) {
-    playStories();
-  } else {
-    setModalVisible(false);
-    setCurrentStoryIndex(0);
-  }
-}, [currentStoryIndex]);
-
-
-  const resetAnimations = () => {
-    topLineWidth.setValue(0);
-    rightLineHeight.setValue(0);
-    bottomLineWidth.setValue(0);
-    leftLineHeight.setValue(0);
-  };
-
-  const playStories = () => {
     if (currentStoryIndex < currentStories.length) {
-      animateBorder(() => {
-        setCurrentStoryIndex((prev) => prev + 1);
-      });
+      playStories();
     } else {
       setModalVisible(false);
       setCurrentStoryIndex(0);
     }
+  }, [currentStoryIndex, modalVisible]);
+
+  const resetProgressBars = () => {
+    progressBars.current.forEach(bar => bar.setValue(0));
   };
 
-  useEffect(() => {
-    if (modalVisible && currentStoryIndex < currentStories.length) {
-      playStories();
+  const playStories = () => {
+    if (currentStoryIndex >= currentStories.length) {
+      setModalVisible(false);
+      setCurrentStoryIndex(0);
+      return;
     }
-  }, [currentStoryIndex]);
 
-  const animateBorder = (onComplete: () => void) => {
-    Animated.sequence([
-      Animated.timing(topLineWidth, {
-        toValue: 1,
-        duration: 600,
-        easing: Easing.linear,
-        useNativeDriver: false,
-      }),
-      Animated.timing(rightLineHeight, {
-        toValue: 1,
-        duration: 600,
-        easing: Easing.linear,
-        useNativeDriver: false,
-      }),
-      Animated.timing(bottomLineWidth, {
-        toValue: 1,
-        duration: 600,
-        easing: Easing.linear,
-        useNativeDriver: false,
-      }),
-      Animated.timing(leftLineHeight, {
-        toValue: 1,
-        duration: 600,
-        easing: Easing.linear,
-        useNativeDriver: false,
-      }),
-    ]).start(() => {
-      resetAnimations();
-      onComplete();
+    Animated.timing(progressBars.current[currentStoryIndex], {
+      toValue: 1,
+      duration: 2500,
+      easing: Easing.linear,
+      useNativeDriver: false,
+    }).start(() => {
+      setTimeout(() => {
+        setCurrentStoryIndex(prev => prev + 1);
+      }, 50);
     });
   };
 
   const openUserStories = (userStories: any[]) => {
     setCurrentStories(userStories);
+    progressBars.current = userStories.map(() => new Animated.Value(0));
     setCurrentStoryIndex(0);
     setModalVisible(true);
   };
@@ -111,6 +67,26 @@ export default function StoryBar() {
         <View style={styles.modalContainer}>
           {currentStories[currentStoryIndex] && (
             <View style={styles.borderContainer}>
+              {/* Progress Bars */}
+              <View style={styles.progressBarContainer}>
+                {currentStories.map((_, i) => (
+                  <View key={i} style={styles.progressBarBackground}>
+                    <Animated.View
+                      style={[
+                        styles.progressBarForeground,
+                        {
+                          width: progressBars.current[i]?.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: ['0%', '100%'],
+                          }) || '0%',
+                        },
+                      ]}
+                    />
+                  </View>
+                ))}
+              </View>
+
+              {/* Image */}
               <View style={styles.imageContainer}>
                 <Image
                   source={{ uri: currentStories[currentStoryIndex].image }}
@@ -118,40 +94,6 @@ export default function StoryBar() {
                   resizeMode="contain"
                 />
               </View>
-
-              {/* Animated Borders */}
-              <Animated.View style={[styles.lineHorizontal, {
-                top: 0,
-                left: 0,
-                width: topLineWidth.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: ['0%', '100%'],
-                }),
-              }]} />
-              <Animated.View style={[styles.lineVertical, {
-                top: 0,
-                right: 0,
-                height: rightLineHeight.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: ['0%', '100%'],
-                }),
-              }]} />
-              <Animated.View style={[styles.lineHorizontal, {
-                bottom: 0,
-                right: 0,
-                width: bottomLineWidth.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: ['0%', '100%'],
-                }),
-              }]} />
-              <Animated.View style={[styles.lineVertical, {
-                bottom: 0,
-                left: 0,
-                height: leftLineHeight.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: ['0%', '100%'],
-                }),
-              }]} />
             </View>
           )}
         </View>
@@ -213,14 +155,24 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 10,
   },
-  lineHorizontal: {
+  progressBarContainer: {
     position: 'absolute',
-    height: 4,
-    backgroundColor: 'white',
+    top: 20,
+    left: 10,
+    right: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
-  lineVertical: {
-    position: 'absolute',
-    width: 4,
-    backgroundColor: 'white',
+  progressBarBackground: {
+    flex: 1,
+    height: 4,
+    backgroundColor: '#555',
+    borderRadius: 2,
+    marginHorizontal: 2,
+    overflow: 'hidden',
+  },
+  progressBarForeground: {
+    height: 4,
+    backgroundColor: '#fff',
   },
 });

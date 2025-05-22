@@ -94,7 +94,6 @@ const LoginScreen = () => {
         return [profilePic, ...stories];
       });
 
-      console.log(mydays2DArray);
       dispatch({ type: 'SET_MYDAYS', payload: mydays2DArray });
     } else {
       console.log(mydaysError);
