@@ -16,19 +16,24 @@ import { Buffer } from 'buffer';
 import { supabase } from '../../../supabaseClient';
 import { loadUserProfileFromContext } from '../../utils/uploadImage';
 import { currentUser, post } from '../../types/types';
+import CreateGroupModal from '../../components/GroupModal';
 
 if (typeof global.Buffer === 'undefined') global.Buffer = Buffer;
+
 
 const Tab = createMaterialTopTabNavigator();
 
 const ProfileScreen = () => {
+  const [createModalVisible, setCreateModalVisible] = useState(false);
   const navigation = useNavigation();
   const { state, dispatch } = useGlobalContext();
   const [profile, setProfile] = useState<currentUser>();
+  const [groupName, setGroupName] = useState('');
+  const [groupImage, setGroupImage] = useState<string | null>(null);
   const [posts, setPosts] = useState<post[]>([]);
   const [loading, setLoading] = useState(true);
   const [imageModalVisible, setImageModalVisible] = useState(false);
-
+  const [groupModalVisible, setGroupModalVisible] = useState(false);
   const linkedIn = profile?.linkedIn_url || '';
   const instagram = profile?.insta_url || '';
 
@@ -54,7 +59,14 @@ const ProfileScreen = () => {
       setLoading(false);
     }
   }, [state]);
-
+const pickImage = async () => {
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    allowsEditing: true,
+    quality: 1,
+  });
+  if (!result.canceled) setGroupImage(result.assets[0].uri);
+};
   const updateDP = async ()=>{
      const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -185,6 +197,13 @@ const ProfileScreen = () => {
             <Text style={styles.ratingNumber}>🤩 {profile?.rating ?? 0} 😎</Text>
             <Text style={styles.ratingText}>Rating</Text>
           </View>
+          <TouchableOpacity
+  onPress={() => setCreateModalVisible(true)}
+  style={{ backgroundColor: '#8B5CF6', padding: 10, borderRadius: 10, marginVertical: 10 }}
+>
+  <Text style={{ color: '#fff', fontWeight: 'bold', textAlign: 'center' }}>+ Create Group</Text>
+</TouchableOpacity>
+
           <View style={{ flexDirection: 'row', marginTop: 10 }}>
             {linkedIn && (
               <TouchableOpacity onPress={() => Linking.openURL(linkedIn)}>
@@ -223,6 +242,12 @@ const ProfileScreen = () => {
           </View>
         </View>
       </Modal>
+      <CreateGroupModal
+  visible={createModalVisible}
+  onClose={() => setCreateModalVisible(false)}
+/>
+
+
     </View>
   );
 };
@@ -249,6 +274,20 @@ const styles = StyleSheet.create({
   modalBackground: {
     flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center',
   },
+  createGroupButton: {
+  backgroundColor: '#3B82F6',
+  paddingHorizontal: 16,
+  paddingVertical: 6,
+  borderRadius: 8,
+  marginTop: 10,
+},
+createGroupButtonText: {
+  color: 'white',
+  fontWeight: 'bold',
+  textAlign: 'center',
+  fontSize: 14,
+},
+
   modalContent: {
     width: 250, backgroundColor: '#fff', borderRadius: 10, padding: 20,
   },
