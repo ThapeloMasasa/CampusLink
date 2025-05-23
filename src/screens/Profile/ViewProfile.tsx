@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 import {useRoute } from '@react-navigation/native';
 import { ViewProfileRouteProp, ViewProfileNavigationProp, post, currentUser  } from '../../types/types';
 import { useNavigation } from '@react-navigation/native';

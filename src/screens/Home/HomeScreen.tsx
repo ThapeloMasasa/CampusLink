@@ -1,9 +1,9 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, Text, Image } from 'react-native';
 import { useNavigation } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons'; 
 import StoryBar from '../../components/StoryBar'; 
-import Post from '../../components/Post';         
+import PostCard from '../../components/PostCard';        
 import Yap from '../../components/Yap';
 import Animated, {
   useSharedValue,
@@ -20,6 +20,8 @@ export default function HomeScreen() {
   const { state,dispatch  } = useGlobalContext();
   const drawerTranslateX = useSharedValue(-250);
   const [toggleChev, setToggleChev] = useState(false)
+  const notifications = 6;
+  const messages = 7;
 
 const drawerStyle = useAnimatedStyle(() => ({
   transform: [{ translateX: drawerTranslateX.value }],
@@ -58,14 +60,56 @@ const toggleDrawer = () => {
 };
 
   useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={() => dispatch({ type: 'LOGOUT' })} style={{ marginRight: 15 }}>
+  navigation.setOptions({
+    headerLeft: () => (
+      <View style={{ marginLeft: 15 }}>
+        <Image
+          source={require('../../../assets/removed_header.png')}
+          style={{ width: 40, height: 40, resizeMode: 'contain' }}
+        />
+      </View>
+    ),
+    headerRight: () => (
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 15 }}>
+        {/* Inbox Icon */}
+        <TouchableOpacity
+          onPress={() => console.log("go to messages")} // Adjust route name accordingly
+          style={{ marginHorizontal: 15}}
+        >
+          <View>
+            <Ionicons name="chatbubble-ellipses-outline" size={24} color="black" />
+            {messages > 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>5</Text>
+              </View>
+            )}
+          </View>
+        </TouchableOpacity>
+
+        {/* Bell Icon */}
+        <TouchableOpacity
+          onPress={() => console.log("go to notifications")} // Adjust route name accordingly
+          style={{ marginHorizontal: 15 }}
+        >
+          <View>
+            <Ionicons name="notifications-outline" size={24} color="black" />
+            {notifications> 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}> 6</Text>
+              </View>
+            )}
+          </View>
+        </TouchableOpacity>
+
+        {/* Logout */}
+        <TouchableOpacity onPress={() => dispatch({ type: 'LOGOUT' })} style={{ marginLeft: 15 }}>
           <Ionicons name="log-out-outline" size={24} color="black" />
         </TouchableOpacity>
-      ),
-    });
-  }, [navigation, state.isLoggedIn]);
+      </View>
+    ),
+  });
+}, [navigation, state.isLoggedIn]);
+
   const renderPostItem = ({ item }: { item: any }) => (
     <View style={styles.post}>
       {item.yap ? (
@@ -76,7 +120,7 @@ const toggleDrawer = () => {
           initialReactions={item.reactions ?? []}
         />
       ) : (
-        <Post
+        <PostCard
           title={item.Header}
           content={item.Header}
           image={item.image ? { uri: item.image } : undefined}
@@ -110,8 +154,6 @@ return (
     <StoryBar />
   </Animated.View>
 </>
-
-        <View style={styles.separator} />
         <FlatList
           data={homeContent}
           numColumns={1}
@@ -138,6 +180,7 @@ const styles = StyleSheet.create({
   shadowRadius: 1,
   elevation: 2, 
   width: '100%',
+ 
 },
 
   separator: {
@@ -160,6 +203,23 @@ const styles = StyleSheet.create({
     paddingRight:20,
   
   },
+  badge: {
+  position: 'absolute',
+  right: -6,
+  top: -4,
+  backgroundColor: 'red',
+  borderRadius: 8,
+  minWidth: 16,
+  height: 16,
+  justifyContent: 'center',
+  alignItems: 'center',
+  paddingHorizontal: 3,
+},
+badgeText: {
+  color: 'white',
+  fontSize: 10,
+  fontWeight: 'bold',
+},
   drawer: {
   position: 'absolute',
   left: 0,
@@ -183,6 +243,7 @@ drawerToggle: {
   container: {
     backgroundColor: '#fff',
     flexDirection: 'row',
+    paddingLeft:40
   },
   feed: {
     paddingTop: 10,

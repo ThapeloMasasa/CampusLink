@@ -176,7 +176,11 @@ export type groupItem ={
   allProfiles: currentUser[] | null
   allMydays: myday[][];
 };
-
+export type AvatarProps = {
+  uri: string;
+  size: number;
+  rounded: number;
+};
 export type Action =
   | { type: 'LOGIN'; payload: { isLoggedIn: boolean; currentUserId: string; currentProfile: currentUser | null } }
   | { type: 'LOGOUT' }
