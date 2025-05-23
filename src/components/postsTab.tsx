@@ -29,7 +29,6 @@ const PostsTab = ({ posts }: { posts: post[] }) => {
   const [newPost, setNewPost] = useState({ Header: '', image: '' });
   const { state } = useGlobalContext();
   let countPosts = Math.floor(Math.random() * 1000000000);
-
   const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
@@ -122,6 +121,7 @@ const PostsTab = ({ posts }: { posts: post[] }) => {
         reactions={item.reactions ?? []}
         mypost={true}
         userId={item.id}
+        createdAt={item.created_at}
       />
     </View>
   );

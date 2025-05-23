@@ -3,12 +3,10 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal, Pressable, ScrollView,
 import ProfileIcon from './ProfileIcon';
 import { PostProps } from '../types/types';
 import moment from 'moment';
-import { useGlobalContext } from '../contexts/GlobalContext';
-//import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Avatar from './Avatar';
 import { Ionicons } from '@expo/vector-icons';
-import renderHtml from 'react-native-render-html';
 import { Image } from 'expo-image';
+import { useGlobalContext } from '../contexts/GlobalContext';
 
 const {width: deviceWidth, height: deviceheight} = Dimensions.get('window')
   const hp = (percentage: number) =>{
@@ -17,12 +15,17 @@ const {width: deviceWidth, height: deviceheight} = Dimensions.get('window')
 const wp = (percentage: number) =>{
     return (percentage*deviceWidth)/ 100;
 }
-const PostCard: React.FC<PostProps> = ({ title, content, image, likes,  mypost, userId }) => {
+const PostCard: React.FC<PostProps> = ({ title, content, image, likes,  mypost, userId, createdAt }) => {
   const [likeCount, setLikeCount] = useState(likes);
   const hasShadow = true;
   const [modalVisible, setModalVisible] = useState(false);
   const { state } = useGlobalContext();
   const [liked, setLiked] = useState(false)
+  const profiles = state.allProfiles || []
+  const userProfile = profiles.find(profile => profile.id === userId);
+  const userDp = userProfile?.avatar_url || require('../../assets/fin.png');
+  const userName = userProfile?.full_name || 'userName'
+  const date = moment(createdAt).format("MMM D")
   
   const shadowStyles = {shadowOffset:{
                             width: 0,
@@ -47,11 +50,11 @@ const PostCard: React.FC<PostProps> = ({ title, content, image, likes,  mypost, 
           <View style = {styles.userInfo}>
               <Avatar
                size={hp(4.5)}
-               uri ={image} 
+               uri ={userDp} 
                rounded= {14}/>
                <View style={{gap:2}}>
-                    <Text style = {styles.username}>UserName</Text>
-                    <Text style ={styles.postTime}>May 23</Text>
+                    <Text style = {styles.username}>{userName}</Text>
+                    <Text style ={styles.postTime}>{date}</Text>
                </View>
           </View>
           <TouchableOpacity>
@@ -61,7 +64,7 @@ const PostCard: React.FC<PostProps> = ({ title, content, image, likes,  mypost, 
        {/*post  body*/}
        <View style={styles.content}>
           <View style = {styles.postBody}>
-              <Text >Body</Text>
+              <Text >{content}</Text>
           </View>
 
           <Image
@@ -76,7 +79,7 @@ const PostCard: React.FC<PostProps> = ({ title, content, image, likes,  mypost, 
                 <Ionicons   name="heart" size={24} color={liked ? '#ef4444' : '#7C7C7C'}/>
             </TouchableOpacity>
             <Text style = {styles.count}>
-                {reactions.length}
+                {Math.floor(Math.random() * 101)}
             </Text>
         </View>
         <View style = {styles.footerButton}>
@@ -84,7 +87,7 @@ const PostCard: React.FC<PostProps> = ({ title, content, image, likes,  mypost, 
                 <Ionicons   name="chatbubble-outline" size={24}/>
             </TouchableOpacity>
             <Text style = {styles.count}>
-                {0}
+                {Math.floor(Math.random() * 101)}
             </Text>
         </View>
         <View style = {styles.footerButton}>

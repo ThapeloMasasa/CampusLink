@@ -61,6 +61,15 @@ export interface post {
   reactions: string[];
   owner: string;
 }
+export type YikYakStyleYapProps = {
+  content: string;
+  likes: number;
+  onLike: () => void;
+  onDislike: () => void;
+  commentCount: number;
+  timestamp?: string; // optional
+  distance?: string;  // optional
+};
 
 export interface PostProps {
   title: string;
@@ -70,6 +79,7 @@ export interface PostProps {
   reactions: any[]; 
   mypost: boolean;
   userId: string | null
+  createdAt: string
 }
 
 export type deal = {

@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import StoryBar from '../../components/StoryBar'; 
 import PostCard from '../../components/PostCard';        
 import Yap from '../../components/Yap';
+import YapCard from '../../components/YapCard';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -20,6 +21,7 @@ export default function HomeScreen() {
   const { state,dispatch  } = useGlobalContext();
   const drawerTranslateX = useSharedValue(-250);
   const [toggleChev, setToggleChev] = useState(false)
+  const [refreshing, setRefreshing] = useState(false);
   const notifications = 6;
   const messages = 7;
 
@@ -38,15 +40,15 @@ const toggleDrawer = () => {
     LoadContent()
   setLoading(false)
  }, [])
- const LoadContent = () => {
-  setLoading(true);
+ const LoadContent = async () => {
+  setRefreshing(true); // Set true here for refresh
+  setLoading(true);    // Set true for initial loading state (optional)
 
   try {
     const postsdata = state.allPosts || [];
     const yapsdata = state.allYaps || [];
 
     const hotyaps = yapsdata.filter(item => item.likes > 15);
-
     const combinedContent = [...postsdata, ...hotyaps];
 
     combinedContent.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
@@ -55,6 +57,7 @@ const toggleDrawer = () => {
   } catch (e) {
     console.log("Error loading content from context:", e);
   } finally {
+    setRefreshing(false); // Reset after refresh
     setLoading(false);
   }
 };
@@ -113,12 +116,16 @@ const toggleDrawer = () => {
   const renderPostItem = ({ item }: { item: any }) => (
     <View style={styles.post}>
       {item.yap ? (
-        <Yap
-          title=""
-          content={item.Content}
-          initialLikes={item.likes ?? 0}
-          initialReactions={item.reactions ?? []}
-        />
+        <YapCard
+                   content="The library smells like coffee and ambition."
+                   likes={42}
+                   onLike={() => console.log('Liked')}
+                   onDislike={() => console.log('Disliked')}
+                   commentCount={7}
+                   timestamp="3h ago"
+                   distance=""
+/>
+
       ) : (
         <PostCard
           title={item.Header}
@@ -128,6 +135,7 @@ const toggleDrawer = () => {
           reactions={item.reactions ?? []}
           mypost={false}
           userId={item.owner}
+          createdAt = {item.created_at}
         />
       )}
     </View>
@@ -160,6 +168,9 @@ return (
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderPostItem}
           contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 80 }}
+          refreshing={refreshing}
+          onRefresh={LoadContent}
+
         />
       </>
     )}
