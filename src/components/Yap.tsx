@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ImageBackground } from 'react
 import EmojiPicker from './EmojiPicker'; // Your emoji picker component
 import { YapProps } from '../types/types';
 
-const Yap = ({ title, content, initialLikes = 0, initialReactions = [] }: YapProps) => {
+const Yap = ({  content, initialLikes = 0, initialReactions = [] }: YapProps) => {
   const [likes, setLikes] = useState(initialLikes);
   const [rank, setRank] = useState(0);
   const [showReactions, setShowReactions] = useState(false);
@@ -11,7 +11,7 @@ const Yap = ({ title, content, initialLikes = 0, initialReactions = [] }: YapPro
   const [reactions, setReactions] = useState(initialReactions);
 
   const updateRank = (likes: number) => {
-    setRank(likes > 10 ? 5 : 100); // Example rank calculation
+    setRank(likes > 10 ? 5 : 100); 
   };
   const handleLike = () => {
     const newLikes = likes + 1;

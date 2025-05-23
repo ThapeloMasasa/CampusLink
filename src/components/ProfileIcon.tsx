@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { TouchableOpacity,  StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ProfileIconProps, NavigationProp } from '../types/types';
 import Icon from 'react-native-vector-icons/FontAwesome';
