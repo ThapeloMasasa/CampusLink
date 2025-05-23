@@ -12,21 +12,19 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
-import { StudentDealCardProps, ViewProfileNavigationProp } from '../types/types';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { StudentDealCardProps} from '../types/types';
+
 import ProfileIcon from './ProfileIcon';
-import { useNavigation } from '@react-navigation/native';
+
 import { useGlobalContext } from '../contexts/GlobalContext';
-// Import your supabase client here (adjust path as needed)
+
 import { supabase } from '../../supabaseClient';
 
 const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price, instructions, userId }) => {
-  const navigation = useNavigation<ViewProfileNavigationProp>();
   const { state } = useGlobalContext();
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  // For editing instructions and price if current user
   const [editedInstructions, setEditedInstructions] = useState(instructions);
   const [editedPrice, setEditedPrice] = useState(String(price));
 
@@ -38,13 +36,11 @@ const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price, instruc
       Alert.alert('Invalid Price', 'Please enter a valid non-negative number for price.');
       return;
     }
-
     try {
       const { error } = await supabase
         .from('Deals')
         .update({ instructions: editedInstructions, price: priceNum })
         .eq('owner', userId);
-
       if (error) {
         Alert.alert('Update Failed', error.message);
         return;
