@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { View, ScrollView, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import { useNavigation } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons'; 
 import StoryBar from '../../components/StoryBar'; 

@@ -43,11 +43,11 @@ const LoadContent = ()=>{
             reactions: [],
             score: 0,
             created_at: formattedDate,
-            owner: state.currentUserId, // If you have the user ID in context
+            owner: state.currentUserId,
           },
         ])
         .select()
-        .single(); // Get the inserted row back
+        .single(); 
 
       if (error) {
         console.error("Supabase insert error:", error);
