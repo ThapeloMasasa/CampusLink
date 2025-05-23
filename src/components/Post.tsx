@@ -16,7 +16,6 @@ const Post: React.FC<PostProps> = ({ title, content, image, likes,  mypost, user
     acc[emoji] = (acc[emoji] || 0) + 1;
     return acc;
   }, {});
-  
   return (
     <View style={styles.postContainer}>
       {/* Top image */}
@@ -25,7 +24,6 @@ const Post: React.FC<PostProps> = ({ title, content, image, likes,  mypost, user
           <Image source={image} style={styles.image} />
         </View>
       )}
-
       {/* Middle: title and content */}
       <View style={styles.middle}>
         <Text style={styles.title}>{title}</Text>
