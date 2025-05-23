@@ -8,9 +8,9 @@ import FlipSpaceScreen from '../screens/FlipSpace/FlipSpaceScreen';
 import ProfileScreen from '../screens/Profile/ProfileScreen';
 import ViewProfile from '../screens/Profile/ViewProfile'; 
 import ConnectZoneStack from './ConnectZoneStack';
-import { AuthProps, MainStackParamList } from '../types/types';
+import {MainStackParamList } from '../types/types';
 import DirectMessageScreen from '../screens/Profile/DirectMessageScreen';
-
+import InboxScreen from '../screens/Home/InboxScreen';
 const Tab = createBottomTabNavigator();
 const  Stack = createNativeStackNavigator<MainStackParamList>();
 
@@ -109,6 +109,11 @@ export default function MainNavigator() {
       name="DirectMessageScreen" 
       options ={{title: 'Inbox'}}
       component={DirectMessageScreen} />
+
+      <Stack.Screen 
+      name="InboxScreen" 
+      options ={{title: 'DM'}}
+      component={InboxScreen} />
     </Stack.Navigator>
   );
 }

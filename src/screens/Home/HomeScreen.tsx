@@ -1,8 +1,9 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, Text, Image } from 'react-native';
-import { useNavigation } from 'expo-router';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons'; 
 import StoryBar from '../../components/StoryBar'; 
+import { MainStackParamList } from '../../types/types';
 import PostCard from '../../components/PostCard';        
 import Yap from '../../components/Yap';
 import YapCard from '../../components/YapCard';
@@ -14,8 +15,9 @@ import Animated, {
 
 import { useGlobalContext } from '../../contexts/GlobalContext';
 
+
 export default function HomeScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<MainStackParamList>>();
   const [homeContent, setHomeContent] = useState<any []>([])
   const [loading, setLoading] = useState<boolean>(true)
   const { state,dispatch  } = useGlobalContext();
@@ -76,7 +78,7 @@ const toggleDrawer = () => {
       <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 15 }}>
         {/* Inbox Icon */}
         <TouchableOpacity
-          onPress={() => console.log("go to messages")} // Adjust route name accordingly
+          onPress={() => navigation.navigate('InboxScreen', { userId: state.currentUserId})} // Adjust route name accordingly
           style={{ marginHorizontal: 15}}
         >
           <View>

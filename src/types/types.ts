@@ -109,6 +109,7 @@ export type localDeal = {
     ViewProfile: { userId: string | null };
     GroupChat: {sections: string[]| null}
     DirectMessageScreen: {username: string | undefined};
+    InboxScreen: { userId: string | null };
   };
 
   export interface DirectMessage {
@@ -125,6 +126,7 @@ export type ViewProfileRouteProp = RouteProp<MainStackParamList, 'ViewProfile'>;
 export type DirectMessageProp = RouteProp<MainStackParamList, 'DirectMessageScreen'>;
 export type ViewProfileNavigationProp = StackNavigationProp<MainStackParamList, 'ViewProfile'>;
 export type GroupChatRouteProp = RouteProp<RootStackParamList, 'GroupChat'>;
+export type InboxScreenNavigationProp = NativeStackNavigationProp<MainStackParamList, 'InboxScreen'>;
 
 export type ProfileIconProps = {
     userId: string | null;
