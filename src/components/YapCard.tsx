@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { YikYakStyleYapProps } from '../types/types';
+import { calculateYapAge } from '../utils/calculateTime';
 
 const reactions = ['❤️', '😂', '😮', '😢', '😡'];
 
@@ -20,7 +21,7 @@ const YapCard: React.FC<YikYakStyleYapProps> = ({
 }) => {
   const [showReactions, setShowReactions] = useState(false);
   const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
-
+  const age = calculateYapAge(timestamp);
   const handleReact = (reaction: string) => {
     setSelectedReaction(reaction);
     setShowReactions(false);
@@ -40,7 +41,7 @@ const YapCard: React.FC<YikYakStyleYapProps> = ({
           <TouchableOpacity onPress={onLike}>
             <Ionicons name="arrow-up" size={24} color="gray" />
           </TouchableOpacity>
-          <Text style={styles.voteCount}>{likes}</Text>
+          <Text style={styles.voteCount}>{Math.floor(Math.random() * 101)}</Text>
           <TouchableOpacity onPress={onDislike}>
             <Ionicons name="arrow-down" size={24} color="gray" />
           </TouchableOpacity>
@@ -63,11 +64,11 @@ const YapCard: React.FC<YikYakStyleYapProps> = ({
         </View>
       )}
 
-      {(timestamp || distance) && (
+      {
         <Text style={styles.subInfo}>
-          {distance ? `${distance} • ` : ''}{timestamp}
+           {age}
         </Text>
-      )}
+      }
 
       <View style={styles.flames}>
         <Text>🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥🔥 🔥 🔥 🔥 </Text>
@@ -92,7 +93,7 @@ const styles = StyleSheet.create({
   },
   flames: {
     paddingTop: 10,
-    paddingLeft: 13,
+    alignItems: 'center',
     flex: 1,
   },
   content: {

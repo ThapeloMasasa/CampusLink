@@ -67,8 +67,8 @@ export type YikYakStyleYapProps = {
   onLike: () => void;
   onDislike: () => void;
   commentCount: number;
-  timestamp?: string; // optional
-  distance?: string;  // optional
+  timestamp: string; 
+  distance: string;  // optional
 };
 
 export interface PostProps {

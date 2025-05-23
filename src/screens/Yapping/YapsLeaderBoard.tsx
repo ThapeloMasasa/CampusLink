@@ -3,8 +3,8 @@ import { View, Text, FlatList, TouchableOpacity, Modal, StyleSheet, Keyboard, Sa
 import Yap from '../../components/Yap';
 import { YapType } from '../../types/types';
 import { useGlobalContext } from '../../contexts/GlobalContext';
-
-
+import { calculateYapAge } from '../../utils/calculateTime';
+import YapCard from '../../components/YapCard';
 
 const YapsLeaderboard = () => {
   const [selectedYap, setSelectedYap] = useState<YapType | null>(null);
@@ -77,12 +77,15 @@ const YapsLeaderboard = () => {
   <SafeAreaView style={{ flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.4)' }}>
     <View style={styles.modalContent}>
       {selectedYap && 
-        <Yap
-          title={selectedYap.header}
-          content={selectedYap.Content}
-          initialLikes={selectedYap.likes}
-          initialReactions={selectedYap.reactions || []}
-        />
+         <YapCard
+                   content= {selectedYap.Content}
+                   likes={42}
+                   onLike={() => console.log('Liked')}
+                   onDislike={() => console.log('Disliked')}
+                   commentCount={7}
+                   timestamp={selectedYap.created_at}
+                   distance=""
+/>
       }
       <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
         <Text style={styles.closeButtonText}>Close</Text>
@@ -96,14 +99,6 @@ const YapsLeaderboard = () => {
 };
 
 // Helper to calculate age
-const calculateYapAge = (created_at: string) => {
-  const secondsAgo = (Date.now() - new Date(created_at).getTime()) / 1000;
-  if (secondsAgo < 60) return `${Math.floor(secondsAgo)}s`;
-  if (secondsAgo < 3600) return `${Math.floor(secondsAgo / 60)}m`;
-  if (secondsAgo < 86400) return `${Math.floor(secondsAgo / 3600)}h`;
-  if (secondsAgo < 604800) return `${Math.floor(secondsAgo / 86400)}d`;
-  return `${Math.floor(secondsAgo / 604800)}w`;
-};
 
 const styles = StyleSheet.create({
   container: {

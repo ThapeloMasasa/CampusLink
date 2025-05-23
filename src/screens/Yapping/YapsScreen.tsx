@@ -5,6 +5,7 @@ import Yap from '../../components/Yap';
 import { YapType } from '../../types/types';
 import { supabase } from '../../../supabaseClient';
 import { useGlobalContext } from '../../contexts/GlobalContext';
+import YapCard from '../../components/YapCard';
 
 const YapsScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -73,8 +74,16 @@ const LoadContent = ()=>{
       <ScrollView>
   <TouchableOpacity>
     {yaps?.map((yap, index) => (
-      <View key={index}> 
-        <Yap title={yap.header} content={yap?.Content} />
+      <View style = {styles.eachYap}key={index}> 
+         <YapCard
+                   content= {yap.Content}
+                   likes={42}
+                   onLike={() => console.log('Liked')}
+                   onDislike={() => console.log('Disliked')}
+                   commentCount={7}
+                   timestamp={yap.created_at}
+                   distance=""
+/>
         <View style={styles.separator} />
       </View>
     ))}
@@ -131,6 +140,11 @@ const LoadContent = ()=>{
 };
 
 const styles = StyleSheet.create({
+
+  eachYap:{
+    marginLeft: 20,
+    marginRight: 20
+  },
   add: {
     position: 'absolute',
     bottom: 25,
