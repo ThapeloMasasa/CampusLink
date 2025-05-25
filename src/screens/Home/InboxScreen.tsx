@@ -40,7 +40,7 @@ const InboxScreen = ({}) => {
   const [chats, setChats] = useState<DMPreview[]>([]);
 
   useEffect(() => {
-    // Replace this with actual fetch from Supabase
+    
     setChats(dummyChats);
   }, []);
 
