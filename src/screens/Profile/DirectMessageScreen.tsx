@@ -16,7 +16,7 @@ const DirectMessageScreen: React.FC<DirectMessageScreenProps> = ({ route }) => {
   const flatListRef = useRef<FlatList>(null);
   const userId = state.currentUserId;
   const [receiverId, setReceiverId] = useState<string | null>(null);
-  console.log("Messages", state.allMessages)
+ 
   useEffect(() => {
     countMessages += 1
     if (userId) {

@@ -36,7 +36,6 @@ const Post: React.FC<PostProps> = ({ title, content, image, likes,  mypost, user
           <Text style={styles.statText}>👍 {likeCount}</Text>
         </TouchableOpacity>
        {state.currentUserId !== userId && !mypost && <ProfileIcon userId={userId} />}
-        
         <TouchableOpacity onPress={() => setModalVisible(true)}>
           <Text style={styles.statText}>🙂 {reactions.length > 0 ? reactions.length : 0}</Text>
         </TouchableOpacity>

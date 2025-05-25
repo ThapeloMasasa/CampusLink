@@ -51,6 +51,7 @@ useEffect(() => {
       reactions={item.reactions ?? []}
       mypost={true}
       userId= {item.owner}
+      createdAt={item.created_at}
     />
   </View>
     
