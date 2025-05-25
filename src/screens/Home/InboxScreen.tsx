@@ -31,10 +31,6 @@ const dummyChats: DMPreview[] = [
   },
 ];
 
-
-
-
-
 const InboxScreen = ({}) => {
   const navigation = useNavigation<InboxScreenNavigationProp>();
   const [chats, setChats] = useState<DMPreview[]>([]);
