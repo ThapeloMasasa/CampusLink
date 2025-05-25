@@ -246,13 +246,9 @@ const pickImage = async () => {
   visible={createModalVisible}
   onClose={() => setCreateModalVisible(false)}
 />
-
-
     </View>
   );
 };
-
-// [Styles unchanged — omitted for brevity, but use your existing ones.]
 
 
 const styles = StyleSheet.create({
