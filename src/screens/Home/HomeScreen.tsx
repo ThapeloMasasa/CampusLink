@@ -168,7 +168,6 @@ export default function HomeScreen() {
             refreshing={refreshing}
             onRefresh={LoadContent}
           />
-
           {/* Notifications Modal */}
           {modalVisible && (
             <NotificationsModalComponent
@@ -247,7 +246,6 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderRightColor: '#ccc',
   },
-
   drawerToggle: {
     position: 'absolute',
     top: 40,
