@@ -10,7 +10,8 @@ const initialState: GlobalState = {
   allPosts: [],
   allYaps: [],
   allProfiles: [],
-  allMydays: []
+  allMydays: [],
+  allMessages:[]
 };
 
 function reducer(state: GlobalState, action: Action): GlobalState {
@@ -26,6 +27,8 @@ function reducer(state: GlobalState, action: Action): GlobalState {
       return { ...initialState };
     case 'SET_MYDAYS':
         return {...state, allMydays: action.payload};
+    case 'SET_MESSAGES':
+        return {...state, allMessages: action.payload};
     case 'SET_POSTS':
     case 'REFRESH_POSTS':
       return { ...state, allPosts: action.payload };

@@ -3,7 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, Modal, StyleSheet, Keyboard, Sa
 import Yap from '../../components/Yap';
 import { YapType } from '../../types/types';
 import { useGlobalContext } from '../../contexts/GlobalContext';
-import { calculateYapAge } from '../../utils/calculateTime';
+import { calculateAge } from '../../utils/calculateTime';
 import YapCard from '../../components/YapCard';
 
 const YapsLeaderboard = () => {
@@ -49,7 +49,7 @@ const YapsLeaderboard = () => {
   );
 
   const renderItem = ({ item }: { item: YapType }) => {
-    const age = calculateYapAge(item.created_at);
+    const age = calculateAge(item.created_at);
     countYaps += 1
 
     return (

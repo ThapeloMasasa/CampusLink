@@ -99,7 +99,12 @@ const LoginScreen = () => {
       console.log(mydaysError);
     }
 
-    // 7. Dispatch login
+     // 7. Fetch Messages
+    const { data: messages, error: messagesError } = await supabase.from('Messages').select('*').eq('sender_id',user.id);
+    if (!postsError) dispatch({ type: 'SET_MESSAGES', payload: messages });
+    else console.log(messagesError);
+
+    // 8. Dispatch login
     dispatch({
       type: 'LOGIN',
       payload: {

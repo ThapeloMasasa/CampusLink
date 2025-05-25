@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { YikYakStyleYapProps } from '../types/types';
-import { calculateYapAge } from '../utils/calculateTime';
+import { calculateAge } from '../utils/calculateTime';
 
 const reactions = ['❤️', '😂', '😮', '😢', '😡'];
 
@@ -21,7 +21,7 @@ const YapCard: React.FC<YikYakStyleYapProps> = ({
 }) => {
   const [showReactions, setShowReactions] = useState(false);
   const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
-  const age = calculateYapAge(timestamp);
+  const age = calculateAge(timestamp);
   const handleReact = (reaction: string) => {
     setSelectedReaction(reaction);
     setShowReactions(false);

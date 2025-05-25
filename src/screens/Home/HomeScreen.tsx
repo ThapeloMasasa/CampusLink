@@ -29,7 +29,6 @@ export default function HomeScreen() {
   const drawerStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: drawerTranslateX.value }],
   }));
-
   const toggleDrawer = () => {
     drawerTranslateX.value = withTiming(drawerTranslateX.value === 0 ? -250 : 0, { duration: 300 });
     setToggleChev(!toggleChev);

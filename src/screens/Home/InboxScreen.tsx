@@ -1,49 +1,79 @@
-// screens/InboxScreen.tsx
-
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { DirectMessage } from '../../types/types';
-import { InboxScreenNavigationProp } from '../../types/types';
-type DMPreview = {
-  id: string;
-  name: string;
-  latestMessage: string;
-  timestamp: string;
-  profileImage: string;
-};
+import { InboxScreenNavigationProp, DMPreview } from '../../types/types';
+import { useGlobalContext } from '../../contexts/GlobalContext';
+import { calculateAge } from '../../utils/calculateTime';
 
-
-const dummyChats: DMPreview[] = [
-  {
-    id: '1',
-    name: 'Alice Johnson',
-    latestMessage: 'Hey! Are you coming to class?',
-    timestamp: '10:24 AM',
-    profileImage: 'https://i.pravatar.cc/150?img=1',
-  },
-  {
-    id: '2',
-    name: 'Ben Foster',
-    latestMessage: 'Sure, I’ll send the notes later.',
-    timestamp: '9:15 AM',
-    profileImage: 'https://i.pravatar.cc/150?img=2',
-  },
-];
-
-const InboxScreen = ({}) => {
+const InboxScreen = () => {
   const navigation = useNavigation<InboxScreenNavigationProp>();
   const [chats, setChats] = useState<DMPreview[]>([]);
+  const { state } = useGlobalContext();
 
   useEffect(() => {
-    
-    setChats(dummyChats);
-  }, []);
+    const latestMessages = loadUserMessages();
+    const enrichedMessages = enrichWithProfileData(latestMessages);
+
+    const updatedChats: DMPreview[] = Object.entries(enrichedMessages).map(([userId, msg]) => ({
+      id: userId,
+      name: msg.full_name ?? 'Unknown',
+      latestMessage: msg.content,
+      timestamp: calculateAge(msg.created_at),
+      profileImage: msg.avatar_url ?? 'https://i.pravatar.cc/150',
+    }));
+
+    setChats(updatedChats);
+  }, [state.allMessages, state.allProfiles]);
+
+  const loadUserMessages = () => {
+    if (!state.allMessages || !state.currentUserId) return {};
+
+    const currentUserMessages = state.allMessages.filter(
+      msg =>
+        !msg.is_group &&
+        (msg.sender_id === state.currentUserId || msg.receiver_id === state.currentUserId)
+    );
+
+    const latestMessages: { [userId: string]: typeof currentUserMessages[0] } = {};
+
+    currentUserMessages.forEach(msg => {
+      const otherUserId =
+        msg.sender_id === state.currentUserId ? msg.receiver_id : msg.sender_id;
+
+      if (typeof otherUserId === 'string') {
+        const existingMsg = latestMessages[otherUserId];
+        if (!existingMsg || new Date(msg.created_at) > new Date(existingMsg.created_at)) {
+          latestMessages[otherUserId] = msg;
+        }
+      }
+    });
+
+    return latestMessages;
+  };
+
+  const enrichWithProfileData = (
+    messages: { [userId: string]: any }
+  ): { [userId: string]: any } => {
+    if (!state.allProfiles) return messages;
+
+    const updated: { [userId: string]: any } = {};
+
+    for (const [userId, msg] of Object.entries(messages)) {
+      const profile = state.allProfiles.find(p => p.id === userId);
+      updated[userId] = {
+        ...msg,
+        full_name: profile?.full_name ?? 'Unknown',
+        avatar_url: profile?.avatar_url ?? 'https://i.pravatar.cc/150',
+      };
+    }
+
+    return updated;
+  };
 
   const renderItem = ({ item }: { item: DMPreview }) => (
     <TouchableOpacity
       style={styles.chatContainer}
-      onPress={() => navigation.navigate('DirectMessageScreen', { username: item.id })}
+      onPress={() => navigation.navigate('DirectMessageScreen', { username: item.name })}
     >
       <Image source={{ uri: item.profileImage }} style={styles.profileImage} />
       <View style={styles.messageInfo}>
@@ -69,6 +99,7 @@ const InboxScreen = ({}) => {
 };
 
 export default InboxScreen;
+
 
 const styles = StyleSheet.create({
   container: {

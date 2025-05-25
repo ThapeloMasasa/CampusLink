@@ -15,9 +15,12 @@ export type AuthProps = {
     id: string;
     content: string;
     sender_id: string;
-    profile: string 
+    receiver_id: string| null;
+    is_group: boolean;
+    group_id: string| null 
+    created_at: string
   };
-// types.ts
+
 
 export type myday = {
   owner: string;
@@ -187,16 +190,25 @@ export type groupItem ={
   allYaps: YapType[];
   allProfiles: currentUser[] | null
   allMydays: myday[][];
+  allMessages: Message[] | null;
 };
 export type AvatarProps = {
   uri: string;
   size: number;
   rounded: number;
 };
+export type DMPreview = {
+  id: string;
+  name: string;
+  latestMessage: string;
+  timestamp: string;
+  profileImage: string;
+};
 export type Action =
   | { type: 'LOGIN'; payload: { isLoggedIn: boolean; currentUserId: string; currentProfile: currentUser | null } }
   | { type: 'LOGOUT' }
   | { type: 'SET_POSTS'; payload: post[] }
+  | { type: 'SET_MESSAGES'; payload: Message[]| null }
   | { type: 'SET_MYDAYS'; payload: myday[][] }
   | { type: 'SET_YAPS'; payload: YapType[] }
   | { type: 'REFRESH_POSTS'; payload: post[] }
