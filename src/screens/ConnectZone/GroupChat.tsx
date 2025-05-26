@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useEffect, useState } from 'react';
 import {
-  View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform,
+  View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform,Modal
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRoute, useNavigation } from '@react-navigation/native';
@@ -16,6 +16,9 @@ const GroupChat = () => {
   const navigation = useNavigation();
   const { state } = useGlobalContext();
   const [modalVisible, setModalVisible] = useState(false);
+const [searchQuery, setSearchQuery] = useState('');
+const [searchResults, setSearchResults] = useState(state.allProfiles);
+  const [addPersonModalVisible, setaddPersonModalVisible] = useState(false);
   let countMessage = Math.floor(Math.random() * 1000000000);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
@@ -31,15 +34,18 @@ const GroupChat = () => {
   useLayoutEffect(() => {
   navigation.setOptions({
     title: header,
-    headerLeft: () => (
+    headerRight: () => (
       <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 10 }}>
-        <TouchableOpacity onPress={() => {/* open user profile */}}>
+        
+        {isAdmin && (
+          <>
+          <TouchableOpacity onPress={() => {/* open user profile */}}>
           <Ionicons name="person-circle-outline" size={28} color="#111827" />
         </TouchableOpacity>
-        {isAdmin && (
-          <TouchableOpacity onPress={() => setModalVisible(true)} style={{ marginLeft: 10 }}>
+          <TouchableOpacity onPress={() => setModalVisible(true)} style={{ marginRight: 5 }}>
             <Ionicons name="add-circle-outline" size={28} color="#3B82F6" />
           </TouchableOpacity>
+          </>
         )}
       </View>
     ),
@@ -135,6 +141,61 @@ const GroupChat = () => {
           </TouchableOpacity>
         </View>
       </View>
+      <Modal visible={modalVisible} animationType="slide" transparent={true}>
+  <View style={{
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    padding: 20,
+  }}>
+    <View style={{
+      backgroundColor: '#fff',
+      borderRadius: 10,
+      padding: 20,
+      maxHeight: '80%',
+    }}>
+      <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>Add User to Group</Text>
+      <TextInput
+        placeholder="Search user by name"
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        style={{
+          borderColor: '#ccc',
+          borderWidth: 1,
+          borderRadius: 8,
+          padding: 10,
+          marginBottom: 15,
+        }}
+      />
+      <FlatList
+        data={searchResults}
+        keyExtractor={(item) => item.full_name}
+        renderItem={({ item }) => (
+          <TouchableOpacity style={{
+            padding: 10,
+            borderBottomColor: '#eee',
+            borderBottomWidth: 1,
+          }}>
+            <Text>{item.full_name}</Text>
+          </TouchableOpacity>
+        )}
+        ListEmptyComponent={<Text style={{ color: '#666' }}>No users found</Text>}
+      />
+      <TouchableOpacity
+        onPress={() => setModalVisible(false)}
+        style={{
+          marginTop: 15,
+          backgroundColor: '#3B82F6',
+          padding: 10,
+          borderRadius: 8,
+        }}
+      >
+        <Text style={{ color: '#fff', textAlign: 'center' }}>Close</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</Modal>
+
     </KeyboardAvoidingView>
   );
 };
