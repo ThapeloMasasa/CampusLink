@@ -49,69 +49,69 @@ export default function CreateGroupModal({ visible, onClose }: createGroupProps)
   };
 
   const handleCreateGroup = async () => {
-    if (!groupName || (addSections && sectionNames.some(name => !name))) {
-      return Alert.alert('Validation', 'Please complete all fields.');
-    }
+  if (!groupName || (addSections && sectionNames.some(name => !name))) {
+    return Alert.alert('Validation', 'Please complete all fields.');
+  }
 
-    setLoading(true);
+  setLoading(true);
 
-    try {
-      let imageUrl = null;
+  try {
+    let imageUrl = null;
 
-      if (groupImage) {
-        const ext = groupImage.split('.').pop();
-        const fileName = `${uuid.v4()}.${ext}`;
-        const filePath = FileSystem.documentDirectory + fileName;
-        await FileSystem.copyAsync({ from: groupImage, to: filePath });
+    if (groupImage) {
+      const base64 = await FileSystem.readAsStringAsync(groupImage, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      const fileName = `${groupName}/post-${Date.now()}.jpg`;
+      const contentType = 'image/jpeg';
 
-        const { data: imgData, error: imgErr } = await supabase.storage
-          .from('group-images')
-          .upload(fileName, {
-            uri: filePath,
-            type: 'image/' + ext,
-            name: fileName,
-          } as any);
-
-        if (imgErr) throw imgErr;
-
-        const { data: publicUrlData } = supabase
-          .storage
-          .from('group-images')
-          .getPublicUrl(fileName);
-
-        imageUrl = publicUrlData.publicUrl;
-      }
-
-      const formattedSections = addSections ? sectionNames.join('/') : null;
-
-      const { data, error } = await supabase
-        .from('Groups')
-        .insert([
-          {
-            name: groupName,
-            sections: formattedSections,
-            admin: state.currentUserId,
-            open: needPermission,
-            has_sections: addSections,
-            image: imageUrl,
-          },
-        ]);
+      const { data, error } = await supabase.storage
+        .from('group-images')
+        .upload(fileName, Buffer.from(base64, 'base64'), {
+          contentType,
+          upsert: true,
+        });
 
       if (error) {
-        console.error('Insert error:', error);
-        Alert.alert('Error', 'Could not create group');
-      } else {
-        Alert.alert('Success', 'Group created successfully');
-        onClose();
-        resetFields();
+        console.error('Image upload error:', error.message);
+        throw error;
       }
-    } catch (err) {
-      console.error('Unexpected error:', err);
-      Alert.alert('Error', 'Unexpected error occurred');
-    } finally {
-      setLoading(false);
+
+      const { data: publicUrlData } = supabase
+        .storage
+        .from('group-images')
+        .getPublicUrl(fileName);
+      imageUrl = publicUrlData?.publicUrl ?? null;
     }
-  };
+    const formattedSections = addSections ? sectionNames.join('/') : null;
+    const { data, error } = await supabase
+      .from('Groups')
+      .insert([
+        {
+          name: groupName,
+          sections: formattedSections,
+          admin: state.currentUserId,
+          open: true,
+          has_sections: addSections,
+          image: imageUrl,
+        },
+      ]);
+
+    if (error) {
+      console.error('Insert error:', error);
+      Alert.alert('Error', 'Could not create group');
+    } else {
+      Alert.alert('Success', 'Group created successfully');
+      onClose();
+      resetFields();
+    }
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    Alert.alert('Error', 'Unexpected error occurred');
+  } finally {
+    setLoading(false);
+  }
+};
 
   const resetFields = () => {
     setGroupName('');

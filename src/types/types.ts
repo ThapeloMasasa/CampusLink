@@ -8,8 +8,8 @@ export type AuthProps = {
   };
   export type RootStackParamList = {
     ConnectZone: undefined;
-    SectionScreen: { group: groupItem};
-    GroupChat: {section: string, groupName: string};
+    SectionScreen: { group: groupItem,};
+    GroupChat: {section: string, groupName: string, admin: string};
   };
   export type Message = {
     id: string;
@@ -139,6 +139,8 @@ export type groupItem ={
     name: string;
     image: Image;
     sections: string[]
+    has_sections: boolean
+    admin: string
   }
   export type FlipSpaceTabParamList = {
     Students: undefined;

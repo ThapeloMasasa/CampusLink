@@ -1,59 +1,90 @@
-import React from 'react';
-import { View, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, TouchableOpacity, FlatList, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import GroupCard from '../../components/GroupCard';
 import { groupItem, RootStackParamList   } from '../../types/types';
-
+import { useGlobalContext } from '../../contexts/GlobalContext';
+import { supabase } from '../../../supabaseClient';
 type ConnectZoneNavigationProp = StackNavigationProp<RootStackParamList, 'ConnectZone', 'GroupChat'>;
 
 
-const images = {'CS': require('../../../assets/CS.png'),
-                'fin': require('../../../assets/fin.png'),
-                'law': require('../../../assets/law.png'),
-                'socio': require('../../../assets/socio.png'),
-                
-}
-const groups: groupItem[] = [
-  {
-    name: 'Computer Science',
-    image: images['CS'],
-    sections: ['General', 'LeetCode', 'Resumes', 'Projects']
-  },
-  {
-    name: 'Finance',
-    image: images['fin'],
-    sections: ['General', 'Internships', 'Valuation', 'Resume Reviews', 'Case Studies']
-  },
-  {
-    name: 'Law',
-    image: images['law'],
-    sections: ['General', 'Case Discussions', 'Internships', 'Moot Court', 'LSAT Prep']
-  },
-  {
-    name: 'Sociology',
-    image: images['socio'],
-    sections: ['General', 'Research Topics', 'Debates', 'Resume Help', 'Projects']
-  }
-];
-
 const ConnectZoneScreen = () => {
+  
   const navigation = useNavigation<ConnectZoneNavigationProp>();
+  const {state} = useGlobalContext();
+  const [createdGroups, setCreatedGroups] = useState<groupItem[]>([]);
+
+  useEffect(()=>{
+     loadGroups();
+  },[])
+
+  const loadGroups = async () => {
+  if (!state.currentUserId) {
+    console.warn('currentUserId is undefined');
+    return;
+  }
+
+  const { data: groups, error: groupsError } = await supabase
+    .from('Groups')
+    .select('*')
+    .eq('admin', state.currentUserId);
+
+  if (groupsError) {
+    console.error('Error fetching groups:', groupsError);
+    Alert.alert("Group fetch failed");
+    return;
+  }
+
+
+  if (groups) {
+    const groupsWithSectionArray = groups.map(group => ({
+      ...group,
+      sections: group?.sections?.split('/'),
+    }));
+    console.log('Processed groups:', groupsWithSectionArray);
+    setCreatedGroups(groupsWithSectionArray);
+  }
+};
+
+  const handleGroupEntrance = (item: any)=>{
+    if (item.has_sections){
+        navigation.navigate('SectionScreen', { group: item, })
+    }else{
+       navigation.navigate('GroupChat', {
+                section: '',
+                groupName: item.name,
+                admin: item.admin
+      })
+    }
+    
+  }
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={groups}
-        keyExtractor={(item) => item.name}
+        data={createdGroups}
+        keyExtractor={(item, index) => item?.name?.toString() ?? index.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity
-          >
-           <GroupCard
+          <TouchableOpacity>
+           {
+          item?.has_sections ? <GroupCard
                 groupName= {item.name}
-                isOpen={false}
+                isOpen={true}
                 onPress={() => navigation.navigate('SectionScreen', { group: item })}
                 backgroundImage={item.image}
+/> :<GroupCard
+                groupName= {item.name}
+                isOpen={true}
+                onPress={() => navigation.navigate('GroupChat', {
+                section: '',
+                groupName: item.name,
+                admin: item.admin
+              })
+            }
+                backgroundImage={item.image}
 />
+           }
           </TouchableOpacity>
         )}
       />

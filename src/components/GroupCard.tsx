@@ -6,15 +6,11 @@ const GroupCard = ({ groupName, isOpen, onPress, backgroundImage }: GroupCardPro
   const onRequest = ()=>{
     Alert.alert("You need to request to Join Group")
   }
-  if(groupName.length% 2 == 0){
-    isOpen = true
-  }else{
-    isOpen = false
-  }
+
   return (
     <View style={styles.cardContainer}>
       <ImageBackground
-        source={backgroundImage}
+        source={{uri:backgroundImage}}
         style={styles.imageBackground}
         imageStyle={{ borderRadius: 15 }}
       >
@@ -39,7 +35,7 @@ const GroupCard = ({ groupName, isOpen, onPress, backgroundImage }: GroupCardPro
 
 const styles = StyleSheet.create({
   cardContainer: {
-    height: 150,
+    height: 250,
     marginVertical: 10,
     marginHorizontal: 20,
     borderRadius: 15,

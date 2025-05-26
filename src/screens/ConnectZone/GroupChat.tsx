@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useEffect, useState } from 'react';
 import {
   View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { supabase } from '../../../supabaseClient';
 import { useGlobalContext } from '../../contexts/GlobalContext';
@@ -11,17 +12,39 @@ import { GroupChatRouteProp } from '../../types/types';
 
 const GroupChat = () => {
   const route = useRoute<GroupChatRouteProp>();
-  const { section,groupName } = route.params;
+  const { section,groupName, admin } = route.params;
   const navigation = useNavigation();
   const { state } = useGlobalContext();
+  const [modalVisible, setModalVisible] = useState(false);
   let countMessage = Math.floor(Math.random() * 1000000000);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const name = groupName+section
+  const isAdmin = admin === state.currentUserId
+  let header = ""
+  if(section === ""){
+    header = groupName
+  }else{
+    header = section
+  }
 
   useLayoutEffect(() => {
-    navigation.setOptions({ title: section });
-  }, [navigation, section]);
+  navigation.setOptions({
+    title: header,
+    headerLeft: () => (
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 10 }}>
+        <TouchableOpacity onPress={() => {/* open user profile */}}>
+          <Ionicons name="person-circle-outline" size={28} color="#111827" />
+        </TouchableOpacity>
+        {isAdmin && (
+          <TouchableOpacity onPress={() => setModalVisible(true)} style={{ marginLeft: 10 }}>
+            <Ionicons name="add-circle-outline" size={28} color="#3B82F6" />
+          </TouchableOpacity>
+        )}
+      </View>
+    ),
+  });
+}, [navigation, section, isAdmin]);
 
   useEffect(() => {
     countMessage += 1

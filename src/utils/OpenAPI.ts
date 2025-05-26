@@ -4,7 +4,6 @@ import Constants from 'expo-constants';
 
 export const checkForHateSpeech = async (text: string): Promise<boolean> => {
   const openAIKey = Constants.expoConfig?.extra?.openaiApiKey
-
     try {
     const response = await fetch('https://api.openai.com/v1/moderations', {
       method: 'POST',

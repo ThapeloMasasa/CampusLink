@@ -18,6 +18,7 @@ const SectionScreen = ({ route, navigation }: SectionScreenProps) => {
               navigation.navigate('GroupChat', {
                 section: item,
                 groupName: group.name,
+                admin:group.admin
               })
             }
           >
