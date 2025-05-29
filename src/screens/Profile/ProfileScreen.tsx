@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {
   View, Text, StyleSheet, Image, ActivityIndicator, TouchableOpacity,
-  Linking, Modal
+  Linking, Modal, Alert
 } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -26,6 +26,7 @@ const Tab = createMaterialTopTabNavigator();
 const ProfileScreen = () => {
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const navigation = useNavigation();
+
   const { state, dispatch } = useGlobalContext();
   const [profile, setProfile] = useState<currentUser>();
   const [groupName, setGroupName] = useState('');
@@ -59,6 +60,7 @@ const ProfileScreen = () => {
       setLoading(false);
     }
   }, [state]);
+  
 const pickImage = async () => {
   const result = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.Images,

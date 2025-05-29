@@ -99,7 +99,7 @@ const DirectMessageScreen: React.FC<DirectMessageScreenProps> = ({ route }) => {
       keyboardVerticalOffset={100}
     >
       <View style={styles.topBar}>
-        <ProfileIcon userId={username} />
+        <ProfileIcon userId={receiverId} />
         <Text style={styles.username}>{username}</Text>
       </View>
 

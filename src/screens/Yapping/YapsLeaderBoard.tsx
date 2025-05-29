@@ -78,6 +78,8 @@ const YapsLeaderboard = () => {
     <View style={styles.modalContent}>
       {selectedYap && 
          <YapCard
+                  imageUrl={selectedYap.image}
+                  hasImage = {selectedYap.has_image}
                    content= {selectedYap.Content}
                    likes={42}
                    onLike={() => console.log('Liked')}

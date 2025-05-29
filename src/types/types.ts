@@ -176,6 +176,8 @@ export type groupItem ={
     owner: string | null;
     id: string;
     Content: string;
+    image : string;
+    has_image: boolean;
     created_at: string; 
     yap: boolean;
     likes: number;

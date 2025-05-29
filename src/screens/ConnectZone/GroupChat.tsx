@@ -22,9 +22,9 @@ const [searchResults, setSearchResults] = useState(state.allProfiles);
   let countMessage = Math.floor(Math.random() * 1000000000);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
-  const name = groupName+section
-  const isAdmin = admin === state.currentUserId
-  let header = ""
+  const name = groupName+section;
+  const isAdmin = admin === state.currentUserId;
+  let header = "";
   if(section === ""){
     header = groupName
   }else{
@@ -141,7 +141,7 @@ const [searchResults, setSearchResults] = useState(state.allProfiles);
           </TouchableOpacity>
         </View>
       </View>
-      <Modal visible={modalVisible} animationType="slide" transparent={true}>
+<Modal visible={modalVisible} animationType="slide" transparent={true}>
   <View style={{
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',

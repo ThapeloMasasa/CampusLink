@@ -1,22 +1,40 @@
-import React from 'react';
-import { TouchableOpacity,  StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { TouchableOpacity,  StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ProfileIconProps, NavigationProp } from '../types/types';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { useGlobalContext } from '../contexts/GlobalContext';
 
 
 
-export default function ProfileIcon({ userId}: ProfileIconProps) {
+export default function ProfileIcon({userId}: ProfileIconProps) {
   const navigation = useNavigation<NavigationProp>();
-
+  const {state} = useGlobalContext();
+  const [userProfilePic, setUserProfilePic] = useState<any| undefined>('')
   const handlePress = () => {
     navigation.navigate('ViewProfile', { userId: userId });
   };
+  useEffect(()=>{
+    loadPicture()
+  }, [])
+
+  const loadPicture = () => {
+  const profile = state.allProfiles?.find(p => p.id === userId);
+  if (profile?.id == userId) {
+    setUserProfilePic(profile?.avatar_url);
+  }
+};
+
 
   return (
-    <TouchableOpacity onPress={handlePress}>
-      <Icon name="user-circle" size={40} color="#000" />
+    <>
+    { userId === state.currentUserId ?  <TouchableOpacity>
+      <Image source={{ uri: userProfilePic }} style={styles.avatar} />
+    </TouchableOpacity>: <TouchableOpacity onPress={handlePress}>
+      <Image source={{ uri: userProfilePic }} style={styles.avatar} />
     </TouchableOpacity>
+    }
+    </>
+   
   );
 }
 
