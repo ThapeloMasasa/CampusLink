@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, View, Text, Pressable, FlatList, StyleSheet } from 'react-native';
+import { Modal, View, Text, Pressable, FlatList, StyleSheet, TouchableOpacity, TouchableWithoutFeedback} from 'react-native';
 
 const notifications = [
   { id: '1', message: 'John liked your post.' },
@@ -18,32 +18,38 @@ export default function NotificationsModalComponent({
 }: NotificationsModalComponentProps) {
 
   return (
-    <Modal
-      animationType="fade"
-      transparent
-      visible={visible}
-      onRequestClose={onClose}
-    >
-      {/* Semi-transparent background */}
-      <Pressable style={styles.backdrop} onPress={onClose}>
-        {/* Stops touch from closing when pressing inside */}
-        <Pressable style={styles.modalContainer}>
-          <Text style={styles.title}>Notifications</Text>
-          <FlatList
-            data={notifications}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View style={styles.notificationItem}>
-                <Text>{item.message}</Text>
-              </View>
-            )}
-          />
-          <Pressable onPress={onClose} style={styles.closeButton}>
-            <Text style={{ color: '#fff' }}>Close</Text>
-          </Pressable>
-        </Pressable>
+  <Modal
+  animationType="fade"
+  transparent
+  visible={visible}
+  onRequestClose={onClose} // necessary for Android back button
+>
+  <View style={styles.backdrop}>
+    <TouchableWithoutFeedback onPress={onClose}>
+      <View style={StyleSheet.absoluteFillObject} />
+    </TouchableWithoutFeedback>
+
+    <View style={styles.modalContainer}>
+      {/* Your modal content */}
+      <Text style={styles.title}>Notifications</Text>
+      <FlatList
+        data={notifications}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.notificationItem}>
+            <Text>{item.message}</Text>
+          </View>
+        )}
+      />
+      <Pressable onPress={onClose} style={styles.closeButton}>
+        <Text style={{ color: '#fff' }}>Close</Text>
       </Pressable>
-    </Modal>
+    </View>
+  </View>
+</Modal>
+
+
+
   );
 }
 

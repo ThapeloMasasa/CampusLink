@@ -20,12 +20,11 @@ export default function StoryBar() {
     }
   }, [currentStoryIndex, modalVisible]);
 
-  const resetProgressBars = () => {
-    progressBars.current.forEach(bar => bar.setValue(0));
-  };
-
   const playStories = () => {
-    if (currentStoryIndex >= currentStories.length) {
+    if (
+      currentStoryIndex >= currentStories.length ||
+      !currentStories[currentStoryIndex]?.image
+    ) {
       setModalVisible(false);
       setCurrentStoryIndex(0);
       return;
@@ -35,7 +34,7 @@ export default function StoryBar() {
       toValue: 1,
       duration: 2500,
       easing: Easing.linear,
-      useNativeDriver: false,
+      useNativeDriver: true,
     }).start(() => {
       setTimeout(() => {
         setCurrentStoryIndex(prev => prev + 1);
@@ -44,8 +43,17 @@ export default function StoryBar() {
   };
 
   const openUserStories = (userStories: any[]) => {
-    setCurrentStories(userStories);
-    progressBars.current = userStories.map(() => new Animated.Value(0));
+    const slicedStories = userStories.slice(1);
+
+    if (!slicedStories.length) {
+      alert("No story content available.");
+      return;
+    }
+
+    console.log('Opening user stories:', slicedStories);
+
+    setCurrentStories(slicedStories);
+    progressBars.current = slicedStories.map(() => new Animated.Value(0));
     setCurrentStoryIndex(0);
     setModalVisible(true);
   };
@@ -55,7 +63,7 @@ export default function StoryBar() {
       <Text style={styles.title}>Scenes</Text>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
         {state.allMydays?.map((userStories, index) => (
-          <TouchableOpacity key={index} onPress={() => openUserStories(userStories.slice(1))}>
+          <TouchableOpacity key={index} onPress={() => openUserStories(userStories)}>
             <View style={styles.storyWrapper}>
               <Image source={{ uri: userStories[0]?.image }} style={styles.storyImage} />
             </View>
@@ -65,7 +73,7 @@ export default function StoryBar() {
 
       <Modal visible={modalVisible} transparent={false} animationType="fade">
         <View style={styles.modalContainer}>
-          {currentStories[currentStoryIndex] && (
+          {currentStories[currentStoryIndex]?.image ? (
             <View style={styles.borderContainer}>
               {/* Progress Bars */}
               <View style={styles.progressBarContainer}>
@@ -75,10 +83,11 @@ export default function StoryBar() {
                       style={[
                         styles.progressBarForeground,
                         {
-                          width: progressBars.current[i]?.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: ['0%', '100%'],
-                          }) || '0%',
+                          transform: [
+                            {
+                              scaleX: progressBars.current[i] || new Animated.Value(0),
+                            },
+                          ],
                         },
                       ]}
                     />
@@ -95,6 +104,10 @@ export default function StoryBar() {
                 />
               </View>
             </View>
+          ) : (
+            <Text style={{ color: 'white', textAlign: 'center', marginTop: 20 }}>
+              No story to display.
+            </Text>
           )}
         </View>
       </Modal>

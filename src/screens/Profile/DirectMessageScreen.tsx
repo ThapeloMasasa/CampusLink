@@ -81,7 +81,7 @@ const DirectMessageScreen: React.FC<DirectMessageScreenProps> = ({ route }) => {
         ...prev,
         {
           id: countMessages.toString(),
-          sender: state.currentUserId,
+          sender: 'me',
           content: inputText,
         },
       ]);

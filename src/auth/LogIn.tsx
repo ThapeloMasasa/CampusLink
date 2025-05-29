@@ -165,17 +165,6 @@ const LoginScreen = () => {
           <TouchableOpacity>
             <Text style={styles.forgotPassword}>Forgot Password?</Text>
           </TouchableOpacity>
-
-          <View style={{ marginVertical: 12 }}>
-            <Text style={{ textAlign: 'center', color: '#6B7280' }}>or</Text>
-          </View>
-
-          <TouchableOpacity style={styles.googleButton}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-        <Icon name="google" size={20} color='#06be3d' />
-        <Text style={{ color: '#111827', fontWeight: '500', marginLeft: 8}}>Continue with Google</Text>
-      </View>
-</TouchableOpacity>
         </View>
 
         <View style={styles.signUp}>
