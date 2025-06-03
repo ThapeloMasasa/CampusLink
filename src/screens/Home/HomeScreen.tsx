@@ -80,6 +80,7 @@ export default function HomeScreen() {
         <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 15 }}>
           {/* Inbox Icon */}
           <TouchableOpacity
+            testID="chat-icon"
             onPress={() => navigation.navigate('InboxScreen', { userId: state.currentUserId })}
             style={{ marginHorizontal: 15 }}
           >
@@ -97,6 +98,7 @@ export default function HomeScreen() {
           <TouchableOpacity
             onPress={() => setModalVisible(true)}  // Correctly open modal
             style={{ marginHorizontal: 15 }}
+            testID ='bell-icon'
           >
             <View>
               <Ionicons name="notifications-outline" size={24} color="black" />
@@ -109,7 +111,7 @@ export default function HomeScreen() {
           </TouchableOpacity>
 
           {/* Logout */}
-          <TouchableOpacity onPress={() => dispatch({ type: 'LOGOUT' })} style={{ marginLeft: 15 }}>
+          <TouchableOpacity testID='logout-icon' onPress={() => dispatch({ type: 'LOGOUT' })} style={{ marginLeft: 15 }}>
             <Ionicons name="log-out-outline" size={24} color="black" />
           </TouchableOpacity>
         </View>
@@ -148,7 +150,7 @@ export default function HomeScreen() {
   <View style={styles.container}>
     {loading ? (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
+        <ActivityIndicator size="large" color="#007AFF" testID = 'ActivityIndicator'/>
       </View>
     ) : (
       <>

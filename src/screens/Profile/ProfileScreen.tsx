@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, Image, ActivityIndicator, TouchableOpacity,
   Linking, Modal, Alert
 } from 'react-native';
+
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -61,14 +62,6 @@ const ProfileScreen = () => {
     }
   }, [state]);
   
-const pickImage = async () => {
-  const result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    allowsEditing: true,
-    quality: 1,
-  });
-  if (!result.canceled) setGroupImage(result.assets[0].uri);
-};
   const updateDP = async ()=>{
      const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,

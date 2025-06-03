@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Modal, StyleSheet, Keyboard, SafeAreaView} from 'react-native';
 import Yap from '../../components/Yap';
+import { LinearGradient } from 'expo-linear-gradient';
 import { YapType } from '../../types/types';
 import { useGlobalContext } from '../../contexts/GlobalContext';
 import { calculateAge } from '../../utils/calculateTime';
@@ -63,7 +64,12 @@ const YapsLeaderboard = () => {
   };
 
   return (
-  
+  <LinearGradient
+    colors={['#EF4444', '#FACC15']} // red to yellow
+    start={{ x: 0, y: 0 }}
+    end={{ x: 0, y: 1 }}
+    style={styles.container}
+  >
     <View style={styles.container}>
       <FlatList
   ListHeaderComponent={renderHeader}
@@ -97,10 +103,10 @@ const YapsLeaderboard = () => {
 </Modal>
 
     </View>
+  </LinearGradient>
   );
 };
 
-// Helper to calculate age
 
 const styles = StyleSheet.create({
   container: {

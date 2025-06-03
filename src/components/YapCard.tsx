@@ -7,6 +7,7 @@ import {
   Image,
   ImageProps,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { YikYakStyleYapProps } from '../types/types';
 import { calculateAge } from '../utils/calculateTime';
@@ -17,7 +18,6 @@ interface ExtendedYapProps extends YikYakStyleYapProps {
   hasImage: boolean;
   imageUrl?: string | null;
 }
-
 const YapCard: React.FC<ExtendedYapProps> = ({
   content,
   likes,
@@ -57,123 +57,126 @@ const YapCard: React.FC<ExtendedYapProps> = ({
     }
   };
 
-  if (hasImage && imageUrl) {
-    // Yap with image
-    return (
-      <View style={styles.card}>
-        <Image source={{uri:imageUrl}} style={styles.yapImage} />
-        <Text style={styles.content}>{content}</Text>
+  return (
+    <LinearGradient
+  colors={['#fbfbfb', '#9f8bda']} // Replace with your desired colors
+  start={{ x: 0, y: 0 }}
+  end={{ x: 1, y: 1 }}
+  style={styles.cardContainer}
+>
+    <View style={styles.card}>
+      <View style={styles.headerRow}>
+  <View style={styles.textSection}>
+    <Text style={styles.content}>{content}</Text>
+    {/* maybe more info here */}
+  </View>
 
-        <View style={styles.metaRow}>
-          <View style={styles.votes}>
-            <TouchableOpacity onPress={() => handleVotes(true)}>
-              <Ionicons name="arrow-up" size={24} color="gray" />
-            </TouchableOpacity>
-            <Text style={styles.voteCount}>{numVotes}</Text>
-            <TouchableOpacity onPress={() => handleVotes(false)}>
-              <Ionicons name="arrow-down" size={24} color="gray" />
-            </TouchableOpacity>
-          </View>
+  <View style={styles.rating}>
+    <TouchableOpacity onPress={() => handleVotes(true)}>
+      <Ionicons name="arrow-up" size={30} />
+    </TouchableOpacity>
+    <Text>{numVotes}</Text>
+    <TouchableOpacity onPress={() => handleVotes(false)}>
+      <Ionicons name="arrow-down" size={30} />
+    </TouchableOpacity>
+  </View>
+</View>
 
-          <TouchableOpacity style={styles.reactionArea} onPress={toggleReactions}>
-            <Text style={styles.emojiIcon}>
-              {selectedReaction ? selectedReaction : '🙂'}
-            </Text>
-          </TouchableOpacity>
-        </View>
 
-        {showReactions && (
-          <View style={styles.reactionBar}>
-            {reactions.map((emoji) => (
-              <TouchableOpacity key={emoji} onPress={() => handleReact(emoji)}>
-                <Text style={styles.reactionEmoji}>{emoji}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
+      {hasImage && imageUrl && (
+        <Image source={{ uri: imageUrl }} style={styles.yapImage} />
+      )}
 
-        <Text style={styles.subInfo}>{age}</Text>
-        {
-        likes > 12 ? <View style={styles.flames}>
-          <Text>🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥🔥 🔥 🔥 🔥 </Text>
-        </View>: <></>
-        }
-        
+      <View style={styles.metaRow}>
+        <TouchableOpacity style={styles.reactionArea} onPress={toggleReactions}>
+          <Text style={styles.emojiIcon}>
+            {selectedReaction ? selectedReaction : '🙂'}
+          </Text>
+        </TouchableOpacity>
+        <Ionicons name="bookmark-outline" size={24} color="black" />
+        <Ionicons   name="share-outline" size={24} />
+        <Ionicons   name="chatbubble-outline" size={24} />
       </View>
-    );
-  } else {
-    // Regular yap without image
-    return (
-      <View style={styles.card}>
-        <Text style={styles.content}>{content}</Text>
 
-        <View style={styles.metaRow}>
-          <View style={styles.votes}>
-            <TouchableOpacity onPress={() => handleVotes(true)}>
-              <Ionicons name="arrow-up" size={24} color="gray" />
+      {showReactions && (
+        <View style={styles.reactionBar}>
+          {reactions.map((emoji) => (
+            <TouchableOpacity key={emoji} onPress={() => handleReact(emoji)}>
+              <Text style={styles.reactionEmoji}>{emoji}</Text>
             </TouchableOpacity>
-            <Text style={styles.voteCount}>{numVotes}</Text>
-            <TouchableOpacity onPress={() => handleVotes(false)}>
-              <Ionicons name="arrow-down" size={24} color="gray" />
-            </TouchableOpacity>
-          </View>
-
-          <TouchableOpacity style={styles.reactionArea} onPress={toggleReactions}>
-            <Text style={styles.emojiIcon}>
-              {selectedReaction ? selectedReaction : '🙂'}
-            </Text>
-          </TouchableOpacity>
+          ))}
         </View>
+      )}
 
-        {showReactions && (
-          <View style={styles.reactionBar}>
-            {reactions.map((emoji) => (
-              <TouchableOpacity key={emoji} onPress={() => handleReact(emoji)}>
-                <Text style={styles.reactionEmoji}>{emoji}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
+      <Text style={styles.subInfo}>{age}</Text>
 
-        <Text style={styles.subInfo}>{age}</Text>
-
+      {likes > 1000 && (
         <View style={styles.flames}>
           <Text>🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥🔥 🔥 🔥 🔥 </Text>
         </View>
-      </View>
-    );
-  }
+      )}
+    </View>
+    </LinearGradient>
+  );
 };
 
 export default YapCard;
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#f6e5db',
-    padding: 16,
-    marginVertical: 8,
-    borderRadius: 12,
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  cardContainer: {
+    marginBottom: 15,
     shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 6,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    elevation: 5,
+  },
+  textSection: {
+    flex: 1,
+    paddingRight: 10,
+    paddingLeft: 15 // space between text and rating
+  },
+  rating: {
+  alignItems: 'center',
+  justifyContent: 'flex-end',
+  gap: 8, 
+  paddingRight: 10,
+},
+
+    card: {
+  marginBottom: 12,
+  width: '100%',
+  backgroundColor: 'rgba(255, 255, 255, 0.05)', // optional soft overlay
+  borderRadius: 12,
+},
+
+
+  header: {
+    padding: 12,
+    flexDirection: 'row'
+    
+  },
+  content: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'left',
+    color: '#111827',
+    fontFamily: 'Courier',
+    justifyContent: 'center'
   },
   yapImage: {
     width: '100%',
-    height: 200,
-    borderRadius: 10,
-    marginBottom: 12,
-  },
-  content: {
-    fontSize: 18,
-    textAlign: 'center',
-    color: '#111827',
-    marginBottom: 12,
+    height: 260,
+    resizeMode: 'cover',
   },
   metaRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
+    padding: 12,
     alignItems: 'center',
   },
   votes: {
@@ -193,10 +196,11 @@ const styles = StyleSheet.create({
     fontSize: 22,
   },
   subInfo: {
-    marginTop: 8,
+    marginTop: 4,
     fontSize: 12,
     color: '#9CA3AF',
     textAlign: 'center',
+    marginBottom: 8,
   },
   reactionBar: {
     flexDirection: 'row',
@@ -215,8 +219,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   flames: {
-    paddingTop: 10,
     alignItems: 'center',
-    flex: 1,
+    paddingBottom: 10,
   },
 });
+

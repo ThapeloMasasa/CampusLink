@@ -114,7 +114,7 @@ const YapsScreen = () => {
 
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
+    <View style={{ flex: 1, backgroundColor: '#fff' }}>
       <ScrollView>
         {yaps?.map((yap, index) => (
           <View style={styles.eachYap} key={index}>
@@ -193,9 +193,11 @@ const YapsScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  eachYap: { marginHorizontal: 20 },
+  eachYap: {
+  width: '100%',
+},
   add: { position: 'absolute', bottom: 25, right: 5, fontWeight: 'bold', fontSize: 17 },
-  separator: { height: 1, backgroundColor: '#ccc', marginVertical: 10, width: '100%' },
+  separator: { height: 4, backgroundColor: '#8a1616f8', width: '100%' },
   fab: {
     position: 'absolute',
     bottom: 55,

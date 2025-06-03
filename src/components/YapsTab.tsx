@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import { supabase } from '../../supabaseClient';
 import { useGlobalContext } from '../contexts/GlobalContext';
-import Yap from './Yap';
+import YapCard from './YapCard';
 import { YapType } from '../types/types'; 
 
 const YapsTab = () => {
@@ -38,19 +38,23 @@ const YapsTab = () => {
       </View>
     );
   }
-
   return (
     <FlatList
       data={yaps}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
         <View style={styles.cardWrapper}>
-          <Yap
-            title= ""
-            content={item.Content}
-            initialLikes={item.likes}
-            initialReactions={item.reactions || []}
-          />
+          <YapCard
+              content={item.Content}
+              likes={42}
+              imageUrl={item.image}
+              onLike={() => console.log('Liked')}
+              onDislike={() => console.log('Disliked')}
+              commentCount={7}
+              hasImage = {item.has_image}
+              timestamp={item.created_at}
+              distance=""
+            />
         </View>
       )}
       contentContainerStyle={styles.listContainer}
