@@ -25,6 +25,7 @@ const LoginScreen = () => {
 
  const { dispatch } = useGlobalContext();
  const handleLogin = async () => {
+  
   try {
     // 1. Sign the user in
     const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
@@ -113,6 +114,7 @@ const LoginScreen = () => {
         currentProfile: profileData,
       },
     });
+    console.log("should be done")
 
   } catch (e) {
     console.log("Unexpected error during login:", e);
@@ -183,7 +185,7 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#3B82F6',
+    backgroundColor: 'white',
   },
   innerContainer: {
     flex: 1,
@@ -240,7 +242,7 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB',
   },
   button: {
-    backgroundColor: '#FB923C',
+    backgroundColor: "#032554",
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
@@ -266,13 +268,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   signUp: {
-    paddingTop: 16,
+    paddingTop: 15,
     flexDirection: 'row',
     justifyContent: 'center',
   },
   haveAccount: {
     fontSize: 16,
-    color: '#ffffff',
+    color: "#032554",
     fontWeight: 'bold',
   },
   signUpText: {

@@ -17,11 +17,23 @@ const wp = (percentage: number) =>{
 }
 const GetStartedScreen = () => {
 const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
-
+const handleGettingStarted = ()=>{
+    navigation.navigate('SignUp')
+}
+const handleSignIn = ()=>{
+    navigation.navigate('LogIn')
+}
   return (
     <ScreenWrapper>
      <StatusBar />
+      <TouchableOpacity style = {styles.signin} onPress={handleSignIn}>
+                <Text style = {styles.signText} >
+                    Sign in 
+                </Text>
+        </TouchableOpacity>
      <View style= {styles.container}>
+       
+       
         <Image style = {styles.welcomeImage} resizeMode = "contain"  source= {require('../../../assets/WelcomeIMG.png')} />
          <View style={{gap: 20}}>
             <Text style = {styles.title}>Campus Link</Text>
@@ -29,7 +41,7 @@ const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>(
          </View>
           <View style = {styles.footer}>
         <TouchableOpacity>
-            <CustomButton title="Getting Started" textStyle="" buttonStyle={{marginHorizontal: wp(3)}} onPress={()=>{}} />
+            <CustomButton title="Getting Started" textStyle="" buttonStyle={{marginHorizontal: wp(3)}} onPress={handleGettingStarted} />
         </TouchableOpacity>
        
      </View>
@@ -41,10 +53,26 @@ const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>(
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'space-around', alignItems: 'center', backgroundColor: 'white', paddingHorizontal: wp(4) },
-  title: { color: '#494949',
+  title: { 
+    color: '#494949',
     fontSize:hp(4),
     textAlign: 'center',
-    fontWeight: '800', },
+    fontWeight: '800',
+    fontFamily:'verdana' 
+   },
+   signText:{
+      color: "#032554",
+      fontWeight: 'bold',
+      fontSize:hp(2),
+      fontFamily:'verdana' 
+   }
+   ,
+signin: {
+ alignItems: 'flex-end',
+ 
+ paddingRight: 35,
+ paddingTop: 25
+},
   welcomeImage: {
         height: hp(30),
         width: wp(100),
@@ -54,7 +82,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingHorizontal:wp(10),
     fontSize: hp(2),
-    color: "#494949"
+    color: "#494949",
+    fontFamily:'verdana' 
   },
   footer:{
     gap: 30,

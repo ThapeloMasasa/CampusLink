@@ -118,7 +118,7 @@ export default SignUpScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#3B82F6',
+    backgroundColor: 'white',
   },
   innerContainer: {
     flex: 1,
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB',
   },
   button: {
-    backgroundColor: '#FB923C',
+    backgroundColor: "#032554",
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
   },
   haveAccount: {
     fontSize: 16,
-    color: '#ffffff',
+    color: "#032554",
     fontWeight: 'bold',
   },
   signUpText: {

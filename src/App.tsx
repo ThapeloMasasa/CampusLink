@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import AppNavigator from './auth/appNavigator'; // main app when logged in
-import AuthNavigator from './auth/AuthNavigator'; // includes GetStarted, Login, SignUp
+import { View, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { GlobalProvider } from './contexts/GlobalContext';
-import { View, ActivityIndicator } from 'react-native';
-import AuthNavigatorInitial from './auth/AuthNavigatorInitial';
+import AppNavigator from './auth/appNavigator';
 
 export default function App() {
-  const [isFirstLaunch, setIsFirstLaunch] = useState<null | boolean>(true);
-  const tester = true;
+  const [isFirstLaunch, setIsFirstLaunch] = useState<null | boolean>(null);
+
   useEffect(() => {
     const checkFirstLaunch = async () => {
+
+      
       const hasLaunched = await AsyncStorage.getItem('hasLaunched');
       if (hasLaunched === null) {
         await AsyncStorage.setItem('hasLaunched', 'true');
@@ -20,7 +20,6 @@ export default function App() {
         setIsFirstLaunch(false);
       }
     };
-
     checkFirstLaunch();
   }, []);
 
@@ -35,12 +34,7 @@ export default function App() {
   return (
     <GlobalProvider>
       <NavigationContainer>
-        {tester ? (
-          // Show only the GetStarted screen first
-          <AuthNavigatorInitial />
-        ) : (
-          <AuthNavigator />
-        )}
+        <AppNavigator isFirstLaunch={isFirstLaunch} />
       </NavigationContainer>
     </GlobalProvider>
   );
