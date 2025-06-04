@@ -21,10 +21,7 @@ interface ExtendedYapProps extends YikYakStyleYapProps {
 const YapCard: React.FC<ExtendedYapProps> = ({
   content,
   likes,
-  onLike,
-  onDislike,
   timestamp,
-  distance,
   hasImage,
   imageUrl,
 }) => {

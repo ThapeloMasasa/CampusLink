@@ -157,6 +157,7 @@ export type groupItem ={
   export type AuthStackParamList = {
     LogIn: undefined;
     SignUp: undefined;
+    GetStarted: undefined
   };
 
   export type YapProps = {

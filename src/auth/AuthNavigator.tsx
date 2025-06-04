@@ -2,6 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './LogIn';
 import SignUpScreen from './SignUp';
+import GetStartedScreen from '../screens/Home/GetStartedScreen';
 
 
 
@@ -17,6 +18,9 @@ function RootStack() {
       </Stack.Screen>
       <Stack.Screen name="SignUp">
         {(props) => <SignUpScreen />}
+      </Stack.Screen>
+      <Stack.Screen name="GetStarted">
+        {(props) => <GetStartedScreen />}
       </Stack.Screen>
     </Stack.Navigator>
   );
