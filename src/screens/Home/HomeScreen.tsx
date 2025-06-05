@@ -143,7 +143,7 @@ export default function HomeScreen() {
         likes={item.likes ?? 0}
         reactions={item.reactions ?? []}
         mypost={true}
-        userId={item.id}
+        userId={item.owner}
         createdAt={item.created_at}
       />
       )}

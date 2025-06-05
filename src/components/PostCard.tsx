@@ -23,7 +23,7 @@ const PostCard: React.FC<PostProps> = ({ title, content, image, mediaType, likes
   const userProfile = profiles.find(profile => profile.id === userId);
   const userName = userProfile?.full_name || '';
   const date = moment(createdAt).format("MMM D");
-
+  console.log(userId)
   const player = useVideoPlayer(typeof image === 'string' ? image : image.uri, player => {
     player.loop = false;
   });
