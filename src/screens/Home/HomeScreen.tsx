@@ -2,7 +2,6 @@ import React, { useEffect, useLayoutEffect, useState, useRef, } from 'react';
 import { View, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, Text, Animated as animation, Image,  Modal, Pressable, TouchableWithoutFeedback,} from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons'; 
-import StoryBar from '../../components/StoryBar'; 
 import { MainStackParamList, YapType } from '../../types/types';
 import PostCard from '../../components/PostCard';        
 import YapCard from '../../components/YapCard';
@@ -11,7 +10,6 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
-import NotificationsModalComponent from '../../components/NotificationsModal';
 import { useGlobalContext } from '../../contexts/GlobalContext';
 
 const notificationList = [
@@ -24,22 +22,13 @@ export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp<MainStackParamList>>();
   const [homeContent, setHomeContent] = useState<any[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [loading, setLoading] = useState<boolean>(true);
   const { state, dispatch } = useGlobalContext();
-  const drawerTranslateX = useSharedValue(-250);
-  const [toggleChev, setToggleChev] = useState(false);
+ 
   const [refreshing, setRefreshing] = useState(false);
   const notifications = 6;
   const messages = 7;
   const scrollY = useRef(new animation.Value(0)).current;
 
-  const drawerStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: drawerTranslateX.value }],
-  }));
-  const toggleDrawer = () => {
-    drawerTranslateX.value = withTiming(drawerTranslateX.value === 0 ? -250 : 0, { duration: 300 });
-    setToggleChev(!toggleChev);
-  };
 
   useEffect(() => {
     LoadContent();
@@ -47,7 +36,6 @@ export default function HomeScreen() {
 
   const LoadContent = async () => {
     setRefreshing(true);
-    setLoading(true);
 
     try {
       const postsdata = state.allPosts || [];
@@ -63,7 +51,6 @@ export default function HomeScreen() {
       console.log("Error loading content from context:", e);
     } finally {
       setRefreshing(false);
-      setLoading(false);
     }
   };
 
@@ -121,7 +108,7 @@ export default function HomeScreen() {
   }, [navigation, state.isLoggedIn]);
 
   const renderPostItem = ({ item }: { item: any }) => (
-    <View style={styles.post}>
+    <View>
       {item.yap ? (
         <YapCard
           hasImage = {item.has_image}
@@ -151,38 +138,18 @@ export default function HomeScreen() {
   );
  return (
   <View style={styles.container}>
-    {loading ? (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#007AFF" testID = 'ActivityIndicator'/>
-      </View>
-    ) : (
-      <>
-        {/* Drawer Toggle Button */}
-        <TouchableOpacity onPress={toggleDrawer} style={styles.drawerToggle}>
-          <Ionicons
-            name={toggleChev ? 'chevron-back' : 'menu'}
-            size={24}
-            color="black"
-          />
-        </TouchableOpacity>
-
-        {/* Animated Drawer */}
-        <Animated.View style={[styles.drawer, drawerStyle]}>
-          <StoryBar />
-        </Animated.View>
-
         {/* Feed */}
         <FlatList
           data={homeContent}
           numColumns={1}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderPostItem}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 80 }}
+          contentContainerStyle={{ paddingBottom: 80 }}
           refreshing={refreshing}
           onRefresh={LoadContent}
         />
-      </>
-    )}
+     
+   
 
     {/* Notifications Modal - Not affected by drawer animation */}
     {modalVisible && (
@@ -223,23 +190,12 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  horizontalSeparator: {
-    height: 1,
-    backgroundColor: '#ccc',
-    marginVertical: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 1,
-    elevation: 2,
-    width: '100%',
-  },
- backdrop: {
+  backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)', // semi-transparent background
+    backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20, // margin around modal
+    padding: 20,
   },
   modalContainer: {
     backgroundColor: '#fff',
@@ -265,27 +221,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignSelf: 'center',
   },
-  separator: {
-    width: 1,
-    backgroundColor: '#ccc',
-    marginVertical: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 1, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 2,
-    elevation: 4,
-  },
-
-  loaderContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  post: {
-    paddingRight: 20,
-  },
-
   badge: {
     position: 'absolute',
     right: -6,
@@ -298,39 +233,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 3,
   },
-
   badgeText: {
     color: 'white',
     fontSize: 10,
     fontWeight: 'bold',
   },
-
-  drawer: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    bottom: 0,
-    width: 120,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    zIndex: 10,
-    paddingTop: 50,
-    borderRightWidth: 1,
-    borderRightColor: '#ccc',
-  },
-  drawerToggle: {
-    position: 'absolute',
-    top: 40,
-    left: 10,
-    zIndex: 20,
-  },
-
   container: {
     backgroundColor: '#fff',
     flex: 1,
-    paddingLeft: 25
-  },
-
-  feed: {
-    paddingTop: 10,
   },
 });

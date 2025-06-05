@@ -8,6 +8,7 @@ import FlipSpaceScreen from '../screens/FlipSpace/FlipSpaceScreen';
 import ProfileScreen from '../screens/Profile/ProfileScreen';
 import ViewProfile from '../screens/Profile/ViewProfile'; 
 import ConnectZoneStack from './ConnectZoneStack';
+import Scenes from '../screens/Scenes/Scenes';
 import {MainStackParamList } from '../types/types';
 import DirectMessageScreen from '../screens/Profile/DirectMessageScreen';
 import InboxScreen from '../screens/Home/InboxScreen';
@@ -30,6 +31,21 @@ function BottomTabs() {
         }}
       >
         {(props) => <HomeScreen />}
+      </Tab.Screen>
+
+      <Tab.Screen 
+        name="Scenes"
+        options={{
+          title: "Scenes", 
+          tabBarIcon: ({focused}) => (
+            <Image 
+              source={require('../../assets/scene.jpg')} 
+              style={{ width: focused ? 40 : 25, height: focused ? 42 : 25, resizeMode: 'contain', borderRadius: 17 }}
+            />
+          )
+        }}
+      >
+        {(props) => <Scenes />}
       </Tab.Screen>
 
       <Tab.Screen 

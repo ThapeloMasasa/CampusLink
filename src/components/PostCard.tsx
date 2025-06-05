@@ -1,4 +1,3 @@
-// PostCard.tsx
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, Pressable, ScrollView, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,21 +8,21 @@ import moment from 'moment';
 import ProfileIcon from './ProfileIcon';
 import { useGlobalContext } from '../contexts/GlobalContext';
 import { PostProps } from '../types/types';
+
 const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
 const hp = (percentage: number) => (percentage * deviceHeight) / 100;
 
-const PostCard: React.FC<PostProps> = ({ title, content, image, mediaType, likes, mypost, userId, createdAt, shouldPlay, scrollY}) => {
+const PostCard: React.FC<PostProps> = ({ title, content, image, mediaType, likes, mypost, userId, createdAt, shouldPlay, scrollY }) => {
   const { state } = useGlobalContext();
-  const [liked, setLiked] = React.useState(false);
-  const [numLikes, setNumLikes] = React.useState(likes);
-  const [commentsVisible, setCommentsVisible] = React.useState(false);
+  const [liked, setLiked] = useState(false);
+  const [numLikes, setNumLikes] = useState(likes);
+  const [commentsVisible, setCommentsVisible] = useState(false);
   const [cardY, setCardY] = useState(0);
   const [showVideo, setShowVideo] = useState(false);
   const profiles = state.allProfiles || [];
   const userProfile = profiles.find(profile => profile.id === userId);
   const userName = userProfile?.full_name || '';
   const date = moment(createdAt).format("MMM D");
-  console.log(userId)
   const player = useVideoPlayer(typeof image === 'string' ? image : image.uri, player => {
     player.loop = false;
   });
@@ -101,10 +100,10 @@ const PostCard: React.FC<PostProps> = ({ title, content, image, mediaType, likes
                 contentFit='cover'
               />
               <TouchableOpacity
-                style={styles.playIconOverlay}
+                style={styles.playIconWrapper}
                 onPress={() => setShowVideo(true)}
               >
-                <Ionicons name="play-circle" size={64} color="white" />
+                <Ionicons name="play-circle" size={64} color="black" />
               </TouchableOpacity>
             </View>
           )
@@ -175,8 +174,6 @@ const styles = StyleSheet.create({
     gap: 10,
     marginBottom: 15,
     borderRadius: 24,
-    padding: 10,
-    paddingVertical: 12,
     backgroundColor: 'white',
     borderWidth: 0.5,
     borderColor: '#e3e3e3',
@@ -191,6 +188,8 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    paddingTop: 10,
   },
   userInfo: {
     flexDirection: 'row',
@@ -206,33 +205,36 @@ const styles = StyleSheet.create({
     color: '#7C7C7C',
     fontWeight: '500',
   },
-  content: { gap: 10 },
-  postBody: { marginLeft: 5 },
+  content: {
+    gap: 10,
+  },
+  postBody: {
+    paddingHorizontal: 10,
+  },
   postMedia: {
-    height: hp(40),
     width: '100%',
-    borderRadius: 18,
+    aspectRatio: 1, // Change this to 4 / 5 or 16 / 9 if you prefer vertical/horizontal layout
   },
   videoPlaceholder: {
     position: 'relative',
-  },
-  playIconOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  playIconWrapper: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: [{ translateX: -32 }, { translateY: -32 }],
+    zIndex: 2,
   },
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 15,
+    paddingHorizontal: 10,
+    paddingBottom: 10,
   },
   footerButton: {
-    marginLeft: 5,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
@@ -262,7 +264,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
-  commentsList: { paddingBottom: 10 },
+  commentsList: {
+    paddingBottom: 10,
+  },
   commentCard: {
     marginBottom: 12,
     backgroundColor: '#f4f4f5',
@@ -273,7 +277,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 4,
   },
-  commentText: { color: '#333' },
+  commentText: {
+    color: '#333',
+  },
   repliesContainer: {
     marginTop: 8,
     paddingLeft: 16,
@@ -282,7 +288,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   replyCard: {
-    backgroundColor: '#f9fafb',
+    backgroundColor: 'transparent',
     padding: 8,
     borderRadius: 8,
   },

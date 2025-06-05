@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -14,7 +15,7 @@ export default function App() {
       Audio.setAudioModeAsync({
     allowsRecordingIOS: false,
     staysActiveInBackground: false,
-    playsInSilentModeIOS: true,
+    playsInSilentModeIOS: false,
     interruptionModeIOS: InterruptionModeIOS.DoNotMix,
     interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
     shouldDuckAndroid: true,
@@ -40,10 +41,12 @@ export default function App() {
   }
 
   return (
+     <SafeAreaProvider>
     <GlobalProvider>
       <NavigationContainer>
         <AppNavigator isFirstLaunch={isFirstLaunch} />
       </NavigationContainer>
     </GlobalProvider>
+    </SafeAreaProvider>
   );
 }
