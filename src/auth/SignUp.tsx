@@ -1,50 +1,93 @@
-import { AuthProps, AuthStackParamList } from '../types/types';
 import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Pressable, Image, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Pressable, Image, Alert } from 'react-native';
 import { supabase } from '../../supabaseClient';
+import { AuthStackParamList } from '../types/types';
 
 const SignUpScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
   const [fullName, setFullName] = useState('');
   const [username, setUsername] = useState('');
+  const [groupName, setGroupName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-
-  const handleSignUp = async () => {
-  if (!email || !password) {
-    Alert.alert('Error', 'Email and password are required.');
+  const [selectedRole, setSelectedRole] = useState<'Student' | 'Staff' | 'Group' | null>(null);
+const handleSignUp = async () => {
+  if (!email || !password || !selectedRole) {
+    Alert.alert('Error', 'All fields including role are required.');
     return;
   }
 
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        full_name: fullName,
-        username: username,
-      },
-    },
-  });
+  if ((selectedRole === 'Student' || selectedRole === 'Staff') && (!fullName || !username)) {
+    Alert.alert('Error', 'Please fill in all fields.');
+    return;
+  }
 
-  if (error) {
-    Alert.alert('Signup Failed', error.message);
-  } else {
+  if (selectedRole === 'Group' && !groupName) {
+    Alert.alert('Error', 'Please enter a group name.');
+    return;
+  }
+
+  try {
+    // Sign up user with Supabase Auth
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: selectedRole === 'Group' ? groupName : fullName,
+          username: selectedRole === 'Group' ? groupName.toLowerCase().replace(/\s+/g, '_') : username,
+          role: selectedRole,
+        },
+      },
+    });
+
+    if (signUpError) {
+      Alert.alert('Signup Failed', signUpError.message);
+      return;
+    }
+
+    // signUpData.user contains the user object
+    const user = signUpData.user;
+    console.log(user)
+    if (!user) {
+      Alert.alert('Signup Failed', 'User data not returned.');
+      return;
+    }
+
+    // Insert user profile into "profiles" table
+    console.log('About to insert profile...');
+    const {  data:profiledata, error: profileError } = await supabase.from('Profile').insert([
+      {
+        id: user.id,  // user id from auth
+        full_name: selectedRole === 'Group' ? groupName : fullName,
+        role: selectedRole,
+        linkedIn_url: "https://randomuser.me/api/portraits/men/46.jpg",
+        rating: 0,
+        created_at: new Date(),
+      },
+    ]);
+
+    if (profileError) {
+      console.log('error here',profileError)
+      Alert.alert('Profile Creation', profileError.message);
+      
+    }
+
+    // Success alert for email verification
     Alert.alert(
       'Verify Your Email',
       'A confirmation link has been sent to your email. Please verify before signing in.',
-      [
-        {
-          text: 'OK',
-          onPress: () => navigation.goBack(), // ✅ navigate back to sign-in
-        },
-      ]
+      [{ text: 'OK', onPress: () => navigation.goBack() }]
     );
+  } catch (error: any) {
+    Alert.alert('Error', "something is wrong");
   }
 };
+
 
   return (
     <KeyboardAvoidingView
@@ -57,20 +100,51 @@ const SignUpScreen = () => {
         </View>
 
         <View style={styles.formCard}>
-          <TextInput
-            placeholder="Full Name"
-            placeholderTextColor="#999"
-            style={styles.input}
-            value={fullName}
-            onChangeText={setFullName}
-          />
-          <TextInput
-            placeholder="User Name"
-            placeholderTextColor="#999"
-            style={styles.input}
-            value={username}
-            onChangeText={setUsername}
-          />
+          <Text style={styles.roleLabel}>Sign up as:</Text>
+          <View style={styles.radioGroup}>
+            {['Student', 'Group'].map(role => (
+              <TouchableOpacity
+                key={role}
+                style={styles.radioButton}
+                onPress={() => setSelectedRole(role as 'Student' |  'Group')}
+              >
+                <Ionicons
+                  name={selectedRole === role ? 'radio-button-on' : 'radio-button-off'}
+                  size={22}
+                  color="#032554"
+                />
+                <Text style={styles.radioText}>{role}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {selectedRole === 'Student'? (
+            <>
+              <TextInput
+                placeholder="Full Name"
+                placeholderTextColor="#999"
+                style={styles.input}
+                value={fullName}
+                onChangeText={setFullName}
+              />
+              <TextInput
+                placeholder="User Name"
+                placeholderTextColor="#999"
+                style={styles.input}
+                value={username}
+                onChangeText={setUsername}
+              />
+            </>
+          ) : selectedRole === 'Group' ? (
+            <TextInput
+              placeholder="Group Name"
+              placeholderTextColor="#999"
+              style={styles.input}
+              value={groupName}
+              onChangeText={setGroupName}
+            />
+          ) : null}
+
           <TextInput
             placeholder="Email (School Email Only)"
             placeholderTextColor="#999"
@@ -114,7 +188,6 @@ const SignUpScreen = () => {
 
 export default SignUpScreen;
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -145,6 +218,25 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 3,
   },
+  roleLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: '#032554',
+  },
+  radioGroup: {
+    marginBottom: 16,
+  },
+  radioButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  radioText: {
+    marginLeft: 10,
+    fontSize: 16,
+    color: '#032554',
+  },
   input: {
     backgroundColor: '#eceff4',
     paddingHorizontal: 16,
@@ -165,7 +257,7 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB',
   },
   button: {
-    backgroundColor: "#032554",
+    backgroundColor: '#032554',
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
@@ -177,12 +269,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  googleButton: {
-    backgroundColor: '#F3F4F6',
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
   signUp: {
     paddingTop: 16,
     flexDirection: 'row',
@@ -190,7 +276,7 @@ const styles = StyleSheet.create({
   },
   haveAccount: {
     fontSize: 16,
-    color: "#032554",
+    color: '#032554',
     fontWeight: 'bold',
   },
   signUpText: {

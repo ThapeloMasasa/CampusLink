@@ -1,5 +1,5 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, Text, Image,  Modal, Pressable, TouchableWithoutFeedback } from 'react-native';
+import React, { useEffect, useLayoutEffect, useState, useRef, } from 'react';
+import { View, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, Text, Animated as animation, Image,  Modal, Pressable, TouchableWithoutFeedback,} from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons'; 
 import StoryBar from '../../components/StoryBar'; 
@@ -31,6 +31,7 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const notifications = 6;
   const messages = 7;
+  const scrollY = useRef(new animation.Value(0)).current;
 
   const drawerStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: drawerTranslateX.value }],
@@ -134,15 +135,17 @@ export default function HomeScreen() {
         />
       ) : (
         <PostCard
-          title={item.Header}
-          content={item.Header}
-          image={item.image ? { uri: item.image } : undefined}
-          likes={item.likes ?? 0}
-          reactions={item.reactions ?? []}
-          mypost={false}
-          userId={item.owner}
-          createdAt={item.created_at}
-        />
+        title={item.Header}
+        mediaType={item.mediaType}
+        scrollY={scrollY}
+        content={item.Header}
+        image={item.image ? { uri: item.image } : undefined}
+        likes={item.likes ?? 0}
+        reactions={item.reactions ?? []}
+        mypost={true}
+        userId={item.id}
+        createdAt={item.created_at}
+      />
       )}
     </View>
   );

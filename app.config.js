@@ -36,7 +36,12 @@ export default {
       favicon: "./assets/logo.png"
     },
     plugins: [
-      "expo-router"
+      "expo-router",
+      ["expo-video",
+        {
+          "supportsBackgroundPlayback": true,
+          "supportsPictureInPicture": true
+        }]
     ]
   }
 };

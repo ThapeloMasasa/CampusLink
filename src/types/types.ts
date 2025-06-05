@@ -1,4 +1,4 @@
-import { Image, ImageSourcePropType } from 'react-native';
+import { Image, ImageSourcePropType, Animated } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
@@ -55,6 +55,7 @@ export interface Yap {
   created_at: string;
 }
 export interface post {
+  mediaType: "image" | "video";
   id: string;
   created_at: string;
   Header: string;
@@ -75,10 +76,13 @@ export type YikYakStyleYapProps = {
 };
 
 export interface PostProps {
+  shouldPlay?: boolean;
   title: string;
   content: string;
+  scrollY: Animated.Value;
   image?: any;
   likes: number;
+  mediaType: 'image' | 'video'; 
   reactions: any[]; 
   mypost: boolean;
   userId: string | null
