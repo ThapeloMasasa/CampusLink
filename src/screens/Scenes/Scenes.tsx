@@ -1,33 +1,71 @@
-import React, { useState, useRef } from 'react';
-import { FlatList, SafeAreaView, StyleSheet, ViewToken } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  ViewToken,
+  ActivityIndicator,
+  View,
+  Text
+} from 'react-native';
 import VideoScene from '../../components/VideoScene';
-
-const data = [
-  { id: '1', videoUri: 'https://example.com/video1.mp4', likes: 120, comments: 45, shares: 10 },
-  { id: '2', videoUri: 'https://example.com/video2.mp4', likes: 89, comments: 20, shares: 5 },
-  { id: '3', videoUri: 'https://mwvbsiccyhijubzaglxz.supabase.co/storage/v1/object/public/posts/e8b59278-1b92-4f3d-9c60-23e06b97ce44/post-1749089100934.mp4', likes: 89, comments: 20, shares: 5 },
-  { id: '4', videoUri: 'https://mwvbsiccyhijubzaglxz.supabase.co/storage/v1/object/public/posts/e8b59278-1b92-4f3d-9c60-23e06b97ce44/post-1749102331886.mp4', likes: 120, comments: 45, shares: 10 },
-];
+import { supabase } from '../../../supabaseClient';
+import { useGlobalContext } from '../../contexts/GlobalContext';
 
 const Scenes = () => {
-  const [focusedVideoId, setFocusedVideoId] = useState<string>(data[0].id);
+  const [scenes, setScenes] = useState<any[]>([]);
+  const [focusedVideoId, setFocusedVideoId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { state } = useGlobalContext();
+
+  const fetchScenes = async () => {
+    const { data, error } = await supabase
+      .from('Scenes')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching scenes:', error.message);
+    } else {
+      setScenes(data);
+      if (data.length > 0) setFocusedVideoId(data[0].id);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchScenes();
+  }, []);
 
   const onViewRef = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
-    if (viewableItems.length > 0) {
-      // Pick the first fully visible item as focused
-      const visibleItem = viewableItems.find(item => item.isViewable);
-      if (visibleItem) {
-        setFocusedVideoId(visibleItem.item.id);
-      }
+    const visibleItem = viewableItems.find(item => item.isViewable);
+    if (visibleItem) {
+      setFocusedVideoId(visibleItem.item.id);
     }
   });
 
   const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 80 });
 
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#fff" />
+      </View>
+    );
+  }
+
+  if (scenes.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={{ color: '#fff' }}>No scenes found.</Text>
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <FlatList
-        data={data}
+        data={scenes}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <VideoScene
@@ -35,7 +73,10 @@ const Scenes = () => {
             likes={item.likes}
             comments={item.comments}
             shares={item.shares}
-            isFocused={item.id === focusedVideoId} // Pass focus info here
+            isFocused={item.id === focusedVideoId}
+            owner = {item.owner}
+            caption= {item.caption}
+            full_name = {item.full_name}
           />
         )}
         pagingEnabled
@@ -50,6 +91,18 @@ const Scenes = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    backgroundColor: 'black',
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: 'black',
   },
 });

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View, ScrollView, ActivityIndicator, Text,
-  TouchableOpacity, Modal, TextInput, StyleSheet
+  TouchableOpacity, Modal, TextInput, StyleSheet,
+  KeyboardAvoidingView, Platform
 } from 'react-native';
-import { Video } from 'expo-av';
 import { supabase } from '../../supabaseClient';
 import { useGlobalContext } from '../contexts/GlobalContext';
 import * as ImagePicker from 'expo-image-picker';
@@ -23,7 +23,11 @@ const ScenesTab = () => {
   const [newScene, setNewScene] = useState({ caption: '' });
   const [videoUri, setVideoUri] = useState<string | null>(null);
   const { state } = useGlobalContext();
+  const captionInputRef = useRef<TextInput>(null);
   let countScenes = Math.floor(Math.random() * 1000000000);
+
+  const profile = state.allProfiles?.find(p => p.id === state.currentUserId);
+  const realName = profile?.full_name || 'Unknown';
 
   const fetchScenes = async () => {
     const { data, error } = await supabase
@@ -44,6 +48,14 @@ const ScenesTab = () => {
     fetchScenes();
   }, []);
 
+  useEffect(() => {
+    if (modalVisible) {
+      setTimeout(() => {
+        captionInputRef.current?.focus();
+      }, 300);
+    }
+  }, [modalVisible]);
+
   const pickVideo = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Videos,
@@ -53,6 +65,9 @@ const ScenesTab = () => {
 
     if (!result.canceled) {
       setVideoUri(result.assets[0].uri);
+      setTimeout(() => {
+        captionInputRef.current?.focus();
+      }, 300);
     }
   };
 
@@ -102,6 +117,7 @@ const ScenesTab = () => {
       comments: {},
       shares: 0,
       owner: state.currentUserId,
+      full_name: realName,
       created_at: new Date().toISOString(),
     };
 
@@ -132,6 +148,10 @@ const ScenesTab = () => {
               likes={scene.likes}
               comments={scene.comments}
               shares={scene.shares}
+              isFocused={false}
+              owner={realName}
+              full_name={scene.full_name}
+              caption={scene.caption}
             />
           ))
         ) : (
@@ -148,28 +168,34 @@ const ScenesTab = () => {
 
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Add New Scene</Text>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            style={{ flex: 1, justifyContent: 'center' }}
+          >
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Add New Scene</Text>
 
-            <TextInput
-              placeholder="Caption"
-              value={newScene.caption}
-              onChangeText={(text) => setNewScene({ ...newScene, caption: text })}
-              style={styles.input}
-            />
+              <TextInput
+                ref={captionInputRef}
+                placeholder="Caption"
+                value={newScene.caption}
+                onChangeText={(text) => setNewScene({ ...newScene, caption: text })}
+                style={styles.input}
+              />
 
-            <TouchableOpacity onPress={pickVideo} style={styles.uploadButton}>
-              <Text style={{ color: '#fff' }}>Upload Video</Text>
-            </TouchableOpacity>
+              <TouchableOpacity onPress={pickVideo} style={styles.uploadButton}>
+                <Text style={{ color: '#fff' }}>Upload Video</Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity onPress={handleCreateScene} style={styles.uploadButton}>
-              <Text style={{ color: '#fff' }}>Create Scene</Text>
-            </TouchableOpacity>
+              <TouchableOpacity onPress={handleCreateScene} style={styles.uploadButton}>
+                <Text style={{ color: '#fff' }}>Create Scene</Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
-              <Text style={{ color: '#fff' }}>Close</Text>
-            </TouchableOpacity>
-          </View>
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+                <Text style={{ color: '#fff' }}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
         </View>
       </Modal>
     </View>
