@@ -174,20 +174,12 @@ if (mediaUri) {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Add New Post</Text>
             <TextInput
-              placeholder="Header"
+              placeholder="Post Info"
               value={newPost.Header}
               onChangeText={(text) => setNewPost({ ...newPost, Header: text })}
               style={styles.input}
             />
 
-            <Text style={styles.inputLabel}>Content</Text>
-            <TextInput
-              value={content}
-              onChangeText={setContent}
-              placeholder="Enter your post content..."
-              style={styles.contentInput}
-              multiline
-            />
 
             <Text style={styles.inputLabel}>Media</Text>
             <TouchableOpacity onPress={pickMedia} style={styles.uploadButton}>

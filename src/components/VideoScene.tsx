@@ -9,7 +9,7 @@ const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
 type Scene = {
   videoUri: string;
   likes: number;
-  comments: number;
+  comments: JSON;
   shares: number;
   isFocused?: boolean; // Bonus prop to control visibility focus
 };
@@ -88,7 +88,7 @@ const VideoScene: React.FC<Scene> = ({
 
             <TouchableOpacity style={styles.iconButton}>
               <Ionicons name="chatbubble-outline" size={32} color="white" />
-              <Text style={styles.iconText}>{comments}</Text>
+              <Text style={styles.iconText}>5</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.iconButton}>

@@ -99,6 +99,7 @@ export type StudentDealCardProps = {
   price: string;
   instructions: string;
   userId: string;
+  created_at: string;
 };
 
 
@@ -200,6 +201,7 @@ export type groupItem ={
   allProfiles: currentUser[] | null
   allMydays: myday[][];
   allMessages: Message[] | null;
+  allSales: StudentDealCardProps[]| null;
 };
 export type AvatarProps = {
   uri: string;
@@ -216,6 +218,7 @@ export type DMPreview = {
 export type Action =
   | { type: 'LOGIN'; payload: { isLoggedIn: boolean; currentUserId: string; currentProfile: currentUser | null } }
   | { type: 'LOGOUT' }
+  | { type: 'SET_SALES'; payload: StudentDealCardProps[] | null }
   | { type: 'SET_POSTS'; payload: post[] }
   | { type: 'SET_MESSAGES'; payload: Message[]| null }
   | { type: 'SET_MYDAYS'; payload: myday[][] }

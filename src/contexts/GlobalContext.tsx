@@ -11,7 +11,8 @@ const initialState: GlobalState = {
   allYaps: [],
   allProfiles: [],
   allMydays: [],
-  allMessages:[]
+  allMessages:[],
+  allSales: [],
 };
 
 function reducer(state: GlobalState, action: Action): GlobalState {
@@ -29,6 +30,8 @@ function reducer(state: GlobalState, action: Action): GlobalState {
         return {...state, allMydays: action.payload};
     case 'SET_MESSAGES':
         return {...state, allMessages: action.payload};
+    case 'SET_SALES':
+        return {...state, allSales: action.payload};
     case 'SET_POSTS':
     case 'REFRESH_POSTS':
       return { ...state, allPosts: action.payload };
@@ -83,6 +86,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         if (parsed?.allPosts) dispatch({ type: 'SET_POSTS', payload: parsed.allPosts });
         if (parsed?.allYaps) dispatch({ type: 'SET_YAPS', payload: parsed.allYaps });
         if (parsed?.allProfiles) dispatch({ type: 'SET_PROFILES', payload: parsed.allProfiles }); 
+         if (parsed?.allSales) dispatch({ type: 'SET_SALES', payload: parsed.allSAles });
       }
     } catch (e) {
       console.warn('Failed to load global state:', e);

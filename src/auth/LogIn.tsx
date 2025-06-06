@@ -56,6 +56,7 @@ const LoginScreen = () => {
     const { data: posts, error: postsError } = await supabase.from('Posts').select('*');
     if (!postsError) dispatch({ type: 'SET_POSTS', payload: posts });
     else console.log(postsError);
+    
 
     // 4. Fetch yaps
     const { data: yaps, error: yapsError } = await supabase.from('Yaps').select('*');
@@ -66,7 +67,12 @@ const LoginScreen = () => {
     const { data: allProfiles, error: profilesError } = await supabase.from('Profile').select('*');
     if (!profilesError) dispatch({ type: 'SET_PROFILES', payload: allProfiles });
     else console.log(profilesError);
+    // 6. fetch Sales
+    const { data: sales, error: salesError } = await supabase.from('Deals').select('*');
+    if (!postsError) dispatch({ type: 'SET_SALES', payload: sales });
+    else console.log(salesError);
 
+    
     // 6. Fetch all Myday entries
     const { data: allMyDays, error: mydaysError } = await supabase.from('Myday').select('*');
 

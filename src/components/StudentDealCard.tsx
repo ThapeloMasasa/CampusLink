@@ -129,80 +129,81 @@ const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price, instruc
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   card: {
-    width: '75%',
+    width: '95%',
     aspectRatio: 0.8,
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: '4%',
     margin: '2.5%',
+    padding: 12, // added padding inside the card
     elevation: 3,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 4,
     justifyContent: 'space-between',
-    marginLeft: '13%',
   },
-  price:{
-flexDirection: 'row',
-  },
-  priceText:{
-     fontWeight:'bold',
-     fontSize: 20,
-     paddingTop: 7,
-     paddingRight: 10
 
+  productImage: {
+    width: '100%',
+    height: '80%', // slightly smaller to avoid overlap with new padding
+    borderRadius: 10,
   },
-  modalActions: {
+
+  bottomRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '70%',
-    marginBottom: 16,
-    marginTop: 12,
+    marginTop: 10,
+    paddingHorizontal: 4, // ensure content doesn't touch edges
   },
-  productImage: {
-    width: '100%',
-    height: '85%',
-    borderRadius: 10,
-  },
+
   dealButton: {
     alignSelf: 'center',
     backgroundColor: '#000',
-    paddingVertical: '2%',
-    paddingHorizontal: '8%',
+    paddingVertical: 6,
+    paddingHorizontal: 16,
     borderRadius: 20,
-    marginTop: '3%',
+    marginTop: 10,
   },
+
   dealText: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
   },
-  bottomRow: {
+
+  price: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: '4%',
+    paddingRight: 10,
   },
+
+  priceText: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    paddingTop: 7,
+    paddingRight: 10,
+  },
+
   userAvatar: {
     width: 30,
     height: 30,
     borderRadius: 15,
   },
+
   priceTag: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
   },
+
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   modalContent: {
     width: '85%',
     height: '45%',
@@ -213,6 +214,7 @@ flexDirection: 'row',
     justifyContent: 'space-between',
     elevation: 10,
   },
+
   modalTitle: {
     fontSize: 30,
     fontWeight: 'bold',
@@ -220,6 +222,7 @@ flexDirection: 'row',
     textAlign: 'center',
     color: '#333',
   },
+
   modalMessage: {
     paddingTop: 45,
     fontSize: 25,
@@ -230,6 +233,7 @@ flexDirection: 'row',
     flex: 1,
     justifyContent: 'center',
   },
+
   instructionsInput: {
     flex: 1,
     width: '100%',
@@ -242,6 +246,7 @@ flexDirection: 'row',
     marginBottom: 12,
     maxHeight: 100,
   },
+
   priceInput: {
     width: 80,
     height: 40,
@@ -253,11 +258,13 @@ flexDirection: 'row',
     textAlign: 'center',
     marginBottom: 20,
   },
+
   modalButtonsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
   },
+
   modalButton: {
     flex: 1,
     paddingVertical: 12,
@@ -265,12 +272,15 @@ flexDirection: 'row',
     marginHorizontal: 10,
     alignItems: 'center',
   },
+
   cancelButton: {
     backgroundColor: '#bbb',
   },
+
   saveButton: {
-    backgroundColor: '#3B82F6', // Your app's main blue
+    backgroundColor: '#3B82F6',
   },
+
   modalButtonText: {
     color: 'white',
     fontWeight: 'bold',

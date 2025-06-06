@@ -2,14 +2,11 @@ import React, { useEffect, useLayoutEffect, useState, useRef, } from 'react';
 import { View, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, Text, Animated as animation, Image,  Modal, Pressable, TouchableWithoutFeedback,} from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons'; 
-import { MainStackParamList, YapType } from '../../types/types';
+import { MainStackParamList } from '../../types/types';
 import PostCard from '../../components/PostCard';        
 import YapCard from '../../components/YapCard';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-} from 'react-native-reanimated';
+import StudentDealCard from '../../components/StudentDealCard';
+
 import { useGlobalContext } from '../../contexts/GlobalContext';
 
 const notificationList = [
@@ -40,12 +37,12 @@ export default function HomeScreen() {
     try {
       const postsdata = state.allPosts || [];
       const yapsdata = state.allYaps || [];
+      const salessdata = state.allSales || [];
 
       const hotyaps = yapsdata.filter(item => item.likes > 15);
-      const combinedContent = [...postsdata, ...hotyaps];
+      const combinedContent = [...postsdata, ...hotyaps, ...salessdata];
 
       combinedContent.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-
       setHomeContent(combinedContent);
     } catch (e) {
       console.log("Error loading content from context:", e);
@@ -107,35 +104,50 @@ export default function HomeScreen() {
     });
   }, [navigation, state.isLoggedIn]);
 
-  const renderPostItem = ({ item }: { item: any }) => (
-    <View>
-      {item.yap ? (
-        <YapCard
-          hasImage = {item.has_image}
-          content="The library smells like coffee and ambition."
-          likes={42}
-          onLike={() => console.log('Liked')}
-          onDislike={() => console.log('Disliked')}
-          commentCount={7}
-          timestamp="3h ago"
-          distance=""
-        />
-      ) : (
-        <PostCard
-        title={item.Header}
-        mediaType={item.mediaType}
-        scrollY={scrollY}
-        content={item.Header}
-        image={item.image ? { uri: item.image } : undefined}
-        likes={item.likes ?? 0}
-        reactions={item.reactions ?? []}
-        mypost={true}
+  const renderPostItem = ({ item }: { item: any }) => {
+  if (item.yap === "deal") {
+    return (
+      <StudentDealCard
+        image={{ uri: item.image }}
+        price={item.price}
+        instructions={item.instructions}
         userId={item.owner}
-        createdAt={item.created_at}
+        created_at=''
       />
-      )}
-    </View>
+    );
+  }
+
+  if (item.yap) {
+    return (
+      <YapCard
+        hasImage={item.has_image}
+        content={item.content || "The library smells like coffee and ambition."}
+        likes={item.likes ?? 0}
+        onLike={() => console.log('Liked')}
+        onDislike={() => console.log('Disliked')}
+        commentCount={item.commentCount ?? 0}
+        timestamp={item.timestamp || "3h ago"}
+        distance={item.distance || ""}
+      />
+    );
+  }
+
+  return (
+    <PostCard
+      title={item.Header}
+      mediaType={item.mediaType}
+      scrollY={scrollY}
+      content={item.Header}
+      image={item.image ? { uri: item.image } : undefined}
+      likes={item.likes ?? 0}
+      reactions={item.reactions ?? []}
+      mypost={true}
+      userId={item.owner}
+      createdAt={item.created_at}
+    />
   );
+};
+
  return (
   <View style={styles.container}>
         {/* Feed */}

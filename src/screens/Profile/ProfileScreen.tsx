@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, Image, ActivityIndicator, TouchableOpacity,
   Linking, Modal, Alert
 } from 'react-native';
+import ScenesTab from '../../components/ScenesTab';
 
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -219,6 +220,7 @@ const ProfileScreen = () => {
           <Tab.Screen name="Posts">{() => <PostsTab posts={posts} />}</Tab.Screen>
           <Tab.Screen name="Yaps">{() => <YapsTab />}</Tab.Screen>
           <Tab.Screen name="Deals">{() => <DealsTab />}</Tab.Screen>
+          <Tab.Screen name="Scenes">{() => <ScenesTab />}</Tab.Screen>
         </Tab.Navigator>
       </View>
 

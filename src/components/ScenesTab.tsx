@@ -1,82 +1,84 @@
 import React, { useEffect, useState } from 'react';
 import {
   View, ScrollView, ActivityIndicator, Text,
-  TouchableOpacity, Modal, TextInput, Image, StyleSheet
+  TouchableOpacity, Modal, TextInput, StyleSheet
 } from 'react-native';
+import { Video } from 'expo-av';
 import { supabase } from '../../supabaseClient';
-import StudentDealCard from './StudentDealCard';
 import { useGlobalContext } from '../contexts/GlobalContext';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { Buffer } from 'buffer';
 import { Ionicons } from '@expo/vector-icons';
+import VideoScene from './VideoScene';
 
 if (typeof global.Buffer === 'undefined') {
   global.Buffer = Buffer;
 }
 
-const DealsTab = () => {
-  const [deals, setDeals] = useState<any[]>([]);
+const ScenesTab = () => {
+  const [scenes, setScenes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const { state } = useGlobalContext();
-  let countDeals = Math.floor(Math.random() * 1000000000);
   const [modalVisible, setModalVisible] = useState(false);
-  const [newDeal, setNewDeal] = useState({ price: '', instructions: '' });
-  const [imageUri, setImageUri] = useState<string | null>(null);
+  const [newScene, setNewScene] = useState({ caption: '' });
+  const [videoUri, setVideoUri] = useState<string | null>(null);
+  const { state } = useGlobalContext();
+  let countScenes = Math.floor(Math.random() * 1000000000);
 
-  const fetchDeals = async () => {
+  const fetchScenes = async () => {
     const { data, error } = await supabase
-      .from('Deals')
+      .from('Scenes')
       .select('*')
       .eq('owner', state.currentUserId)
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Error fetching deals:', error.message);
+      console.error('Error fetching scenes:', error.message);
     } else {
-      setDeals(data);
+      setScenes(data);
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    fetchDeals();
+    fetchScenes();
   }, []);
 
-  const pickImage = async () => {
+  const pickVideo = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
       allowsEditing: false,
       quality: 1,
     });
 
     if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
+      setVideoUri(result.assets[0].uri);
     }
   };
 
-  const uploadImageToSupabase = async (uri: string) => {
+  const uploadVideoToSupabase = async (uri: string) => {
     try {
       const base64 = await FileSystem.readAsStringAsync(uri, {
         encoding: FileSystem.EncodingType.Base64,
       });
 
-      const fileName = `${state.currentUserId}/deal-${Date.now()}.jpg`;
-      const contentType = 'image/jpeg';
+      const fileName = `${state.currentUserId}/scene-${Date.now()}.mp4`;
+      const contentType = 'video/mp4';
 
       const { error } = await supabase.storage
-        .from('deals')
+        .from('posts')
         .upload(fileName, Buffer.from(base64, 'base64'), {
           contentType,
           upsert: true,
         });
 
       if (error) {
-        console.error('Error uploading image:', error.message);
+        console.error('Error uploading video:', error.message);
         return null;
       }
 
       const { data: publicUrlData } = supabase.storage
-        .from('deals')
+        .from('posts')
         .getPublicUrl(fileName);
 
       return publicUrlData?.publicUrl ?? null;
@@ -86,32 +88,32 @@ const DealsTab = () => {
     }
   };
 
-  const handleCreateDeal = async () => {
-    let imageUrl = '';
-    countDeals += 1
-    if (imageUri) {
-      const uploadedUrl = await uploadImageToSupabase(imageUri);
-      if (uploadedUrl) imageUrl = uploadedUrl;
-    }
+  const handleCreateScene = async () => {
+    if (!videoUri) return;
 
-    const dealPayload = {
-      ...newDeal,
-      id: countDeals,
-      image: imageUrl,
+    const uploadedUrl = await uploadVideoToSupabase(videoUri);
+    if (!uploadedUrl) return;
+
+    const scenePayload = {
+      id: countScenes,
+      videoUri: uploadedUrl,
+      caption: newScene.caption,
+      likes: 0,
+      comments: {},
+      shares: 0,
       owner: state.currentUserId,
       created_at: new Date().toISOString(),
     };
 
-    const { error } = await supabase.from('Deals').insert(dealPayload);
+    const { error } = await supabase.from('Scenes').insert(scenePayload);
 
     if (error) {
-      console.error('Error saving deal:', error.message);
+      console.error('Error saving scene:', error.message);
     } else {
-      console.log('Deal saved!');
       setModalVisible(false);
-      setNewDeal({ price: '', instructions: '' });
-      setImageUri(null);
-      fetchDeals(); // Refresh list
+      setNewScene({ caption: '' });
+      setVideoUri(null);
+      fetchScenes();
     }
   };
 
@@ -122,58 +124,46 @@ const DealsTab = () => {
   return (
     <View style={{ flex: 1 }}>
       <ScrollView>
-        {deals.length > 0 ? (
-          deals.map((deal, index) => (
-            <StudentDealCard
+        {scenes.length > 0 ? (
+          scenes.map((scene, index) => (
+            <VideoScene
               key={index}
-              instructions={deal.instructions}
-              price={deal.price}
-              image={{ uri: deal.image }}
-              userId={deal.owner}
-              created_at=''
+              videoUri={scene.videoUri}
+              likes={scene.likes}
+              comments={scene.comments}
+              shares={scene.shares}
             />
           ))
         ) : (
           <View style={{ marginTop: 50, alignItems: 'center' }}>
-            <Text>No deals available.</Text>
+            <Text>No scenes available.</Text>
           </View>
         )}
       </ScrollView>
 
       <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
         <Ionicons name="add" size={28} color="#fff" />
-        <Text style={styles.addButtonLabel}>New Deal</Text>
+        <Text style={styles.addButtonLabel}>New Scene</Text>
       </TouchableOpacity>
 
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Add New Deal</Text>
+            <Text style={styles.modalTitle}>Add New Scene</Text>
 
             <TextInput
-              placeholder="Price"
-              value={newDeal.price}
-              onChangeText={(text) => setNewDeal({ ...newDeal, price: text })}
+              placeholder="Caption"
+              value={newScene.caption}
+              onChangeText={(text) => setNewScene({ ...newScene, caption: text })}
               style={styles.input}
             />
 
-            <TextInput
-              placeholder="Instructions"
-              value={newDeal.instructions}
-              onChangeText={(text) => setNewDeal({ ...newDeal, instructions: text })}
-              style={styles.input}
-            />
-
-            <TouchableOpacity onPress={pickImage} style={styles.uploadButton}>
-              <Text style={{ color: '#fff' }}>Upload Image</Text>
+            <TouchableOpacity onPress={pickVideo} style={styles.uploadButton}>
+              <Text style={{ color: '#fff' }}>Upload Video</Text>
             </TouchableOpacity>
 
-            {imageUri && (
-              <Image source={{ uri: imageUri }} style={styles.previewImage} />
-            )}
-
-            <TouchableOpacity onPress={handleCreateDeal} style={styles.uploadButton}>
-              <Text style={{ color: '#fff' }}>Create Deal</Text>
+            <TouchableOpacity onPress={handleCreateScene} style={styles.uploadButton}>
+              <Text style={{ color: '#fff' }}>Create Scene</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
@@ -237,12 +227,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
   },
-  previewImage: {
-    width: '100%',
-    height: 180,
-    marginTop: 12,
-    borderRadius: 10,
-  },
   closeButton: {
     backgroundColor: 'gray',
     marginTop: 20,
@@ -252,4 +236,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DealsTab;
+export default ScenesTab;
