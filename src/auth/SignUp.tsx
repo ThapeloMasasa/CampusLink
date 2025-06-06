@@ -14,14 +14,14 @@ const SignUpScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<'Student' | 'Staff' | 'Group' | null>(null);
+  const [selectedRole, setSelectedRole] = useState<'Student' |  'Group' | null>(null);
 const handleSignUp = async () => {
   if (!email || !password || !selectedRole) {
     Alert.alert('Error', 'All fields including role are required.');
     return;
   }
 
-  if ((selectedRole === 'Student' || selectedRole === 'Staff') && (!fullName || !username)) {
+  if ((selectedRole === 'Student') && (!fullName || !username)) {
     Alert.alert('Error', 'Please fill in all fields.');
     return;
   }

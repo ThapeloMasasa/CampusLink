@@ -176,7 +176,7 @@ const ProfileScreen = () => {
             source={
               profile?.avatar_url
                 ? { uri: profile.avatar_url }
-                : require('../../../assets/cropped-file.jpg')
+                : require('../../../assets/Holder2.png')
             }
             style={styles.profileImage}
           />

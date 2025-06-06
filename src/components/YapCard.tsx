@@ -194,10 +194,12 @@ const styles = StyleSheet.create({
   },
   subInfo: {
     marginTop: 4,
-    fontSize: 12,
-    color: '#9CA3AF',
+    fontSize: 20,
+    color: '#000',
     textAlign: 'center',
     marginBottom: 8,
+    fontWeight: 'bold',
+    fontFamily: 'Courier'
   },
   reactionBar: {
     flexDirection: 'row',

@@ -1,9 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, Pressable, ScrollView, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  Pressable,
+  ScrollView,
+  Dimensions,
+  Platform,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useEvent } from 'expo';
 import { useVideoPlayer, VideoView } from 'expo-video';
+import * as VideoThumbnails from 'expo-video-thumbnails';
 import moment from 'moment';
 import ProfileIcon from './ProfileIcon';
 import { useGlobalContext } from '../contexts/GlobalContext';
@@ -12,20 +23,37 @@ import { PostProps } from '../types/types';
 const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
 const hp = (percentage: number) => (percentage * deviceHeight) / 100;
 
-const PostCard: React.FC<PostProps> = ({ title, content, image, mediaType, likes, mypost, userId, createdAt, shouldPlay, scrollY }) => {
+const PostCard: React.FC<PostProps> = ({
+  title,
+  content,
+  image,
+  mediaType,
+  likes,
+  mypost,
+  userId,
+  createdAt,
+  shouldPlay,
+  scrollY,
+}) => {
   const { state } = useGlobalContext();
   const [liked, setLiked] = useState(false);
   const [numLikes, setNumLikes] = useState(likes);
   const [commentsVisible, setCommentsVisible] = useState(false);
   const [cardY, setCardY] = useState(0);
   const [showVideo, setShowVideo] = useState(false);
+  const [thumbnail, setThumbnail] = useState<string | null>(null);
+
   const profiles = state.allProfiles || [];
   const userProfile = profiles.find(profile => profile.id === userId);
   const userName = userProfile?.full_name || '';
   const date = moment(createdAt).format("MMM D");
-  const player = useVideoPlayer(typeof image === 'string' ? image : image.uri, player => {
-    player.loop = false;
-  });
+
+  const player = useVideoPlayer(
+    typeof image === 'string' ? image : image.uri,
+    player => {
+      player.loop = false;
+    }
+  );
 
   const { isPlaying } = useEvent(player, 'playingChange', {
     isPlaying: player.playing,
@@ -52,6 +80,24 @@ const PostCard: React.FC<PostProps> = ({ title, content, image, mediaType, likes
     if (!player) return;
     shouldPlay ? player.play() : player.pause();
   }, [shouldPlay, player]);
+
+  useEffect(() => {
+    const generateThumbnail = async () => {
+      try {
+        const source = typeof image === 'string' ? image : image.uri;
+        const { uri } = await VideoThumbnails.getThumbnailAsync(source, {
+          time: 1000,
+        });
+        setThumbnail(uri);
+      } catch (e) {
+        console.warn('Could not generate thumbnail:', e);
+      }
+    };
+
+    if (mediaType === 'video') {
+      generateThumbnail();
+    }
+  }, [image]);
 
   const handleLikePress = () => {
     setNumLikes(prev => liked ? prev - 1 : prev + 1);
@@ -94,11 +140,13 @@ const PostCard: React.FC<PostProps> = ({ title, content, image, mediaType, likes
             />
           ) : (
             <View style={styles.videoPlaceholder}>
-              <Image
-                source={image}
-                style={styles.postMedia}
-                contentFit='cover'
-              />
+              {thumbnail && (
+                <Image
+                  source={{ uri: thumbnail }}
+                  style={styles.postMedia}
+                  contentFit='cover'
+                />
+              )}
               <TouchableOpacity
                 style={styles.playIconWrapper}
                 onPress={() => setShowVideo(true)}
@@ -213,12 +261,16 @@ const styles = StyleSheet.create({
   },
   postMedia: {
     width: '100%',
-    aspectRatio: 1, // Change this to 4 / 5 or 16 / 9 if you prefer vertical/horizontal layout
+    aspectRatio: 1,
+    borderRadius: 0,
   },
   videoPlaceholder: {
     position: 'relative',
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
+    width: '100%',
+    aspectRatio: 1,
   },
   playIconWrapper: {
     position: 'absolute',

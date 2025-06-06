@@ -42,7 +42,6 @@ const ConnectZoneScreen = () => {
       ...group,
       sections: group?.sections?.split('/'),
     }));
-    console.log('Processed groups:', groupsWithSectionArray);
     setCreatedGroups(groupsWithSectionArray);
   }
 };

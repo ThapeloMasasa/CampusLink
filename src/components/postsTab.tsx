@@ -29,7 +29,7 @@ const PostsTab = ({ posts }: { posts: post[] }) => {
   const [content, setContent] = useState('');
   const [mediaUri, setMediaUri] = useState<string | null>(null);
   const [mediaType, setMediaType] = useState<'image' | 'video' | null>(null);
-  const [newPost, setNewPost] = useState({ Header: '', image: '' });
+  const [newPost, setNewPost] = useState({ Header: '', image: null });
   const { state } = useGlobalContext();
   let countPosts = Math.floor(Math.random() * 1000000000);
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -124,7 +124,7 @@ if (mediaUri) {
       else {
         console.log('Post saved!');
         setModalVisible(false);
-        setNewPost({ Header: '', image: '' });
+        setNewPost({ Header: '', image: null });
         setContent('');
         setMediaUri(null);
         setMediaType(null);
