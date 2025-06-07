@@ -23,7 +23,6 @@ const DealsTab = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [newDeal, setNewDeal] = useState({ price: '', instructions: '' });
   const [imageUri, setImageUri] = useState<string | null>(null);
-
   const fetchDeals = async () => {
     const { data, error } = await supabase
       .from('Deals')
@@ -98,6 +97,7 @@ const DealsTab = () => {
       ...newDeal,
       id: countDeals,
       image: imageUrl,
+      yap: 'deal',
       owner: state.currentUserId,
       created_at: new Date().toISOString(),
     };
@@ -131,6 +131,7 @@ const DealsTab = () => {
               image={{ uri: deal.image }}
               userId={deal.owner}
               created_at=''
+              place = ''
             />
           ))
         ) : (

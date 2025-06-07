@@ -20,7 +20,7 @@ export default function HomeScreen() {
   const [homeContent, setHomeContent] = useState<any[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const { state, dispatch } = useGlobalContext();
- 
+  const place = 'home';
   const [refreshing, setRefreshing] = useState(false);
   const notifications = 6;
   const messages = 7;
@@ -113,6 +113,7 @@ export default function HomeScreen() {
         instructions={item.instructions}
         userId={item.owner}
         created_at=''
+        place= {place}
       />
     );
   }

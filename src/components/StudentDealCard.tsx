@@ -12,19 +12,16 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
-import { StudentDealCardProps} from '../types/types';
+import { StudentDealCardProps } from '../types/types';
 
 import ProfileIcon from './ProfileIcon';
-
 import { useGlobalContext } from '../contexts/GlobalContext';
-
 import { supabase } from '../../supabaseClient';
 
-const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price, instructions, userId }) => {
+const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price, instructions, userId, place }) => {
   const { state } = useGlobalContext();
 
   const [modalVisible, setModalVisible] = useState(false);
-
   const [editedInstructions, setEditedInstructions] = useState(instructions);
   const [editedPrice, setEditedPrice] = useState(String(price));
 
@@ -54,7 +51,6 @@ const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price, instruc
   };
 
   const handleCancel = () => {
-    // Reset edits and close modal
     setEditedInstructions(instructions);
     setEditedPrice(String(price));
     setModalVisible(false);
@@ -62,6 +58,12 @@ const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price, instruc
 
   return (
     <View style={styles.card}>
+      {place === 'home' && (
+        <View style={styles.homeHeaderContainer}>
+          <Text style={styles.homeHeaderText}>💸 Student Sale 💸</Text>
+        </View>
+      )}
+
       <Image source={image} style={styles.productImage} resizeMode="cover" />
 
       <View style={styles.bottomRow}>
@@ -85,7 +87,6 @@ const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price, instruc
 
               {isCurrentUser ? (
                 <>
-                  {/* Editable instructions input */}
                   <TextInput
                     style={styles.instructionsInput}
                     multiline
@@ -93,20 +94,18 @@ const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price, instruc
                     onChangeText={setEditedInstructions}
                     placeholder="Enter instructions"
                   />
-                 <View style={styles.price}>
-
-                 <Text style = {styles.priceText}>Price</Text>
-                  <TextInput
-                    style={styles.priceInput}
-                    keyboardType="numeric"
-                    value={editedPrice}
-                    onChangeText={setEditedPrice}
-                    placeholder="Price"
-                    maxLength={10}
-                  />
+                  <View style={styles.price}>
+                    <Text style={styles.priceText}>Price</Text>
+                    <TextInput
+                      style={styles.priceInput}
+                      keyboardType="numeric"
+                      value={editedPrice}
+                      onChangeText={setEditedPrice}
+                      placeholder="Price"
+                      maxLength={10}
+                    />
                   </View>
 
-                  {/* Buttons side by side */}
                   <View style={styles.modalButtonsRow}>
                     <Pressable style={[styles.modalButton, styles.cancelButton]} onPress={handleCancel}>
                       <Text style={styles.modalButtonText}>Cancel</Text>
@@ -129,6 +128,7 @@ const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price, instruc
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   card: {
     width: '95%',
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 12,
     margin: '2.5%',
-    padding: 12, // added padding inside the card
+    padding: 12,
     elevation: 3,
     shadowColor: '#000',
     shadowOpacity: 0.1,
@@ -144,9 +144,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 
+  homeHeaderContainer: {
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+
+  homeHeaderText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#2e7d32',
+    textAlign: 'center',
+  },
+
   productImage: {
     width: '100%',
-    height: '80%', // slightly smaller to avoid overlap with new padding
+    height: '80%',
     borderRadius: 10,
   },
 
@@ -155,7 +167,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 10,
-    paddingHorizontal: 4, // ensure content doesn't touch edges
+    paddingHorizontal: 4,
   },
 
   dealButton: {
@@ -183,12 +195,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     paddingTop: 7,
     paddingRight: 10,
-  },
-
-  userAvatar: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
   },
 
   priceTag: {

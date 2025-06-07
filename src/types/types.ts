@@ -100,6 +100,7 @@ export type StudentDealCardProps = {
   instructions: string;
   userId: string;
   created_at: string;
+  place: string
 };
 
 
