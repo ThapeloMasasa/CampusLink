@@ -107,7 +107,7 @@ const YapCard: React.FC<ExtendedYapProps> = ({
 
       <Text style={styles.subInfo}>{age}</Text>
 
-      {likes > 1000 && (
+      {likes > 10 && (
         <View style={styles.flames}>
           <Text>🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥🔥 🔥 🔥 🔥 </Text>
         </View>

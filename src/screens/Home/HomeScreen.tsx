@@ -118,7 +118,7 @@ export default function HomeScreen() {
     );
   }
 
-  if (item.yap) {
+  if (item.yap === 'yap') {
     return (
       <YapCard
         hasImage={item.has_image}

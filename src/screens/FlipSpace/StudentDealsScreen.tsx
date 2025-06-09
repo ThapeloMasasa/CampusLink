@@ -10,6 +10,7 @@ const StudentDealsScreen: React.FC = () => {
   const [deals, setDeals] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const {state} = useGlobalContext();
+    const place = 'dealsTab';
   
     const fetchDeals = async () => {
       const { data, error } = await supabase.from('Deals').select('*').neq('owner', state.currentUserId).order('created_at', { ascending: false });
@@ -39,6 +40,8 @@ const StudentDealsScreen: React.FC = () => {
            price= {deal.price}
            instructions = {deal.instructions}
            userId= {deal.owner}
+           created_at=''
+           place = {place}
          />
         </TouchableOpacity>
        )

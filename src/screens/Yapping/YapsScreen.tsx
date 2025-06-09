@@ -82,7 +82,7 @@ const YapsScreen = () => {
       .insert([{
         header: yapTitle,
         Content: yapText,
-        yap: true,
+        yap: 'yap',
         likes: 0,
         reactions: [],
         score: 0,

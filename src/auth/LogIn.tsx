@@ -72,7 +72,6 @@ const LoginScreen = () => {
     if (!postsError) dispatch({ type: 'SET_SALES', payload: sales });
     else console.log(salesError);
 
-    
     // 6. Fetch all Myday entries
     const { data: allMyDays, error: mydaysError } = await supabase.from('Myday').select('*');
 

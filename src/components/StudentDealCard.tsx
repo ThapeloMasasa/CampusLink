@@ -70,9 +70,8 @@ const StudentDealCard: React.FC<StudentDealCardProps> = ({ image, price, instruc
         {!isCurrentUser && <ProfileIcon userId={userId} />}
 
         <Pressable style={styles.dealButton} onPress={() => setModalVisible(true)}>
-          <Text style={styles.dealText}>{isCurrentUser ? 'Instructions' : 'Deal'}</Text>
+          <Text style={styles.dealText}>{isCurrentUser ? 'Instructions' : 'See Details'}</Text>
         </Pressable>
-
         <Text style={styles.priceTag}>${price}</Text>
 
         <Modal
