@@ -30,7 +30,8 @@
 
 ## 🚀 Full Demo
 
-[![Watch the video](https://drive.google.com/file/d/1TaCiSUXM5SUQqe7oujyPr09mTiS75saG/view)
+[![Watch the video](assets/icon.png)](https://drive.google.com/file/d/1TaCiSUXM5SUQqe7oujyPr09mTiS75saG/view?usp=sharing)
+
 
 
 
