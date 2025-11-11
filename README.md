@@ -30,7 +30,7 @@
 
 ## 🚀 Full Demo
 
-[![Watch the video](https://fast.wistia.com/embed/medias/k0pndzfl7n/swatch)](https://fast.wistia.com/medias/k0pndzfl7n)
+[![Watch the video](https://drive.google.com/file/d/1TaCiSUXM5SUQqe7oujyPr09mTiS75saG/view)
 
 
 
