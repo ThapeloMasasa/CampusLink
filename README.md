@@ -30,7 +30,8 @@
 
 ## 🚀 Full Demo
 
-https://drive.google.com/file/d/1TaCiSUXM5SUQqe7oujyPr09mTiS75saG/view?usp=sharing
+[![Watch the video](https://fast.wistia.com/embed/medias/k0pndzfl7n/swatch)](https://fast.wistia.com/medias/k0pndzfl7n)
+
 
 
 ## 🧰 Tech Stack
